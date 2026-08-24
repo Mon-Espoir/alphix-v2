@@ -1,0 +1,16 @@
+/**
+ * ---------------------------------------------------------------------------
+ * ALPHIX V2 — Global styles (overrides Vite template defaults)
+ * ---------------------------------------------------------------------------
+ * Minimal resets — the theme.css handles all design tokens.
+ */
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}

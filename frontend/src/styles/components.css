@@ -1,0 +1,391 @@
+/* ==========================================================================
+   ALPHIX V2 — UI Components
+   ========================================================================== */
+
+/* --- Button ---------------------------------------------------------------- */
+.ax-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ax-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--ax-radius-md);
+  font-family: var(--ax-font-sans);
+  font-weight: var(--ax-font-medium);
+  white-space: nowrap;
+  user-select: none;
+  transition: background var(--ax-transition-fast), color var(--ax-transition-fast),
+    border-color var(--ax-transition-fast), box-shadow var(--ax-transition-fast);
+}
+
+.ax-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ax-btn--sm { padding: 6px 12px; font-size: var(--ax-text-sm); border-radius: var(--ax-radius-sm); }
+.ax-btn--md { padding: 10px 20px; font-size: var(--ax-text-sm); }
+.ax-btn--lg { padding: 12px 28px; font-size: var(--ax-text-base); border-radius: var(--ax-radius-lg); }
+
+.ax-btn--primary {
+  background: var(--ax-primary);
+  color: var(--ax-text-inverse);
+}
+.ax-btn--primary:hover { background: var(--ax-primary-hover); }
+.ax-btn--primary:active { background: var(--ax-primary-active); }
+
+.ax-btn--secondary {
+  background: var(--ax-secondary);
+  color: var(--ax-text-inverse);
+}
+.ax-btn--secondary:hover { background: var(--ax-secondary-hover); }
+
+.ax-btn--danger {
+  background: var(--ax-danger);
+  color: var(--ax-text-inverse);
+}
+.ax-btn--danger:hover { background: var(--ax-danger-hover); }
+
+.ax-btn--ghost {
+  background: transparent;
+  color: var(--ax-text);
+  border-color: transparent;
+}
+.ax-btn--ghost:hover { background: var(--ax-surface-hover); }
+
+.ax-btn--outline {
+  background: transparent;
+  color: var(--ax-text);
+  border-color: var(--ax-border-strong);
+}
+.ax-btn--outline:hover { background: var(--ax-surface-hover); }
+
+.ax-btn__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ax-spin 0.7s linear infinite;
+}
+
+.ax-btn--loading { pointer-events: none; }
+.ax-btn__content--hidden { visibility: hidden; }
+
+@keyframes ax-spin { to { transform: rotate(360deg); } }
+
+/* --- Card ------------------------------------------------------------------ */
+.ax-card {
+  background: var(--ax-surface);
+  border: 1px solid var(--ax-border);
+  border-radius: var(--ax-radius-lg);
+  box-shadow: var(--ax-shadow-xs);
+  transition: box-shadow var(--ax-transition-base), border-color var(--ax-transition-base);
+}
+
+.ax-card--padded { padding: var(--ax-space-6); }
+
+.ax-card__header {
+  padding: var(--ax-space-6) var(--ax-space-6) 0;
+}
+
+.ax-card__body {
+  padding: var(--ax-space-6);
+}
+
+.ax-card__footer {
+  padding: 0 var(--ax-space-6) var(--ax-space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--ax-space-3);
+}
+
+/* --- Container ------------------------------------------------------------- */
+.ax-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--ax-space-4);
+}
+
+.ax-container--sm { max-width: 640px; }
+.ax-container--md { max-width: var(--ax-content-max-width); }
+.ax-container--lg { max-width: 1400px; }
+
+@media (min-width: 640px) {
+  .ax-container { padding: 0 var(--ax-space-6); }
+}
+
+@media (min-width: 1024px) {
+  .ax-container { padding: 0 var(--ax-space-8); }
+}
+
+/* --- Section --------------------------------------------------------------- */
+.ax-section {
+  padding: var(--ax-space-8) 0;
+}
+
+.ax-section__header {
+  margin-bottom: var(--ax-space-6);
+}
+
+.ax-section__title {
+  font-size: var(--ax-text-xl);
+  font-weight: var(--ax-font-semibold);
+  color: var(--ax-text);
+  margin-bottom: var(--ax-space-1);
+}
+
+.ax-section__subtitle {
+  font-size: var(--ax-text-sm);
+  color: var(--ax-text-secondary);
+}
+
+/* --- Badge ----------------------------------------------------------------- */
+.ax-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ax-space-1);
+  border-radius: var(--ax-radius-full);
+  font-weight: var(--ax-font-medium);
+  white-space: nowrap;
+}
+
+.ax-badge--sm { padding: 2px 8px; font-size: 11px; }
+.ax-badge--md { padding: 4px 10px; font-size: var(--ax-text-xs); }
+.ax-badge--lg { padding: 6px 14px; font-size: var(--ax-text-sm); }
+
+.ax-badge--default {
+  background: var(--ax-bg-tertiary);
+  color: var(--ax-text-secondary);
+}
+
+.ax-badge--primary {
+  background: var(--ax-primary-light);
+  color: var(--ax-primary);
+}
+
+.ax-badge--success {
+  background: var(--ax-secondary-light);
+  color: var(--ax-green-600);
+}
+
+.ax-badge--danger {
+  background: var(--ax-danger-light);
+  color: var(--ax-danger);
+}
+
+.ax-badge--warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+/* --- Avatar ---------------------------------------------------------------- */
+.ax-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ax-radius-full);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--ax-primary);
+  color: var(--ax-text-inverse);
+  font-weight: var(--ax-font-semibold);
+}
+
+.ax-avatar--sm { width: 32px; height: 32px; font-size: var(--ax-text-xs); }
+.ax-avatar--md { width: 40px; height: 40px; font-size: var(--ax-text-sm); }
+.ax-avatar--lg { width: 56px; height: 56px; font-size: var(--ax-text-lg); }
+.ax-avatar--xl { width: 80px; height: 80px; font-size: var(--ax-text-2xl); }
+
+.ax-avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ax-avatar__fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* --- IconButton ------------------------------------------------------------ */
+.ax-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--ax-radius-md);
+  background: transparent;
+  color: var(--ax-text-secondary);
+  cursor: pointer;
+  transition: background var(--ax-transition-fast), color var(--ax-transition-fast);
+}
+
+.ax-icon-btn:hover { background: var(--ax-surface-hover); color: var(--ax-text); }
+
+.ax-icon-btn--sm { width: 32px; height: 32px; }
+.ax-icon-btn--md { width: 40px; height: 40px; }
+.ax-icon-btn--lg { width: 48px; height: 48px; }
+
+.ax-icon-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.ax-icon-btn__badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--ax-radius-full);
+  background: var(--ax-danger);
+  color: var(--ax-text-inverse);
+  font-size: 10px;
+  font-weight: var(--ax-font-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* --- PageTitle -------------------------------------------------------------- */
+.ax-page-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ax-space-4);
+  padding: var(--ax-space-6) 0;
+}
+
+.ax-page-title__heading {
+  font-size: var(--ax-text-2xl);
+  font-weight: var(--ax-font-bold);
+}
+
+.ax-page-title__subtitle {
+  font-size: var(--ax-text-sm);
+  color: var(--ax-text-secondary);
+  margin-top: var(--ax-space-1);
+}
+
+.ax-page-title__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ax-space-2);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .ax-page-title {
+    flex-direction: column;
+  }
+}
+
+/* --- StatCard -------------------------------------------------------------- */
+.ax-stat-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ax-space-4);
+  padding: var(--ax-space-5);
+  background: var(--ax-surface);
+  border: 1px solid var(--ax-border);
+  border-radius: var(--ax-radius-lg);
+  box-shadow: var(--ax-shadow-xs);
+  transition: box-shadow var(--ax-transition-base), border-color var(--ax-transition-base);
+}
+
+.ax-stat-card:hover {
+  box-shadow: var(--ax-shadow-sm);
+  border-color: var(--ax-border-strong);
+}
+
+.ax-stat-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ax-radius-md);
+  background: var(--ax-primary-light);
+  color: var(--ax-primary);
+  flex-shrink: 0;
+  font-size: var(--ax-text-xl);
+}
+
+.ax-stat-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ax-stat-card__label {
+  font-size: var(--ax-text-xs);
+  font-weight: var(--ax-font-medium);
+  color: var(--ax-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ax-stat-card__value {
+  font-size: var(--ax-text-2xl);
+  font-weight: var(--ax-font-bold);
+  color: var(--ax-text);
+  line-height: 1.2;
+}
+
+.ax-stat-card__trend {
+  font-size: var(--ax-text-xs);
+  font-weight: var(--ax-font-medium);
+  color: var(--ax-text-tertiary);
+}
+
+.ax-stat-card__trend--up { color: var(--ax-green-600); }
+.ax-stat-card__trend--down { color: var(--ax-red-500); }
+
+.ax-stat-card__trend-label {
+  color: var(--ax-text-tertiary);
+  margin-left: var(--ax-space-1);
+}
+
+/* --- LoadingSpinner -------------------------------------------------------- */
+.ax-spinner-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ax-space-3);
+}
+
+.ax-spinner-wrap__label {
+  font-size: var(--ax-text-sm);
+  color: var(--ax-text-secondary);
+}
+
+.ax-spinner {
+  border-radius: 50%;
+  border: 3px solid var(--ax-border);
+  border-top-color: var(--ax-primary);
+  animation: ax-spin 0.8s linear infinite;
+}
+
+.ax-spinner--sm { width: 20px; height: 20px; border-width: 2px; }
+.ax-spinner--md { width: 32px; height: 32px; }
+.ax-spinner--lg { width: 48px; height: 48px; border-width: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ax-spinner,
+  .ax-btn__spinner {
+    animation-duration: 2.4s;
+  }
+}

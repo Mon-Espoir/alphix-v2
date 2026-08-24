@@ -1,0 +1,302 @@
+/* ==========================================================================
+   ALPHIX V2 — Design System
+   ==========================================================================
+   Palette inspirée du Burundi (bleu, rouge, vert).
+   Mobile-first. Material Design 3 / Notion / GitHub.
+   ========================================================================== */
+
+:root {
+  /* — Palette primaire — Burundi Blue — */
+  --ax-blue-50: #eef3ff;
+  --ax-blue-100: #d9e4ff;
+  --ax-blue-200: #bcd0ff;
+  --ax-blue-300: #8eb4ff;
+  --ax-blue-400: #598cff;
+  --ax-blue-500: #1a56db;
+  --ax-blue-600: #1543b0;
+  --ax-blue-700: #10308a;
+  --ax-blue-800: #0b1f62;
+  --ax-blue-900: #071240;
+
+  /* — Palette secondaire — Burundi Green — */
+  --ax-green-50: #ecfdf5;
+  --ax-green-100: #d1fae5;
+  --ax-green-200: #a7f3d0;
+  --ax-green-300: #6ee7b7;
+  --ax-green-400: #34d399;
+  --ax-green-500: #16a34a;
+  --ax-green-600: #15803d;
+  --ax-green-700: #166534;
+  --ax-green-800: #14532d;
+  --ax-green-900: #052e16;
+
+  /* — Palette accent — Burundi Red — */
+  --ax-red-50: #fef2f2;
+  --ax-red-100: #fee2e2;
+  --ax-red-200: #fecaca;
+  --ax-red-300: #fca5a5;
+  --ax-red-400: #f87171;
+  --ax-red-500: #dc2626;
+  --ax-red-600: #b91c1c;
+  --ax-red-700: #991b1b;
+  --ax-red-800: #7f1d1d;
+  --ax-red-900: #450a0a;
+
+  /* — Neutres — */
+  --ax-gray-50: #f9fafb;
+  --ax-gray-100: #f3f4f6;
+  --ax-gray-200: #e5e7eb;
+  --ax-gray-300: #d1d5db;
+  --ax-gray-400: #9ca3af;
+  --ax-gray-500: #6b7280;
+  --ax-gray-600: #4b5563;
+  --ax-gray-700: #374151;
+  --ax-gray-800: #1f2937;
+  --ax-gray-900: #111827;
+
+  /* — Sémantiques — */
+  --ax-primary: var(--ax-blue-500);
+  --ax-primary-hover: var(--ax-blue-600);
+  --ax-primary-active: var(--ax-blue-700);
+  --ax-primary-light: var(--ax-blue-50);
+
+  --ax-secondary: var(--ax-green-500);
+  --ax-secondary-hover: var(--ax-green-600);
+  --ax-secondary-light: var(--ax-green-50);
+
+  --ax-danger: var(--ax-red-500);
+  --ax-danger-hover: var(--ax-red-600);
+  --ax-danger-light: var(--ax-red-50);
+
+  --ax-success: var(--ax-green-500);
+  --ax-warning: #f59e0b;
+  --ax-info: var(--ax-blue-400);
+
+  /* — Fond et surface — */
+  --ax-bg: #ffffff;
+  --ax-bg-secondary: var(--ax-gray-50);
+  --ax-bg-tertiary: var(--ax-gray-100);
+  --ax-surface: #ffffff;
+  --ax-surface-hover: var(--ax-gray-50);
+  --ax-surface-active: var(--ax-gray-100);
+
+  /* — Texte — */
+  --ax-text: var(--ax-gray-900);
+  --ax-text-secondary: var(--ax-gray-600);
+  --ax-text-tertiary: var(--ax-gray-400);
+  --ax-text-inverse: #ffffff;
+  --ax-text-link: var(--ax-primary);
+  --ax-text-link-hover: var(--ax-primary-hover);
+
+  /* — Bordures — */
+  --ax-border: var(--ax-gray-200);
+  --ax-border-strong: var(--ax-gray-300);
+  --ax-border-focus: var(--ax-primary);
+  --ax-divider: var(--ax-gray-100);
+
+  /* — Ombres — */
+  --ax-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --ax-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ax-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --ax-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --ax-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+
+  /* — Rayons — */
+  --ax-radius-sm: 6px;
+  --ax-radius-md: 8px;
+  --ax-radius-lg: 12px;
+  --ax-radius-xl: 16px;
+  --ax-radius-2xl: 24px;
+  --ax-radius-full: 9999px;
+
+  /* — Espacement (base 4px) — */
+  --ax-space-0: 0;
+  --ax-space-1: 4px;
+  --ax-space-2: 8px;
+  --ax-space-3: 12px;
+  --ax-space-4: 16px;
+  --ax-space-5: 20px;
+  --ax-space-6: 24px;
+  --ax-space-8: 32px;
+  --ax-space-10: 40px;
+  --ax-space-12: 48px;
+  --ax-space-16: 64px;
+  --ax-space-20: 80px;
+
+  /* — Typographie — */
+  --ax-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ax-font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --ax-text-xs: 0.75rem;
+  --ax-text-sm: 0.875rem;
+  --ax-text-base: 1rem;
+  --ax-text-lg: 1.125rem;
+  --ax-text-xl: 1.25rem;
+  --ax-text-2xl: 1.5rem;
+  --ax-text-3xl: 1.875rem;
+  --ax-text-4xl: 2.25rem;
+
+  --ax-leading-tight: 1.25;
+  --ax-leading-normal: 1.5;
+  --ax-leading-relaxed: 1.625;
+
+  --ax-font-normal: 400;
+  --ax-font-medium: 500;
+  --ax-font-semibold: 600;
+  --ax-font-bold: 700;
+
+  /* — Transitions — */
+  --ax-transition-fast: 120ms ease;
+  --ax-transition-base: 200ms ease;
+  --ax-transition-slow: 300ms ease;
+
+  /* — Z-index — */
+  --ax-z-dropdown: 100;
+  --ax-z-sticky: 200;
+  --ax-z-header: 300;
+  --ax-z-overlay: 400;
+  --ax-z-modal: 500;
+  --ax-z-toast: 600;
+
+  /* — Layout — */
+  --ax-header-height: 64px;
+  --ax-sidebar-width: 260px;
+  --ax-bottom-nav-height: 64px;
+  --ax-content-max-width: 1200px;
+
+  color-scheme: light;
+}
+
+/* — Dark mode — */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ax-bg: var(--ax-gray-900);
+    --ax-bg-secondary: #1a1f2e;
+    --ax-bg-tertiary: #232837;
+    --ax-surface: #1e2332;
+    --ax-surface-hover: #252a3a;
+    --ax-surface-active: #2d3348;
+
+    --ax-text: var(--ax-gray-100);
+    --ax-text-secondary: var(--ax-gray-400);
+    --ax-text-tertiary: var(--ax-gray-500);
+    --ax-text-inverse: var(--ax-gray-900);
+
+    --ax-border: #2d3348;
+    --ax-border-strong: #3d4458;
+    --ax-divider: #252a3a;
+
+    --ax-primary: var(--ax-blue-400);
+    --ax-primary-hover: var(--ax-blue-300);
+    --ax-primary-active: var(--ax-blue-200);
+    --ax-primary-light: rgba(89, 140, 255, 0.15);
+
+    --ax-secondary: var(--ax-green-400);
+    --ax-secondary-hover: var(--ax-green-300);
+    --ax-secondary-light: rgba(52, 211, 153, 0.15);
+
+    --ax-danger: var(--ax-red-400);
+    --ax-danger-hover: var(--ax-red-300);
+    --ax-danger-light: rgba(248, 113, 113, 0.15);
+
+    --ax-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --ax-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.25);
+    --ax-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+    --ax-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.45), 0 4px 6px -4px rgba(0, 0, 0, 0.25);
+    --ax-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+
+    color-scheme: dark;
+  }
+}
+
+/* ==========================================================================
+   Resets & Base
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--ax-font-sans);
+  font-size: var(--ax-text-base);
+  line-height: var(--ax-leading-normal);
+  color: var(--ax-text);
+  background: var(--ax-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+}
+
+a {
+  color: var(--ax-text-link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--ax-text-link-hover);
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  color: var(--ax-text);
+  font-weight: var(--ax-font-semibold);
+  line-height: var(--ax-leading-tight);
+}
+
+p {
+  margin: 0;
+}
+
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* — Focus visible — */
+:focus-visible {
+  outline: 2px solid var(--ax-border-focus);
+  outline-offset: 2px;
+}
+
+/* — Scrollbar (webkit) — */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ax-gray-300);
+  border-radius: var(--ax-radius-full);
+}
+
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: var(--ax-gray-600);
+  }
+}
