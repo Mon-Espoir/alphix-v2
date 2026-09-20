@@ -1,5 +1,5 @@
 // Shared helpers for ALPHIX V2 e2e — no hardcoded hierarchy, real API driven
-export const API_BASE = 'http://localhost:8000/api/v1';
+export const API_BASE = 'https://alphix-backend.onrender.com/api/v1';
 export const ADMIN_EMAIL = 'monirankunda@gmail.com';
 export const ADMIN_PASSWORD = 'monespoir.443125';
 export const STORAGE_KEY = 'alphix.v2:auth:token';

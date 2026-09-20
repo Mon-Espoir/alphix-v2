@@ -18,7 +18,7 @@
  * @type {Readonly<{API_BASE_URL: string, API_TIMEOUT_MS: number, APP_NAME: string, AUTH_MODE: string}>}
  */
 const DEFAULTS = Object.freeze({
-  API_BASE_URL: 'http://localhost:8000/api/v1',
+  API_BASE_URL: 'https://alphix-backend.onrender.com/api/v1',
   API_TIMEOUT_MS: 15000,
   APP_NAME: 'ALPHIX',
   AUTH_MODE: 'token',
