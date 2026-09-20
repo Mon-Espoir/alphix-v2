@@ -58,6 +58,12 @@ fi
 export DB_CONNECTION
 
 # ──────────────────────────────────────────────
+# Package discovery (doit tourner après le COPY du code)
+# ──────────────────────────────────────────────
+echo "🔍 Discovering packages..."
+php artisan package:discover --no-interaction
+
+# ──────────────────────────────────────────────
 # Migrations (force = pas de confirmation)
 # ──────────────────────────────────────────────
 echo "📊 Running migrations..."
@@ -70,12 +76,6 @@ if [ ! -L public/storage ]; then
     echo "🔗 Creating storage link..."
     php artisan storage:link --no-interaction
 fi
-
-# ──────────────────────────────────────────────
-# Package discovery (doit tourner après le COPY du code)
-# ──────────────────────────────────────────────
-echo "🔍 Discovering packages..."
-php artisan package:discover --no-interaction
 
 # ──────────────────────────────────────────────
 # Optimisation caches production
