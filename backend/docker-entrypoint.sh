@@ -64,6 +64,12 @@ if [ ! -L public/storage ]; then
 fi
 
 # ──────────────────────────────────────────────
+# Package discovery (doit tourner après le COPY du code)
+# ──────────────────────────────────────────────
+echo "🔍 Discovering packages..."
+php artisan package:discover --no-interaction
+
+# ──────────────────────────────────────────────
 # Optimisation caches production
 # ──────────────────────────────────────────────
 echo "⚡ Caching config, routes, views..."
