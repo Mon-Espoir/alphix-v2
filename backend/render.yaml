@@ -1,5 +1,5 @@
 # Render Blueprint for ALPHIX V2 Backend
-# Déploiement 100% gratuit : Web Service + PostgreSQL (90 jours gratuits) + Cron
+# Déploiement 100% gratuit : Web Service + PostgreSQL (90 jours gratuits)
 # URL permanente : https://alphix-backend.onrender.com
 
 databases:
@@ -57,29 +57,5 @@ services:
       php artisan config:cache --no-interaction
       php artisan route:cache --no-interaction
       php artisan view:cache --no-interaction
-    startCommand: |
-      php artisan serve --host=0.0.0.0 --port=$PORT
     healthCheckPath: /api/v1/maintenance/status
     autoDeploy: true
-
-  # Cron Job pour le scheduler Laravel (gratuit)
-  - type: cron
-    name: alphix-scheduler
-    runtime: docker
-    plan: free
-    region: oregon
-    repo: https://github.com/Mon-Espoir/alphix-v2
-    branch: master
-    rootDir: backend
-    dockerfilePath: ./Dockerfile.render
-    schedule: "* * * * *"
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: DB_CONNECTION
-        value: pgsql
-      # DB_* injectés depuis alphix-db
-    buildCommand: |
-      composer install --no-dev --optimize-autoloader --no-interaction
-    startCommand: |
-      php artisan schedule:run --verbose --no-interaction
