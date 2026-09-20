@@ -3,28 +3,23 @@
 # URL permanente : https://alphix-backend.onrender.com
 
 services:
-  # ──────────────────────────────────────────────
   # Base de données PostgreSQL (gratuite 90 jours)
-  # ──────────────────────────────────────────────
-  - type: pserv
+  - type: psql
     name: alphix-db
     plan: free
     region: oregon
-    postgresMajorVersion: 16
+    postgresMajorVersion: "16"
     databaseName: alphix
     user: alphix
-    # La base est créée automatiquement, variables d'env injectées dans le web service
 
-  # ──────────────────────────────────────────────
   # Web Service Laravel (gratuit, spin-down après 15 min inactivité)
-  # ──────────────────────────────────────────────
   - type: web
     name: alphix-backend
     runtime: docker
     plan: free
     region: oregon
-    repo: https://github.com/<TON_GITHUB_USER>/alphix-v2
-    branch: main
+    repo: https://github.com/Mon-Espoir/alphix-v2
+    branch: master
     rootDir: backend
     dockerfilePath: ./Dockerfile.render
     envVars:
@@ -42,7 +37,7 @@ services:
         value: error
       - key: DB_CONNECTION
         value: pgsql
-      # Variables injectées automatiquement depuis le pserv 'alphix-db' :
+      # Variables injectées automatiquement depuis le psql 'alphix-db' :
       # DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
       - key: SESSION_DRIVER
         value: database
@@ -56,7 +51,6 @@ services:
         value: log
       - key: SANCTUM_STATEFUL_DOMAINS
         value: alphix-backend.onrender.com
-    # Commande de build (exécutée à chaque deploy)
     buildCommand: |
       composer install --no-dev --optimize-autoloader --no-interaction
       php artisan key:generate --force --no-interaction
@@ -65,22 +59,19 @@ services:
       php artisan config:cache --no-interaction
       php artisan route:cache --no-interaction
       php artisan view:cache --no-interaction
-    # Commande de démarrage
     startCommand: |
       php artisan serve --host=0.0.0.0 --port=$PORT
     healthCheckPath: /api/v1/maintenance/status
     autoDeploy: true
 
-  # ──────────────────────────────────────────────
   # Cron Job pour le scheduler Laravel (gratuit)
-  # ──────────────────────────────────────────────
   - type: cron
     name: alphix-scheduler
     runtime: docker
     plan: free
     region: oregon
-    repo: https://github.com/<TON_GITHUB_USER>/alphix-v2
-    branch: main
+    repo: https://github.com/Mon-Espoir/alphix-v2
+    branch: master
     rootDir: backend
     dockerfilePath: ./Dockerfile.render
     schedule: "* * * * *"
