@@ -4,6 +4,14 @@
 
 set -e
 
+# ──────────────────────────────────────────────
+# S'assurer que le fichier .env existe
+# ──────────────────────────────────────────────
+if [ ! -f .env ]; then
+    echo "📝 .env introuvable, copie de .env.example..."
+    cp .env.example .env
+fi
+
 echo "🚀 ALPHIX V2 Backend - Starting..."
 
 # ──────────────────────────────────────────────
