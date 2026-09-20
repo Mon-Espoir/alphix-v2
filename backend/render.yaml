@@ -4,7 +4,7 @@
 
 services:
   # Base de données PostgreSQL (gratuite 90 jours)
-  - type: psql
+  - type: pg
     name: alphix-db
     plan: free
     region: oregon
