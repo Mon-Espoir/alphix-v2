@@ -1,17 +1,15 @@
 # Render Blueprint for ALPHIX V2 Backend
-# Déploiement 100% gratuit : Web Service + PostgreSQL (90 jours gratuits)
+# Déploiement 100% gratuit : Web Service + PostgreSQL (90 jours gratuits) + Cron
 # URL permanente : https://alphix-backend.onrender.com
 
-services:
-  # Base de données PostgreSQL (gratuite 90 jours)
-  - type: database
-    name: alphix-db
+databases:
+  - name: alphix-db
     plan: free
-    region: oregon
-    postgresMajorVersion: "16"
     databaseName: alphix
     user: alphix
+    postgresMajorVersion: "16"
 
+services:
   # Web Service Laravel (gratuit, spin-down après 15 min inactivité)
   - type: web
     name: alphix-backend
@@ -37,7 +35,7 @@ services:
         value: error
       - key: DB_CONNECTION
         value: pgsql
-      # Variables injectées automatiquement depuis le psql 'alphix-db' :
+      # Variables injectées automatiquement depuis la database 'alphix-db' :
       # DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
       - key: SESSION_DRIVER
         value: database
