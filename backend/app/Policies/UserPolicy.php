@@ -27,18 +27,20 @@ class UserPolicy
 
     /**
      * Determine whether the user can create models.
+     * L'inscription publique passe par /register : ici, admins uniquement.
      */
     public function create(User $user): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
      * Determine whether the user can update the model.
+     * Admins uniquement (statut, role, rattachements).
      */
     public function update(User $currentUser, User $modelUser): bool
     {
-        return true;
+        return $this->isAdmin($currentUser);
     }
 
     /**
@@ -46,7 +48,7 @@ class UserPolicy
      */
     public function delete(User $currentUser, User $modelUser): bool
     {
-        return true;
+        return $this->isAdmin($currentUser);
     }
 
     /**
@@ -54,7 +56,7 @@ class UserPolicy
      */
     public function restore(User $currentUser, User $modelUser): bool
     {
-        return true;
+        return $this->isAdmin($currentUser);
     }
 
     /**
@@ -62,6 +64,14 @@ class UserPolicy
      */
     public function forceDelete(User $currentUser, User $modelUser): bool
     {
-        return true;
+        return $this->isAdmin($currentUser);
+    }
+
+    /**
+     * Roles d'administration (alignes sur frontend ADMIN_ROLES).
+     */
+    private function isAdmin(User $user): bool
+    {
+        return in_array(strtolower((string) $user->role), ['administrator', 'admin', 'super_admin', 'superadmin'], true);
     }
 }

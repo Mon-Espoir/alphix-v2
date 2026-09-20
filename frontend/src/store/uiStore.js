@@ -31,6 +31,11 @@ export const useUiStore = create((set) => ({
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
 
   /**
+   * Ouvre explicitement la barre latérale (parcours guidé, guide d'accueil).
+   */
+  openSidebar: () => set({ isSidebarOpen: true }),
+
+  /**
    * Ferme explicitement la barre latérale (navigation mobile).
    */
   closeSidebar: () => set({ isSidebarOpen: false }),

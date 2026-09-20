@@ -19,12 +19,37 @@ class UserRepository extends BaseRepository
     }
 
     /**
-     * Find a user by email address.
+     * Find a user by exact email address.
      */
     public function findByEmail(string $email): ?User
     {
+        return $this->query()->where('email', $email)->whereNotNull('email')->first();
+    }
+
+    /**
+     * Find a user by exact username (insensible a la casse normalisee).
+     */
+    public function findByUsername(string $username): ?User
+    {
+        return $this->query()->where('username', $username)->whereNotNull('username')->first();
+    }
+
+    /**
+     * Find a user by login identifier : nom d'utilisateur OU adresse email.
+     * Les noms d'utilisateur sont stockes en minuscules (insensibles a la casse),
+     * l'email reste compare exactement pour ne pas casser les comptes existants.
+     */
+    public function findByIdentifier(string $identifier): ?User
+    {
+        $username = strtolower(trim($identifier));
+
         /** @var User|null */
-        return $this->query()->where('email', $email)->first();
+        return $this->query()
+            ->where(function ($query) use ($identifier, $username) {
+                $query->where('username', $username)
+                    ->orWhere('email', $identifier);
+            })
+            ->first();
     }
 
     /**

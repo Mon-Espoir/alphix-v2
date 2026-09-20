@@ -52,4 +52,14 @@ export const UploadApi = {
   findDuplicateByHash(hash) {
     return httpService.get(`/upload/duplicate-by-hash/${hash}`)
   },
+
+  /**
+   * Reconnaissance intelligente depuis le nom de fichier (base réelle).
+   * @param {string} filename - Nom du fichier sélectionné.
+   * @returns {Promise<any>} {academic_year, doc_type, level_code, semester_code,
+   *                          faculty, department, course_id, course, suggestions, reason}
+   */
+  recognize(filename) {
+    return httpService.post('/upload/recognize', { filename })
+  },
 }

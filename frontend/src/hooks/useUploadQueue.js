@@ -19,11 +19,13 @@ import { uploadEngine } from '../features/upload/uploadEngine'
  *   cancelItem: (id: string) => void,
  *   retryItem: (id: string) => void,
  *   removeItem: (id: string) => void,
- *   clearCompleted: () => void,
+ *   clearCompleted: (ids?: string[]) => number,
  *   purgeItems: (ids: string[]) => number,
+ *   markClassified: (id: string, classification?: object) => void,
  *   resolveDuplicate: (id: string, decision: 'replace'|'keep_both'|'cancel') => Promise<void>,
  *   pause: () => void,
  *   resume: () => void,
+ *   onEvent: (handler: (event: object) => void) => () => void,
  * }} Instantane + actions.
  */
 export function useUploadQueue() {
@@ -34,6 +36,8 @@ export function useUploadQueue() {
     [],
   )
 
+  const onEvent = useCallback((handler) => uploadEngine.onEvent(handler), [])
+
   return {
     queue,
     enqueueFiles: uploadEngine.enqueueFiles,
@@ -42,9 +46,11 @@ export function useUploadQueue() {
     removeItem: uploadEngine.removeItem,
     clearCompleted: uploadEngine.clearCompleted,
     purgeItems: uploadEngine.purgeItems,
+    markClassified: uploadEngine.markClassified,
     resolveDuplicate,
     pause: uploadEngine.pause,
     resume: uploadEngine.resume,
+    onEvent,
   }
 }
 

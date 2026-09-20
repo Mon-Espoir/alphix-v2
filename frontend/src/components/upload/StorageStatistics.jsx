@@ -47,16 +47,19 @@ export default function StorageStatistics({
 
   return (
     <section className={['ax-storage-statistics', className].filter(Boolean).join(' ')} aria-label="Statistiques de stockage">
+      <p className="ax-text--muted ax-text--xs" style={{ marginBottom: 'var(--ax-space-3)' }}>
+        Envois et durée : session locale en cours sur cet appareil (pas la bibliothèque globale).
+      </p>
       {/* Grille de 4 cartes principales */}
       <div className="ax-storage-statistics__grid">
         <StatCard
           icon={DOCUMENT_ICON}
-          label="Envois aujourd'hui"
+          label="Envois aujourd'hui (session)"
           value={stats?.uploadedTodayCount ?? 0}
         />
         <StatCard
           icon={SPEED_ICON}
-          label="Duree moyenne"
+          label="Duree moyenne (session)"
           value={formatDuration(stats?.averageDurationMs ?? null)}
         />
         <StatCard

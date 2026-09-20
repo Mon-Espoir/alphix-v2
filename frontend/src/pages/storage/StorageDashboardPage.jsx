@@ -6,13 +6,19 @@
  * globale, drives connectes avec synchronisation, drive cible.
  */
 
-import { useState, useEffect, useCallback } from 'react'
+/* eslint-disable react-hooks/set-state-in-effect -- chargement initial + refresh intentionnels */
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { GoogleDriveApi } from '../../api/GoogleDriveApi'
 import { AutomationApi } from '../../api/AutomationApi'
+import { DocumentApi } from '../../api/DocumentApi'
 import { normalizeApiList } from '../../utils/academic'
+import { hasAdminAccess } from '../../utils/admin'
 import { selectTargetDrive, aggregateStorage } from '../../utils/drive'
-import { Container, Button, LoadingSpinner } from '../../components/ui'
+import { formatBytes } from '../../utils/upload'
+import { Container, Button, LoadingSpinner, StatCard } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
+import AdminSection from '../../components/admin/AdminSection'
 import {
   StorageStatistics,
   DriveSelector,
@@ -21,6 +27,8 @@ import {
 } from '../../components/upload'
 import { useUploadQueue } from '../../hooks/useUploadQueue'
 import { useNotification } from '../../hooks/useNotification'
+import { useAuth } from '../../hooks/useAuth'
+import { ROUTE_PATHS } from '../../constants/routes'
 
 /**
  * Page tableau de bord stockage.
@@ -28,28 +36,47 @@ import { useNotification } from '../../hooks/useNotification'
  */
 export default function StorageDashboardPage() {
   const { queue } = useUploadQueue()
-  const notify = useNotification()
+  // Fonctions stables (useCallback) : evitent la boucle refetch -> render -> refetch.
+  const { error: notifyError, success: notifySuccess } = useNotification()
+  const { user } = useAuth()
+  // Actions sensibles (defaut, priorite, sync, statut) reservees aux admins.
+  const isAdmin = hasAdminAccess(user)
   const [drives, setDrives] = useState([])
+  const [documents, setDocuments] = useState([])
   const [targetDriveId, setTargetDriveId] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [syncingId, setSyncingId] = useState(null)
 
   const refresh = useCallback(
-    () =>
-      GoogleDriveApi.getActiveByPriority()
-        .then((response) => setDrives(normalizeApiList(response)))
-        .catch(() => notify.error('Impossible de charger les drives.'))
-        .finally(() => setIsLoading(false)),
-    [notify],
+    // quiet=true : rafraichissement de fond (intervalle) sans spinner plein ecran.
+    async (signal, opts = {}) => {
+      if (!opts.quiet) setIsLoading(true)
+      try {
+        // Donnees reelles : drives (API) + documents (bibliotheque).
+        const [drivesRes, docsRes] = await Promise.all([
+          GoogleDriveApi.getActiveByPriority().catch(() => []),
+          DocumentApi.list({ per_page: 100 }).catch(() => ({ data: [] })),
+        ])
+        if (signal?.aborted) return
+        setDrives(normalizeApiList(drivesRes))
+        setDocuments(normalizeApiList(docsRes))
+      } catch {
+        if (!signal?.aborted) notifyError('Impossible de charger les drives.')
+      } finally {
+        if (!signal?.aborted) setIsLoading(false)
+      }
+    },
+    [notifyError],
   )
 
   useEffect(() => {
-    const interval = setInterval(() => refresh(), 30000)
-    return () => clearInterval(interval)
-  }, [refresh])
-
-  useEffect(() => {
-    refresh()
+    const ctrl = new AbortController()
+    refresh(ctrl.signal)
+    const interval = setInterval(() => refresh(null, { quiet: true }), 30000)
+    return () => {
+      ctrl.abort()
+      clearInterval(interval)
+    }
   }, [refresh])
 
   const preferredDrive = drives.length > 0 ? selectTargetDrive(drives) : null
@@ -60,62 +87,79 @@ export default function StorageDashboardPage() {
       setSyncingId(driveId)
       try {
         await AutomationApi.synchronizeDrive(driveId)
-        notify.success('Synchronisation terminee.')
-        await refresh()
+        notifySuccess('Synchronisation terminee.')
+        await refresh(null, { quiet: true })
       } catch {
-        notify.error('Echec de la synchronisation.')
+        notifyError('Echec de la synchronisation.')
       } finally {
         setSyncingId(null)
       }
     },
-    [notify, refresh],
+    [notifyError, notifySuccess, refresh],
   )
 
   const handleSetDefault = useCallback(
     async (driveId) => {
       try {
         await GoogleDriveApi.patch(driveId, { is_default: true })
-        notify.success('Drive defini par defaut.')
-        await refresh()
+        notifySuccess('Drive defini par defaut.')
+        await refresh(null, { quiet: true })
       } catch {
-        notify.error('Impossible de definir le drive par defaut.')
+        notifyError('Impossible de definir le drive par defaut.')
       }
     },
-    [notify, refresh],
+    [notifyError, notifySuccess, refresh],
   )
 
   const handleToggleStatus = useCallback(
     async (driveId, nextStatus) => {
       try {
         await GoogleDriveApi.patch(driveId, { is_active: nextStatus })
-        notify.success(nextStatus ? 'Drive active.' : 'Drive desactive.')
-        await refresh()
+        notifySuccess(nextStatus ? 'Drive active.' : 'Drive desactive.')
+        await refresh(null, { quiet: true })
       } catch {
-        notify.error('Echec du changement de statut.')
+        notifyError('Echec du changement de statut.')
       }
     },
-    [notify, refresh],
+    [notifyError, notifySuccess, refresh],
   )
 
   const handlePriorityChange = useCallback(
     async (driveId, priority) => {
       try {
         await GoogleDriveApi.patch(driveId, { priority })
-        await refresh()
+        await refresh(null, { quiet: true })
       } catch {
-        notify.error('Echec du changement de priorite.')
+        notifyError('Echec du changement de priorite.')
       }
     },
-    [notify, refresh],
+    [notifyError, refresh],
   )
 
   const storage = aggregateStorage(drives)
 
+  // Statistiques reelles de la bibliotheque (documents API, pas la session locale).
+  const library = useMemo(() => {
+    const list = Array.isArray(documents) ? documents : []
+    const todayKey = new Date().toISOString().slice(0, 10)
+    let bytes = 0
+    let today = 0
+    for (const doc of list) {
+      bytes += Number(doc?.file_size) || 0
+      if (String(doc?.created_at || '').slice(0, 10) === todayKey) today += 1
+    }
+    return { count: list.length, bytes, today }
+  }, [documents])
+
+  const neverSynced = drives.filter((d) => !d.last_sync_at).length
+
   return (
     <Container>
       <PageHeader
-        title="Tableau de bord stockage"
-        subtitle="Vue d'ensemble de la flotte Google Drive"
+        title={isAdmin ? 'Tableau de bord stockage' : 'Espace documentaire'}
+        subtitle={isAdmin
+          ? "Vue d'ensemble de la flotte Google Drive"
+          : 'Disponibilité de la bibliothèque — vos téléversements passent par le drive par défaut'}
         actions={
           <Button
             variant="secondary"
@@ -127,6 +171,12 @@ export default function StorageDashboardPage() {
           </Button>
         }
       />
+      {!isAdmin && (
+        <p className="ax-text--muted ax-text--sm" style={{ marginBottom: 'var(--ax-space-4)' }}>
+          Affichage en lecture seule : la gestion des drives (priorités, synchronisation, activation) est réservée aux administrateurs
+          {' '}(<Link to={ROUTE_PATHS.ADMIN_STORAGE} className="ax-link">Administration → Stockage</Link>).
+        </p>
+      )}
 
       {isLoading && (
         <div className="ax-storage-dashboard__loading" role="status" aria-live="polite">
@@ -139,38 +189,51 @@ export default function StorageDashboardPage() {
 
       {!isLoading && (
         <>
-          <StorageStatistics
-            stats={queue.stats}
-            drives={drives}
-            history={queue.items}
-            days={7}
-          />
-
-          <div className="ax-storage-dashboard__overview">
-            <div className="ax-storage-dashboard__selector">
-              <DriveSelector
-                drives={drives}
-                value={effectiveTargetId}
-                onChange={setTargetDriveId}
-                label="Drive cible pour les envois"
+          {/* 1. Etat reel de la bibliotheque (documents API) */}
+          <AdminSection title="Bibliothèque — état réel" description="Compteurs calculés depuis les documents enregistrés">
+            <div className="ax-automation-grid">
+              <StatCard label="Documents enregistrés" value={String(library.count)} icon={<span aria-hidden="true">📄</span>} />
+              <StatCard label="Volume total" value={formatBytes(library.bytes)} icon={<span aria-hidden="true">💾</span>} />
+              <StatCard label="Ajoutés aujourd'hui" value={String(library.today)} icon={<span aria-hidden="true">📥</span>} />
+            </div>
+            <div style={{ marginTop: 'var(--ax-space-4)' }}>
+              <StorageCard
+                usedBytes={storage.totalUsed}
+                limitBytes={storage.hasCapacityData ? storage.totalLimit : null}
+                availableBytes={storage.hasCapacityData ? storage.totalAvailable : null}
+                label={isAdmin ? 'Stockage global (drives)' : 'Espace bibliothèque disponible'}
               />
             </div>
+            {isAdmin && (
+              <div className="ax-storage-dashboard__selector" style={{ marginTop: 'var(--ax-space-4)' }}>
+                <DriveSelector
+                  drives={drives}
+                  value={effectiveTargetId}
+                  onChange={setTargetDriveId}
+                  label="Drive cible pour les envois"
+                />
+              </div>
+            )}
+          </AdminSection>
 
-            <StorageCard
-              usedBytes={storage.totalUsed}
-              limitBytes={storage.hasCapacityData ? storage.totalLimit : null}
-              availableBytes={storage.hasCapacityData ? storage.totalAvailable : null}
-              label="Stockage global"
-            />
-          </div>
-
-          <div style={{ marginTop: 'var(--ax-space-8)' }}>
-            <h2 className="ax-section-title">Drives connectes ({drives.length})</h2>
+          {/* 2. Drives (lecture pour tous, gestion admin) */}
+          <AdminSection
+            title={isAdmin ? `Drives connectes (${drives.length})` : `Espaces disponibles (${drives.length})`}
+            description={isAdmin ? 'Santé et occupation en temps réel (API)' : 'État des espaces de la bibliothèque'}
+          >
+            {neverSynced > 0 && (
+              <p className="ax-text--muted ax-text--sm" style={{ marginBottom: 'var(--ax-space-3)' }}>
+                {neverSynced} drive{neverSynced > 1 ? 's' : ''} n&apos;a jamais été synchronisé — ses compteurs
+                démarreront après la première synchronisation.
+              </p>
+            )}
             {drives.length === 0 ? (
               <div className="ax-empty-state">
                 <p className="ax-empty-state__title">Aucun drive actif</p>
                 <p className="ax-empty-state__desc">
-                  Activez un drive depuis la page Gestion des drives.
+                  {isAdmin
+                    ? 'Activez un drive depuis la page Gestion des drives.'
+                    : "La bibliothèque est momentanément indisponible. Réessayez plus tard ou contactez un administrateur."}
                 </p>
               </div>
             ) : (
@@ -180,15 +243,46 @@ export default function StorageDashboardPage() {
                     key={drive.id}
                     drive={drive}
                     isSyncing={syncingId === drive.id}
-                    onSetDefault={handleSetDefault}
-                    onSync={handleSync}
-                    onPriorityChange={handlePriorityChange}
-                    onToggleStatus={handleToggleStatus}
+                    onSetDefault={isAdmin ? handleSetDefault : undefined}
+                    onSync={isAdmin ? handleSync : undefined}
+                    onPriorityChange={isAdmin ? handlePriorityChange : undefined}
+                    onToggleStatus={isAdmin ? handleToggleStatus : undefined}
                   />
                 ))}
               </div>
             )}
-          </div>
+            {isAdmin && (
+              <div className="ax-automation-actions" style={{ marginTop: 'var(--ax-space-4)' }}>
+                <Link to={ROUTE_PATHS.STORAGE_DRIVES} className="ax-btn ax-btn--outline ax-btn--sm">
+                  Gérer les drives
+                </Link>
+                <Link to={ROUTE_PATHS.ADMIN_STORAGE} className="ax-btn ax-btn--ghost ax-btn--sm">
+                  Administration → Stockage
+                </Link>
+              </div>
+            )}
+          </AdminSection>
+
+          {/* 3. Activite locale de cet appareil (secondaire, session uniquement) */}
+          <AdminSection
+            title="Mon activité sur cet appareil"
+            description="File de téléversement locale de cette session — pas la bibliothèque globale"
+          >
+            <StorageStatistics
+              stats={queue.stats}
+              drives={drives}
+              history={queue.items}
+              days={7}
+            />
+            <div className="ax-automation-actions" style={{ marginTop: 'var(--ax-space-3)' }}>
+              <Link to={ROUTE_PATHS.UPLOAD} className="ax-btn ax-btn--primary ax-btn--sm">
+                Aller au téléversement
+              </Link>
+              <Link to={ROUTE_PATHS.DOCUMENTS} className="ax-btn ax-btn--ghost ax-btn--sm">
+                Explorer la bibliothèque
+              </Link>
+            </div>
+          </AdminSection>
         </>
       )}
     </Container>

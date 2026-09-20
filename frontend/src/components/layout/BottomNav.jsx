@@ -37,7 +37,7 @@ const UserIcon = () => (
 const NAV_ITEMS = [
   { to: ROUTE_PATHS.HOME, label: 'Accueil', icon: HomeIcon, end: true },
   { to: '/search', label: 'Recherche', icon: SearchIcon },
-  { to: '/downloads', label: 'Telechargements', icon: DownloadIcon },
+  { to: ROUTE_PATHS.DOCUMENTS, label: 'Documents', icon: DownloadIcon },
   { to: ROUTE_PATHS.DASHBOARD, label: 'Profil', icon: UserIcon },
 ]
 
@@ -52,11 +52,12 @@ export default function BottomNav() {
           : location.pathname.startsWith(to)
 
         return (
-          <Link
-            key={to}
-            to={to}
-            className={`ax-bottom-nav__item ${isActive ? 'ax-bottom-nav__item--active' : ''}`}
-          >
+      <Link
+        key={to}
+        to={to}
+        className={`ax-bottom-nav__item ${isActive ? 'ax-bottom-nav__item--active' : ''}`}
+        aria-current={isActive ? 'page' : undefined}
+      >
             <span className="ax-bottom-nav__icon"><Icon /></span>
             {label}
           </Link>

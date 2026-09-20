@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Application service for user domain operations.
@@ -17,8 +18,7 @@ class UserService
      */
     public function __construct(
         protected UserRepository $userRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Create a user.
@@ -27,7 +27,7 @@ class UserService
      */
     public function create(array $data): Model
     {
-        return $this->userRepository->create($data);
+        return $this->userRepository->create($this->normalizeUsername($data));
     }
 
     /**
@@ -37,7 +37,27 @@ class UserService
      */
     public function update(int $id, array $data): Model
     {
-        return $this->userRepository->update($id, $data);
+        return $this->userRepository->update($id, $this->normalizeUsername($data));
+    }
+
+    /**
+     * Normalise le nom d'utilisateur (minuscules, sans espaces superflus)
+     * et hash le mot de passe si fourni (aucun stockage en clair).
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function normalizeUsername(array $data): array
+    {
+        if (array_key_exists('username', $data) && is_string($data['username'])) {
+            $data['username'] = strtolower(trim($data['username']));
+        }
+
+        if (array_key_exists('password', $data) && is_string($data['password']) && $data['password'] !== '') {
+            $data['password'] = Hash::make($data['password']);
+        }
+
+        return $data;
     }
 
     /**

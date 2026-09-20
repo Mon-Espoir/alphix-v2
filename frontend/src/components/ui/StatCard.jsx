@@ -1,8 +1,11 @@
 /**
  * ALPHIX V2 — StatCard
+ * Memoized — pure presentational, avoids re-render when parent updates unrelated state.
  */
 
-export default function StatCard({ icon, label, value, trend, trendLabel, className = '' }) {
+import { memo } from 'react'
+
+function StatCard({ icon, label, value, trend, trendLabel, className = '' }) {
   return (
     <div className={['ax-stat-card', className].filter(Boolean).join(' ')}>
       {icon && <div className="ax-stat-card__icon">{icon}</div>}
@@ -19,3 +22,5 @@ export default function StatCard({ icon, label, value, trend, trendLabel, classN
     </div>
   )
 }
+
+export default memo(StatCard)

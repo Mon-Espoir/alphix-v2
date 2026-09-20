@@ -511,3 +511,79 @@ describe('nettoyage du moteur', () => {
     expect(engine.getSnapshot().items[0].status).toBe(UPLOAD_ITEM_STATUS.PENDING)
   })
 })
+
+describe('fallback de classification guidee (UploadModal)', () => {
+  it('signale needsClassification quand le cours est inconnu (course_id null)', async () => {
+    const engine = new UploadEngine()
+    DocumentApi.create.mockResolvedValue({ id: 99, course_id: null, doc_type: 'other' })
+
+    engine.enqueueFiles([makeFile('inconnu.pdf')])
+    const done = await waitFor(
+      () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.UPLOADED,
+    )
+    expect(done).toBe(true)
+
+    const item = engine.getSnapshot().items[0]
+    expect(item.documentId).toBe(99)
+    expect(item.courseId).toBeNull()
+    expect(item.docType).toBe('other')
+    expect(item.needsClassification).toBe(true)
+    engine.destroy()
+  })
+
+  it('ne signale rien quand cours + type sont identifies (pas de modale)', async () => {
+    const engine = new UploadEngine()
+    DocumentApi.create.mockResolvedValue({ id: 100, course_id: 115, doc_type: 'exam' })
+
+    engine.enqueueFiles([makeFile('hetero.pdf')])
+    const done = await waitFor(
+      () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.UPLOADED,
+    )
+    expect(done).toBe(true)
+
+    const item = engine.getSnapshot().items[0]
+    expect(item.courseId).toBe(115)
+    expect(item.docType).toBe('exam')
+    expect(item.needsClassification).toBe(false)
+    engine.destroy()
+  })
+
+  it('markClassified efface le besoin de classification apres choix etudiant', async () => {
+    const engine = new UploadEngine()
+    DocumentApi.create.mockResolvedValue({ id: 101, course_id: null, doc_type: null })
+
+    const [id] = engine.enqueueFiles([makeFile('a-classer.pdf')])
+    const done = await waitFor(
+      () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.UPLOADED,
+    )
+    expect(done).toBe(true)
+    expect(engine.getSnapshot().items[0].needsClassification).toBe(true)
+
+    engine.markClassified(id, { courseId: 115, docType: 'exam' })
+    const item = engine.getSnapshot().items[0]
+    expect(item.classified).toBe(true)
+    expect(item.courseId).toBe(115)
+    expect(item.docType).toBe('exam')
+    expect(item.needsClassification).toBe(false)
+    engine.destroy()
+  })
+
+  it('emet completed avec needsClassification pour ouverture d’UploadModal', async () => {
+    const engine = new UploadEngine()
+    DocumentApi.create.mockResolvedValue({ id: 102, course_id: null, doc_type: 'other' })
+    const handler = vi.fn()
+    const off = engine.onEvent(handler)
+
+    engine.enqueueFiles([makeFile('modal.pdf')])
+    const fired = await waitFor(() => handler.mock.calls.length > 0)
+    expect(fired).toBe(true)
+    expect(handler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'completed',
+        item: expect.objectContaining({ needsClassification: true, documentId: 102 }),
+      }),
+    )
+    off()
+    engine.destroy()
+  })
+})

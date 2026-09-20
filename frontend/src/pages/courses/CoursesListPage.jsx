@@ -10,12 +10,14 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { CourseApi } from '../../api/CourseApi'
 import { DepartmentApi } from '../../api/DepartmentApi'
 import { LevelApi } from '../../api/LevelApi'
 import { SemesterApi } from '../../api/SemesterApi'
 import { useNotification } from '../../hooks/useNotification'
+import { useAuth } from '../../hooks/useAuth'
+import { hasAdminAccess, hasDelegateAccess } from '../../utils/admin'
 import { ROUTE_PATHS } from '../../constants/routes'
 import { Container, Button, Badge, LoadingSpinner } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
@@ -26,6 +28,7 @@ import {
   toSelectOptions,
   isActiveStatus,
   statusLabel,
+  semesterOptionsForLevel,
 } from '../../utils/academic'
 
 const EditIcon = () => (
@@ -61,12 +64,30 @@ const PlusIcon = () => (
  */
 export default function CoursesListPage() {
   const notify = useNotification()
+  const { user } = useAuth()
+  // Creation : admins + delegues (departement/classe imposes au formulaire).
+  const canManage = hasAdminAccess(user) || hasDelegateAccess(user)
+  // Modification / suppression par ligne : le delegue ne touche que les cours
+  // de son departement et, s'il a une classe, de sa classe (miroir backend).
+  const canManageCourse = (course) => {
+    if (!course || typeof course !== 'object') return false
+    if (hasAdminAccess(user)) return true
+    if (!hasDelegateAccess(user)) return false
+    const courseDept = course.department_id ?? course.department?.id
+    if (courseDept == null || user?.department_id == null) return false
+    if (String(courseDept) !== String(user.department_id)) return false
+    if (user?.level_id == null) return true
+    const courseLevel = course.level_id ?? course.level?.id
+    return courseLevel != null && String(courseLevel) === String(user.level_id)
+  }
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialDept = searchParams.get('departmentId') || ''
 
   const [departments, setDepartments] = useState([])
   const [levels, setLevels] = useState([])
   const [semesters, setSemesters] = useState([])
 
-  const [departmentId, setDepartmentId] = useState('')
+  const [departmentId, setDepartmentId] = useState(initialDept)
   const [levelId, setLevelId] = useState('')
   const [semesterId, setSemesterId] = useState('')
 
@@ -157,7 +178,8 @@ export default function CoursesListPage() {
 
   const departmentOptions = toSelectOptions(departments)
   const levelOptions = toSelectOptions(levels)
-  const semesterOptions = toSelectOptions(semesters)
+  const selectedLevelCode = levels.find((l) => String(l.id) === String(levelId))?.code || ''
+  const rawSemesterOptions = semesterOptionsForLevel(semesters, selectedLevelCode)
 
   const hasPrimaryFilter = Boolean(departmentId || levelId || semesterId)
 
@@ -174,8 +196,16 @@ export default function CoursesListPage() {
     )
   })
 
+  const syncDepartmentToUrl = (value) => {
+    const next = new URLSearchParams(searchParams)
+    if (value) next.set('departmentId', value)
+    else next.delete('departmentId')
+    setSearchParams(next, { replace: true })
+  }
+
   const setFilterDepartement = (value) => {
     setDepartmentId(value)
+    syncDepartmentToUrl(value)
     setIsLoading(true)
     setError(null)
   }
@@ -197,6 +227,9 @@ export default function CoursesListPage() {
     setLevelId('')
     setSemesterId('')
     setSearch('')
+    const next = new URLSearchParams(searchParams)
+    next.delete('departmentId')
+    setSearchParams(next, { replace: true })
   }
 
   const handleDelete = async () => {
@@ -214,19 +247,43 @@ export default function CoursesListPage() {
     }
   }
 
+  // Sync if URL changes externally (back/forward)
+  useEffect(() => {
+    const urlDept = searchParams.get('departmentId') || ''
+    if (urlDept !== departmentId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDepartmentId(urlDept)
+      if (urlDept) { setIsLoading(true); setError(null) }
+    }
+  }, [searchParams, departmentId])
+
   return (
     <Container>
       <PageHeader
         title="Cours"
-        subtitle={`${courses.length} cours charge${courses.length !== 1 ? 's' : ''}`}
+        subtitle={`${courses.length} cours charge${courses.length !== 1 ? 's' : ''}${initialDept ? ` — departement #${initialDept}` : ''}`}
         actions={
-          <Link to={`${ROUTE_PATHS.COURSES}/create`}>
-            <Button variant="primary" size="md">
-              <PlusIcon /> Nouveau cours
-            </Button>
-          </Link>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {initialDept && (
+              <Link to={ROUTE_PATHS.DEPARTMENTS}>
+                <Button variant="ghost" size="md">&larr; Departements</Button>
+              </Link>
+            )}
+            {canManage && (
+              <Link to={`${ROUTE_PATHS.COURSES}/create${departmentId ? `?departmentId=${departmentId}` : ''}`}>
+                <Button variant="primary" size="md">
+                  <PlusIcon /> Nouveau cours
+                </Button>
+              </Link>
+            )}
+          </div>
         }
       />
+      {initialDept && (
+        <div className="ax-alert" style={{ marginBottom: '12px' }}>
+          Filtre actif : departement #{initialDept} — <Link to={ROUTE_PATHS.COURSES} onClick={(e) => { e.preventDefault(); resetFilters() }} style={{ textDecoration: 'underline' }}>Effacer</Link>
+        </div>
+      )}
 
       {/* Recherche multicritere : filtres combines departement / niveau / semestre */}
       <form className="ax-card ax-card--padded" onSubmit={(e) => e.preventDefault()}>
@@ -260,7 +317,7 @@ export default function CoursesListPage() {
             </select>
           </div>
           <div className="ax-form-group">
-            <label className="ax-form-group__label" htmlFor="course-filter-semester">Semestre</label>
+            <label className="ax-form-group__label" htmlFor="course-filter-semester">Semestre{selectedLevelCode && /^BAC(\d+)$/.test(selectedLevelCode) ? ` — ${selectedLevelCode} → ${Number(selectedLevelCode.replace('BAC',''))*2-1}/${Number(selectedLevelCode.replace('BAC',''))*2}` : ''}</label>
             <select
               id="course-filter-semester"
               className="ax-form-group__input"
@@ -268,8 +325,8 @@ export default function CoursesListPage() {
               onChange={(e) => setFilterSemestre(e.target.value)}
             >
               <option value="">Tous les semestres</option>
-              {semesterOptions.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+              {rawSemesterOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}{selectedLevelCode ? ` (${option.raw?.code || ''})` : ''}</option>
               ))}
             </select>
           </div>
@@ -333,11 +390,13 @@ export default function CoursesListPage() {
                   <th>Credits ECTS</th>
                   <th>Statut</th>
                   <th>Documents</th>
-                  <th className="ax-table__actions-col">Actions</th>
+                  {canManage && <th className="ax-table__actions-col">Actions</th>}
                 </tr>
               </thead>
               <tbody>
-                {filteredCourses.map((course) => (
+                {filteredCourses.map((course) => {
+                  const manageable = canManageCourse(course)
+                  return (
                   <tr key={course.id}>
                     <td>
                       {course.code ? (
@@ -360,26 +419,35 @@ export default function CoursesListPage() {
                         <span className="ax-text-tertiary">-</span>
                       )}
                     </td>
-                    <td className="ax-table__cell--actions">
-                      <Link
-                        to={`${ROUTE_PATHS.COURSES}/${course.id}/edit`}
-                        state={{ course }}
-                        className="ax-icon-btn ax-icon-btn--sm"
-                        aria-label={`Modifier ${course.title || course.name}`}
-                      >
-                        <EditIcon />
-                      </Link>
-                      <button
-                        className="ax-icon-btn ax-icon-btn--sm"
-                        onClick={() => setDeleteTarget(course)}
-                        aria-label={`Supprimer ${course.title || course.name}`}
-                        style={{ color: 'var(--ax-danger)' }}
-                      >
-                        <TrashIcon />
-                      </button>
-                    </td>
+                    {canManage && (
+                      <td className="ax-table__cell--actions">
+                        {manageable ? (
+                          <>
+                            <Link
+                              to={`${ROUTE_PATHS.COURSES}/${course.id}/edit`}
+                              state={{ course }}
+                              className="ax-icon-btn ax-icon-btn--sm"
+                              aria-label={`Modifier ${course.title || course.name}`}
+                            >
+                              <EditIcon />
+                            </Link>
+                            <button
+                              className="ax-icon-btn ax-icon-btn--sm"
+                              onClick={() => setDeleteTarget(course)}
+                              aria-label={`Supprimer ${course.title || course.name}`}
+                              style={{ color: 'var(--ax-danger)' }}
+                            >
+                              <TrashIcon />
+                            </button>
+                          </>
+                        ) : (
+                          <span className="ax-text-tertiary" title="Hors de votre périmètre (département / classe)">—</span>
+                        )}
+                      </td>
+                    )}
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
           </div>

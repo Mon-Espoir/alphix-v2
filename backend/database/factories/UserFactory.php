@@ -25,7 +25,9 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => (string) Str::uuid(),
             'name' => fake()->name(),
+            'username' => strtolower(fake()->unique()->userName()),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

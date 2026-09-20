@@ -14,10 +14,12 @@ import { DepartmentApi } from '../../api/DepartmentApi'
 import { LevelApi } from '../../api/LevelApi'
 import { SemesterApi } from '../../api/SemesterApi'
 import { useNotification } from '../../hooks/useNotification'
+import { useAuth } from '../../hooks/useAuth'
+import { hasAdminAccess, hasDelegateAccess } from '../../utils/admin'
 import { ROUTE_PATHS } from '../../constants/routes'
 import { Container, Button } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
-import { normalizeApiList, toSelectOptions, slugify } from '../../utils/academic'
+import { normalizeApiList, toSelectOptions, slugify, semesterOptionsForLevel } from '../../utils/academic'
 
 /**
  * Construit les valeurs initiales du formulaire depuis l'objet cours recu.
@@ -51,13 +53,40 @@ export default function CourseFormPage() {
   const location = useLocation()
   const editingCourse = location.state?.course
   const isEditing = Boolean(id) && Boolean(editingCourse)
+  const { user } = useAuth()
+  // Creation / modification : admins + delegues (perimetre impose). Etudiants refuses.
+  const canManage = hasAdminAccess(user) || hasDelegateAccess(user)
+  // Delegue (non-admin) : departement impose = le sien (backend revalide).
+  const isScopedDelegate = hasDelegateAccess(user) && !hasAdminAccess(user)
+  const scopedDepartmentId = isScopedDelegate && user?.department_id != null
+    ? String(user.department_id)
+    : (location.state?.presetDepartmentId != null ? String(location.state.presetDepartmentId) : '')
 
   const [departments, setDepartments] = useState([])
   const [levels, setLevels] = useState([])
   const [semesters, setSemesters] = useState([])
-  const [formData, setFormData] = useState(() => buildInitialValues(editingCourse))
+  const scopedLevelId = isScopedDelegate && user?.level_id != null ? String(user.level_id) : ''
+  const [formData, setFormData] = useState(() => {
+    const initial = buildInitialValues(editingCourse)
+    if (scopedDepartmentId && !initial.departmentId) initial.departmentId = scopedDepartmentId
+    if (scopedLevelId && !initial.levelId) initial.levelId = scopedLevelId
+    return initial
+  })
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Delegue : departement et classe imposes (selects desactives + garde de saisie).
+  const isDepartmentLocked = Boolean(isScopedDelegate && scopedDepartmentId)
+  const isLevelLocked = Boolean(isScopedDelegate && scopedLevelId)
+  // Edition hors perimetre (ex. lien direct vers un cours d'une autre classe).
+  const editDept = editingCourse?.department_id ?? editingCourse?.department?.id
+  const editLevel = editingCourse?.level_id ?? editingCourse?.level?.id
+  const isOutOfScope = Boolean(
+    isEditing && isScopedDelegate && (
+      (editDept == null || user?.department_id == null || String(editDept) !== String(user.department_id)) ||
+      (user?.level_id != null && (editLevel == null || String(editLevel) !== String(user.level_id)))
+    ),
+  )
 
   // Edition impossible sans objet deja charge (aucun GET /courses/:id).
   useEffect(() => {
@@ -95,14 +124,22 @@ export default function CourseFormPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
+    if (name === 'departmentId' && isDepartmentLocked) return
+    if (name === 'levelId' && isLevelLocked) return
     setFormData((prev) => {
       if (name === 'status') return { ...prev, status: value === '1' }
+      // Si on change de niveau, le semestre reste S1/S2 mais son label global change (BAC3: 5/6)
+      if (name === 'levelId') {
+        // invalide semester si plus cohérent? On garde mais on clear l'erreur semestre
+        return { ...prev, [name]: value }
+      }
       return { ...prev, [name]: value }
     })
     if (errors[name]) {
       setErrors((prev) => {
         const next = { ...prev }
         delete next[name]
+        if (name === 'levelId') delete next.semester_id
         return next
       })
     }
@@ -152,7 +189,31 @@ export default function CourseFormPage() {
 
   const departmentOptions = toSelectOptions(departments)
   const levelOptions = toSelectOptions(levels)
-  const semesterOptions = toSelectOptions(semesters)
+  const selectedLevelCode = levels.find((l) => String(l.id) === String(formData.levelId))?.code || ''
+  const semesterOptions = semesterOptionsForLevel(semesters, selectedLevelCode).map((o) => ({ value: o.value, label: o.label }))
+
+  if (!canManage || isOutOfScope) {
+    return (
+      <Container size="sm">
+        <PageHeader
+          title="Acces refuse"
+          subtitle={isOutOfScope
+            ? "Ce cours n'appartient pas a votre departement / classe"
+            : 'Creation et modification reservees aux administrateurs et delegues'}
+        />
+        <div className="ax-card ax-card--padded" role="alert">
+          <p>
+            {isOutOfScope
+              ? "En tant que delegue, vous ne pouvez modifier que les cours de votre departement et de votre classe."
+              : 'Votre compte ne dispose pas des privileges requis pour gerer les cours.'}
+          </p>
+          <Button variant="primary" size="md" onClick={() => navigate(ROUTE_PATHS.COURSES)}>
+            Retour aux cours
+          </Button>
+        </div>
+      </Container>
+    )
+  }
 
   return (
     <Container size="sm">
@@ -175,12 +236,16 @@ export default function CourseFormPage() {
               value={formData.departmentId}
               onChange={handleChange}
               required
+              disabled={isDepartmentLocked}
             >
               <option value="">Selectionnez un departement...</option>
               {departmentOptions.map((option) => (
                 <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
+            {isDepartmentLocked && (
+              <span className="ax-text--muted ax-text--xs">Département imposé : votre périmètre de délégué.</span>
+            )}
             {errors.department_id && (
               <span className="ax-form-group__error">{errors.department_id[0]}</span>
             )}
@@ -198,21 +263,26 @@ export default function CourseFormPage() {
               value={formData.levelId}
               onChange={handleChange}
               required
+              disabled={isLevelLocked}
             >
               <option value="">Selectionnez un niveau...</option>
               {levelOptions.map((option) => (
                 <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
+            {isLevelLocked && (
+              <span className="ax-text--muted ax-text--xs">Classe imposée : votre périmètre de délégué.</span>
+            )}
             {errors.level_id && (
               <span className="ax-form-group__error">{errors.level_id[0]}</span>
             )}
           </div>
 
-          {/* Semestre */}
+          {/* Semestre — label global selon niveau (BAC3: Semestre 5/6) */}
           <div className="ax-form-group">
             <label className="ax-form-group__label" htmlFor="course-semester">
               Semestre <span className="ax-form-group__required">*</span>
+              {selectedLevelCode ? <span style={{ fontWeight: 400, marginLeft: 6, color: 'var(--ax-text-tertiary)' }}>({selectedLevelCode} → {selectedLevelCode.match(/^BAC(\d+)$/) ? `Semestres ${(Number(selectedLevelCode.replace('BAC',''))-1)*2+1} / ${(Number(selectedLevelCode.replace('BAC',''))-1)*2+2}` : ''})</span> : null}
             </label>
             <select
               id="course-semester"
@@ -224,11 +294,14 @@ export default function CourseFormPage() {
             >
               <option value="">Selectionnez un semestre...</option>
               {semesterOptions.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+                <option key={option.value} value={option.value}>{option.label}{selectedLevelCode ? ` (${semesters.find(s=>String(s.id)===String(option.value))?.code || ''})` : ''}</option>
               ))}
             </select>
             {errors.semester_id && (
               <span className="ax-form-group__error">{errors.semester_id[0]}</span>
+            )}
+            {selectedLevelCode && /^BAC(\d+)$/.test(selectedLevelCode) && (
+              <span className="ax-text--muted ax-text--xs">BAC3 = Semestre 5 (S1) ou 6 (S2), pas 1/2.</span>
             )}
           </div>
 

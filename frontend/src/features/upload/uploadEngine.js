@@ -80,9 +80,12 @@ export class UploadEngine {
     this.removeItem = this.removeItem.bind(this)
     this.clearCompleted = this.clearCompleted.bind(this)
     this.purgeItems = this.purgeItems.bind(this)
+    this.markClassified = this.markClassified.bind(this)
     this.resolveDuplicate = this.resolveDuplicate.bind(this)
     this.pause = this.pause.bind(this)
     this.resume = this.resume.bind(this)
+    this.subscribe = this.subscribe.bind(this)
+    this.onEvent = this.onEvent.bind(this)
     this.getSnapshot = this.getSnapshot.bind(this)
   }
 
@@ -187,6 +190,10 @@ export class UploadEngine {
         resolution: null,
         documentId: null,
         linkedTitle: null,
+        // Classification auto/IA (POST /documents) : null = non identifié.
+        courseId: null,
+        docType: null,
+        classified: false,
         startedAt: null,
         completedAt: null,
         durationMs: null,
@@ -626,22 +633,31 @@ export class UploadEngine {
   async _registerWithRetry(item) {
     try {
       const titleBase = item.name.replace(/\.[^.]+$/, '') || item.name
-      const payload = {
-        title: titleBase,
-        original_name: item.name,
-        slug: `${slugify(titleBase) || 'document'}-${Date.now().toString(36)}`,
-        doc_type: 'other',
-        mime_type: item.mimeType || undefined,
-        file_size: item.size,
-        file_hash: item.hash,
-        visibility: 'public',
-        status: 'pending',
-        version: '1.0',
-        google_drive_id: item.driveId != null ? Number(item.driveId) : undefined,
-        metadata: [`upload_engine:v2`, `uploaded_at:${new Date().toISOString()}`],
-      }
-      const created = await DocumentApi.create(payload, { signal: item.controller.signal })
-      item.documentId = created?.id ?? created?.data?.id ?? null
+      const fd = new FormData()
+      fd.append('title', titleBase)
+      fd.append('original_name', item.name)
+      fd.append('slug', `${slugify(titleBase) || 'document'}-${Date.now().toString(36)}`)
+      fd.append('doc_type', 'other')
+      if (item.mimeType) fd.append('mime_type', item.mimeType)
+      fd.append('file_size', String(item.size))
+      fd.append('file_hash', item.hash)
+      fd.append('visibility', 'public')
+      fd.append('status', 'pending')
+      fd.append('version', '1.0')
+      if (item.driveId != null) fd.append('google_drive_id', String(Number(item.driveId)))
+      fd.append('metadata[]', `upload_engine:v2`)
+      fd.append('metadata[]', `uploaded_at:${new Date().toISOString()}`)
+      // Transmission binaire indispensable pour POST /api/v1/documents
+      if (item.file) fd.append('file', item.file, item.name)
+      const created = await DocumentApi.create(fd, { signal: item.controller.signal })
+      const createdDoc = created?.data && typeof created.data === 'object' && !Array.isArray(created.data)
+        ? created.data
+        : created
+      item.documentId = createdDoc?.id ?? null
+      // Mémorise la classification auto/IA pour le fallback guidé :
+      // cours manquant ou type générique => sélection hiérarchique proposée.
+      item.courseId = createdDoc?.course_id ?? createdDoc?.course?.id ?? null
+      item.docType = createdDoc?.doc_type ?? null
       this._setProgress(
         item,
         PHASE_WEIGHTS.HASHING + PHASE_WEIGHTS.CHECKING + PHASE_WEIGHTS.TRANSFER + PHASE_WEIGHTS.REGISTRATION,
@@ -658,6 +674,20 @@ export class UploadEngine {
       }
       throw error
     }
+  }
+
+  /**
+   * Marque un element comme classifié manuellement (fallback UploadModal).
+   * @param {string} id - Identifiant de l'element.
+   * @param {{courseId?: number|string|null, docType?: string|null}} [classification] - Cours/type confirmés.
+   */
+  markClassified(id, classification = {}) {
+    const item = this._items.get(id)
+    if (!item) return
+    if (classification.courseId != null) item.courseId = classification.courseId
+    if (classification.docType != null) item.docType = classification.docType
+    item.classified = true
+    this._emit()
   }
 
   /**
@@ -834,6 +864,14 @@ export class UploadEngine {
       resolution: item.resolution,
       documentId: item.documentId,
       linkedTitle: item.linkedTitle,
+      courseId: item.courseId,
+      docType: item.docType,
+      classified: item.classified,
+      // Fallback guidé requis : cours non identifié OU type générique,
+      // et pas encore classifié manuellement via UploadModal.
+      needsClassification:
+        !item.classified
+        && (item.courseId == null || item.docType == null || item.docType === 'other'),
       startedAt: item.startedAt ? new Date(item.startedAt).toISOString() : null,
       completedAt: item.completedAt,
       durationMs: item.durationMs,

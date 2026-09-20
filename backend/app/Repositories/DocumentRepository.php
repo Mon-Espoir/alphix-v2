@@ -99,6 +99,20 @@ class DocumentRepository extends BaseRepository
     }
 
     /**
+     * Retrieve APPROVED documents for a given course (public explorer).
+     *
+     * @return Collection<int, Document>
+     */
+    public function getApprovedByCourseId(int $courseId): Collection
+    {
+        return $this->query()
+            ->where('course_id', $courseId)
+            ->where('status', 'approved')
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
+    /**
      * Paginate approved documents.
      */
     public function paginateApproved(int $perPage = 15): LengthAwarePaginator

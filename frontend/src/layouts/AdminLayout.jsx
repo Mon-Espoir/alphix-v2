@@ -30,6 +30,9 @@ const ADMIN_NAV = [
 export default function AdminLayout() {
   return (
     <div className="app-shell app-shell--admin">
+      <a href="#admin-main" className="ax-skip-link">
+        Aller au contenu principal
+      </a>
       <Header />
       <Sidebar />
 
@@ -51,7 +54,7 @@ export default function AdminLayout() {
         </div>
       </nav>
 
-      <main className="app-main app-main--sidebar app-main--with-nav ax-admin-main" id="admin-main">
+      <main className="app-main app-main--sidebar app-main--with-nav ax-admin-main" id="admin-main" tabIndex={-1}>
         <Outlet />
       </main>
 

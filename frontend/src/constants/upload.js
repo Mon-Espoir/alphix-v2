@@ -84,11 +84,11 @@ export const UPLOAD_STATUS_BADGES = Object.freeze({
 /**
  * Contraintes de validation strictes — miroir exact du backend :
  *   - MIME : liste blanche `UploadService::$allowedMimeTypes` ;
- *   - Taille : gate la plus stricte entre UploadController (`max:20480` Ko
- *     soit 20 Mo) et UploadService (50 Mo) => 20 Mo retenus.
+ *   - Taille : 50 Mo (`UploadService::$maxFileSize`, `UploadController`
+ *     `max:51200` Ko, PHP `upload_max_filesize=50M` via serve.sh).
  */
 export const UPLOAD_CONSTRAINTS = Object.freeze({
-  MAX_SIZE_BYTES: 20 * 1024 * 1024,
+  MAX_SIZE_BYTES: 50 * 1024 * 1024,
   ALLOWED_MIME_TYPES: Object.freeze([
     'application/pdf',
     'application/msword',
@@ -113,6 +113,20 @@ export const HASH_CHUNK_SIZE = 4 * 1024 * 1024
 
 /** Delai (ms) entre deux elements consecutifs de la file (laisse respirer l'UI). */
 export const QUEUE_INTER_ITEM_DELAY_MS = 150
+
+/**
+ * Types proposés dans le fallback guidé (UploadModal) -> doc_type backend
+ * (PATCH /documents/{id}/classify). Source unique (fast-refresh safe).
+ */
+export const UPLOAD_CLASSIFY_TYPES = Object.freeze([
+  { value: 'syllabus', label: 'Syllabus', icon: '📚' },
+  { value: 'exam', label: 'Examen', icon: '📄' },
+  { value: 'tp', label: 'TP', icon: '📝' },
+  { value: 'td', label: 'TD', icon: '📐' },
+  { value: 'report', label: 'Rapport', icon: '📋' },
+  { value: 'presentation', label: 'Exposé', icon: '🎤' },
+  { value: 'thesis', label: 'Sujet de recherche', icon: '🎓' },
+])
 
 /** Types d'erreur retentables automatiquement (taxonomie ApiError). */
 export const RETRYABLE_ERROR_TYPES = Object.freeze([

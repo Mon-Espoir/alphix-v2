@@ -232,6 +232,14 @@
 .ax-icon-btn--md { width: 40px; height: 40px; }
 .ax-icon-btn--lg { width: 48px; height: 48px; }
 
+/* Comfortable 44px touch targets on mobile */
+@media (max-width: 767px) {
+  .ax-icon-btn--md {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .ax-icon-btn__icon {
   display: flex;
   align-items: center;

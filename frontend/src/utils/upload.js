@@ -97,7 +97,7 @@ export function validateUploadFile(file, constraints = {}) {
 /**
  * Calcule l'empreinte SHA-256 hexadecimale d'un fichier par chunks.
  * Progression reelle (octets lus), annulable via AbortSignal, sans chargement
- * integral du fichier en memoire (mobile-first : fichiers jusqu'a 20 Mo).
+ * integral du fichier en memoire (mobile-first : fichiers jusqu'a 50 Mo).
  *
  * @param {File|Blob} file - Fichier source.
  * @param {{signal?: AbortSignal, onProgress?: (bytesRead: number, totalBytes: number) => void}} [opts]

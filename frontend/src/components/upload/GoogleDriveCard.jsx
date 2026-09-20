@@ -94,30 +94,36 @@ export default function GoogleDriveCard({
           </div>
         </div>
 
-        <div className="ax-google-drive-card__priority">
-          <span className="ax-google-drive-card__priority-label">Priorite</span>
-          <div className="ax-google-drive-card__priority-controls">
-            <IconButton
-              size="sm"
-              variant="ghost"
-              onClick={handlePriorityUp}
-              disabled={drive.priority <= 1 || isSyncing}
-              aria-label="Monter la priorite"
-            >
-              {ARROW_UP_ICON}
-            </IconButton>
-            <span className="ax-google-drive-card__priority-value">{drive.priority}</span>
-            <IconButton
-              size="sm"
-              variant="ghost"
-              onClick={handlePriorityDown}
-              disabled={isSyncing}
-              aria-label="Descendre la priorite"
-            >
-              {ARROW_DOWN_ICON}
-            </IconButton>
+        {onPriorityChange ? (
+          <div className="ax-google-drive-card__priority">
+            <span className="ax-google-drive-card__priority-label">Priorite</span>
+            <div className="ax-google-drive-card__priority-controls">
+              <IconButton
+                size="sm"
+                variant="ghost"
+                onClick={handlePriorityUp}
+                disabled={drive.priority <= 1 || isSyncing}
+                aria-label="Monter la priorite"
+              >
+                {ARROW_UP_ICON}
+              </IconButton>
+              <span className="ax-google-drive-card__priority-value">{drive.priority}</span>
+              <IconButton
+                size="sm"
+                variant="ghost"
+                onClick={handlePriorityDown}
+                disabled={isSyncing}
+                aria-label="Descendre la priorite"
+              >
+                {ARROW_DOWN_ICON}
+              </IconButton>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="ax-google-drive-card__priority">
+            <span className="ax-google-drive-card__priority-label">Priorite {drive.priority}</span>
+          </div>
+        )}
       </div>
 
       <StorageCard
@@ -129,9 +135,6 @@ export default function GoogleDriveCard({
 
       <div className="ax-google-drive-card__meta">
         <span>
-          Email: {drive.email || '—'}
-        </span>
-        <span>
           Derniere sync: {drive.last_sync_at ? new Date(drive.last_sync_at).toLocaleString('fr-FR') : 'Jamais'}
         </span>
         <span>
@@ -139,39 +142,47 @@ export default function GoogleDriveCard({
         </span>
       </div>
 
-      <div className="ax-google-drive-card__actions">
-        <Button
-          variant={isDefault ? 'ghost' : 'outline'}
-          size="sm"
-          onClick={handleSetDefault}
-          disabled={isDefault || isSyncing}
-        >
-          {STAR_FILLED_ICON}
-          <span className="ax-btn__content--hidden">{isDefault ? 'Par defaut' : 'Definir par defaut'}</span>
-        </Button>
+      {(onSetDefault || onSync || onToggleStatus || onPriorityChange) && (
+        <div className="ax-google-drive-card__actions">
+          {onSetDefault && (
+            <Button
+              variant={isDefault ? 'ghost' : 'outline'}
+              size="sm"
+              onClick={handleSetDefault}
+              disabled={isDefault || isSyncing}
+            >
+              {STAR_FILLED_ICON}
+              <span className="ax-btn__content--hidden">{isDefault ? 'Par defaut' : 'Definir par defaut'}</span>
+            </Button>
+          )}
 
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={handleSync}
-          disabled={isSyncing}
-          loading={isSyncing}
-        >
-          {SYNC_ICON}
-          <span className="ax-btn__content--hidden">Synchroniser</span>
-        </Button>
+          {onSync && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleSync}
+              disabled={isSyncing}
+              loading={isSyncing}
+            >
+              {SYNC_ICON}
+              <span className="ax-btn__content--hidden">Synchroniser</span>
+            </Button>
+          )}
 
-        <IconButton
-          variant="ghost"
-          size="sm"
-          onClick={handleToggleStatus}
-          disabled={isSyncing}
-          aria-label={isActive ? 'Desactiver' : 'Activer'}
-          aria-pressed={isActive}
-        >
-          {isActive ? TOGGLE_ON_ICON : TOGGLE_OFF_ICON}
-        </IconButton>
-      </div>
+          {onToggleStatus && (
+            <IconButton
+              variant="ghost"
+              size="sm"
+              onClick={handleToggleStatus}
+              disabled={isSyncing}
+              aria-label={isActive ? 'Desactiver' : 'Activer'}
+              aria-pressed={isActive}
+            >
+              {isActive ? TOGGLE_ON_ICON : TOGGLE_OFF_ICON}
+            </IconButton>
+          )}
+        </div>
+      )}
     </article>
   )
 }

@@ -30,9 +30,9 @@ class DepartmentSeeder extends Seeder
             $departments = [
                 [
                     'faculty_id' => $sciencesId,
-                    'name' => 'Chimie',
-                    'code' => 'CHM',
-                    'slug' => 'chimie',
+                    'name' => 'Département de Chimie',
+                    'code' => 'CHI',
+                    'slug' => 'departement-de-chimie',
                     'short_name' => 'Chimie',
                     'description' => 'Département de Chimie.',
                     'color' => '#43A047',

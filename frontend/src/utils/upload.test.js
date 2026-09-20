@@ -57,7 +57,7 @@ describe('formatBytes / formatSpeed / formatDuration', () => {
 })
 
 describe('validateUploadFile', () => {
-  it('accepte un fichier conforme (PDF < 20 Mo)', () => {
+  it('accepte un fichier conforme (PDF < 50 Mo)', () => {
     const verdict = validateUploadFile(fakeFile())
     expect(verdict.valid).toBe(true)
     expect(verdict.errors).toEqual([])

@@ -71,4 +71,29 @@ export const NotificationApi = {
   markAsRead(id) {
     return httpService.patch(`/notifications/${id}/read`)
   },
+
+  /**
+   * Diffuse un message personnalisé à tous les utilisateurs (admin).
+   * @param {{title: string, body?: string, message?: string, type?: string}} payload
+   * @returns {Promise<{message: string, count: number}>}
+   */
+  broadcast(payload) {
+    return httpService.post('/notifications/broadcast', payload)
+  },
+
+  /**
+   * Récupère les notifications de l'utilisateur connecté (via /me).
+   * @returns {Promise<any>}
+   */
+  getMe(params) {
+    return httpService.get('/notifications/me', { params })
+  },
+
+  /**
+   * Récupère les notifications non lues de l'utilisateur connecté.
+   * @returns {Promise<any>}
+   */
+  getMyUnread() {
+    return httpService.get('/notifications/me/unread')
+  },
 }

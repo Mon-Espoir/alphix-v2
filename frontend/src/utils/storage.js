@@ -120,3 +120,65 @@ export function setToken(token) {
 export function removeToken() {
   return deleteValue(STORAGE_KEYS.AUTH_TOKEN)
 }
+
+/**
+ * Lit un drapeau booléen persisté (« 1 » = actif).
+ * Sert aux préférences d'interface légères (ex. onboarding déjà vu).
+ * @param {string} key - Clé de stockage.
+ * @returns {boolean} true si le drapeau est actif.
+ */
+export function readFlag(key) {
+  return readValue(key) === '1'
+}
+
+/**
+ * Persiste (ou efface) un drapeau booléen.
+ * @param {string} key - Clé de stockage.
+ * @param {boolean} [enabled=true] - Valeur du drapeau.
+ * @returns {boolean} true si l'écriture a réussi.
+ */
+export function writeFlag(key, enabled = true) {
+  return enabled ? writeValue(key, '1') : deleteValue(key)
+}
+
+/**
+ * Lit un drapeau brut (valeur texte) du stockage local.
+ * Aucune logique métier : un simple couple clé/valeur pour les préférences
+ * d'interface (ex. guide de première visite déjà affiché).
+ * @param {string} key - Clé de stockage (voir STORAGE_KEYS).
+ * @returns {string|null} Valeur brute ou null si absente.
+ */
+export function getFlag(key) {
+  if (typeof key !== 'string' || key.trim() === '') return null
+  return readValue(key)
+}
+
+/**
+ * Écrit un drapeau brut dans le stockage local.
+ * @param {string} key - Clé de stockage (voir STORAGE_KEYS).
+ * @param {string} value - Valeur texte ("1", "true", …).
+ * @returns {boolean} true si l'écriture a réussi.
+ */
+export function setFlag(key, value) {
+  if (typeof key !== 'string' || key.trim() === '') return false
+  return writeValue(key, String(value))
+}
+
+/**
+ * Supprime un drapeau brut du stockage local.
+ * @param {string} key - Clé de stockage (voir STORAGE_KEYS).
+ * @returns {boolean} true si la suppression a réussi.
+ */
+export function removeFlag(key) {
+  if (typeof key !== 'string' || key.trim() === '') return false
+  return deleteValue(key)
+}
+
+/**
+ * Helper booléen : lit un drapeau et le compare à "1" (activé).
+ * @param {string} key - Clé de stockage (voir STORAGE_KEYS).
+ * @returns {boolean} true si le drapeau vaut "1".
+ */
+export function isFlagOn(key) {
+  return getFlag(key) === '1'
+}

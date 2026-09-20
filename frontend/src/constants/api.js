@@ -108,4 +108,6 @@ export const STORAGE_PREFIX = 'alphix.v2'
 export const STORAGE_KEYS = Object.freeze({
   /** Jeton d'authentification JWT/Bearer. */
   AUTH_TOKEN: `${STORAGE_PREFIX}:auth:token`,
+  /** Guide de première visite déjà affiché (valeur "1" = vu). */
+  WELCOME_SEEN: `${STORAGE_PREFIX}:ui:welcome-seen`,
 })

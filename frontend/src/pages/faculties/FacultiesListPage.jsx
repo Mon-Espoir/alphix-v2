@@ -4,9 +4,11 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FacultyApi } from '../../api/FacultyApi'
 import { useNotification } from '../../hooks/useNotification'
+import { useAuth } from '../../hooks/useAuth'
+import { hasAdminAccess } from '../../utils/admin'
 import { ROUTE_PATHS } from '../../constants/routes'
 import { Container, Button, Badge, LoadingSpinner } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
@@ -69,6 +71,10 @@ function normalizePagination(response) {
  */
 export default function FacultiesListPage() {
   const notify = useNotification()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  // Creation / modification / suppression reservees aux administrateurs.
+  const isAdmin = hasAdminAccess(user)
 
   const [faculties, setFaculties] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -141,11 +147,13 @@ export default function FacultiesListPage() {
         title="Facultes"
         subtitle={`${faculties.length} faculte${faculties.length !== 1 ? 's' : ''} enregistree${faculties.length !== 1 ? 's' : ''}`}
         actions={
-          <Link to={`${ROUTE_PATHS.FACULTIES}/create`}>
-            <Button variant="primary" size="md">
-              <PlusIcon /> Nouvelle faculte
-            </Button>
-          </Link>
+          isAdmin ? (
+            <Link to={`${ROUTE_PATHS.FACULTIES}/create`}>
+              <Button variant="primary" size="md">
+                <PlusIcon /> Nouvelle faculte
+              </Button>
+            </Link>
+          ) : null
         }
       />
 
@@ -188,7 +196,7 @@ export default function FacultiesListPage() {
               ? 'Aucun resultat pour votre recherche. Essayez avec d\'autres termes.'
               : 'Commencez par creer votre premiere faculte.'}
           </p>
-          {!search && (
+          {!search && isAdmin && (
             <Link to={`${ROUTE_PATHS.FACULTIES}/create`}>
               <Button variant="primary" size="md">
                 <PlusIcon /> Creer une faculte
@@ -209,13 +217,26 @@ export default function FacultiesListPage() {
                   <th>Code</th>
                   <th>Description</th>
                   <th>Departements</th>
-                  <th className="ax-table__actions-col">Actions</th>
+                  {isAdmin && <th className="ax-table__actions-col">Actions</th>}
                 </tr>
               </thead>
               <tbody>
                 {filteredFaculties.map((faculty) => (
-                  <tr key={faculty.id}>
-                    <td className="ax-table__cell--strong">{faculty.name}</td>
+                  <tr
+                    key={faculty.id}
+                    onClick={() => navigate(`${ROUTE_PATHS.DEPARTMENTS}?facultyId=${faculty.id}`)}
+                    style={{ cursor: 'pointer' }}
+                    title={`Voir les departements de ${faculty.name}`}
+                  >
+                    <td className="ax-table__cell--strong">
+                      <Link
+                        to={`${ROUTE_PATHS.DEPARTMENTS}?facultyId=${faculty.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px' }}
+                      >
+                        {faculty.name}
+                      </Link>
+                    </td>
                     <td>
                       {faculty.code ? (
                         <Badge variant="primary" size="sm">{faculty.code}</Badge>
@@ -227,29 +248,37 @@ export default function FacultiesListPage() {
                       {faculty.description || <span className="ax-text-tertiary">-</span>}
                     </td>
                     <td>
-                      {faculty.departments_count != null ? (
-                        <Badge variant="default" size="sm">{faculty.departments_count}</Badge>
-                      ) : (
-                        <span className="ax-text-tertiary">-</span>
-                      )}
-                    </td>
-                    <td className="ax-table__cell--actions">
                       <Link
-                        to={`${ROUTE_PATHS.FACULTIES}/${faculty.id}/edit`}
-                        className="ax-icon-btn ax-icon-btn--sm"
-                        aria-label={`Modifier ${faculty.name}`}
+                        to={`${ROUTE_PATHS.DEPARTMENTS}?facultyId=${faculty.id}`}
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <EditIcon />
+                        {faculty.departments_count != null ? (
+                          <Badge variant="default" size="sm" style={{ cursor: 'pointer' }}>{faculty.departments_count} &rarr;</Badge>
+                        ) : (
+                          <Badge variant="default" size="sm" style={{ cursor: 'pointer' }}>Voir &rarr;</Badge>
+                        )}
                       </Link>
-                      <button
-                        className="ax-icon-btn ax-icon-btn--sm"
-                        onClick={() => setDeleteTarget(faculty)}
-                        aria-label={`Supprimer ${faculty.name}`}
-                        style={{ color: 'var(--ax-danger)' }}
-                      >
-                        <TrashIcon />
-                      </button>
                     </td>
+                    {isAdmin && (
+                      <td className="ax-table__cell--actions">
+                        <Link
+                          to={`${ROUTE_PATHS.FACULTIES}/${faculty.id}/edit`}
+                          className="ax-icon-btn ax-icon-btn--sm"
+                          aria-label={`Modifier ${faculty.name}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <EditIcon />
+                        </Link>
+                        <button
+                          className="ax-icon-btn ax-icon-btn--sm"
+                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(faculty) }}
+                          aria-label={`Supprimer ${faculty.name}`}
+                          style={{ color: 'var(--ax-danger)' }}
+                        >
+                          <TrashIcon />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

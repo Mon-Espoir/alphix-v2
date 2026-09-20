@@ -11,6 +11,7 @@ import { DepartmentApi } from '../../api/DepartmentApi'
 import { FacultyApi } from '../../api/FacultyApi'
 import { SemesterApi } from '../../api/SemesterApi'
 import { normalizeApiList } from '../../utils/academic'
+import { cachedAcademicList } from '../../utils/academicCache'
 import { paginate } from '../../utils/admin'
 import PageHeader from '../../components/common/PageHeader'
 import ConfirmModal from '../../components/common/ConfirmModal'
@@ -42,14 +43,16 @@ export default function AdminCoursesPage() {
         SemesterApi.list().catch(() => []),
       ])
       if (signal?.aborted) return
-      setDepartments(normalizeApiList(deps))
-      setFaculties(normalizeApiList(facs))
-      setSemesters(normalizeApiList(sems))
-      // Courses index is excluded backend - try filtered fetch as fallback
-      try {
-        const courseRes = await CourseApi.list?.()
-        if (!signal?.aborted && courseRes) setItems(normalizeApiList(courseRes))
-      } catch { /* index not available */ }
+      const departmentsList = normalizeApiList(deps)
+      const facultiesList = normalizeApiList(facs)
+      const semestersList = normalizeApiList(sems)
+      setDepartments(departmentsList)
+      setFaculties(facultiesList)
+      setSemesters(semestersList)
+      if (signal?.aborted) return
+      // Index unique + cache (plus de fan-out N×departements).
+      const courses = await cachedAcademicList('courses', () => CourseApi.list()).catch(() => [])
+      if (!signal?.aborted) setItems(normalizeApiList(courses))
     } catch (err) {
       if (!signal?.aborted) setError(err.message || 'Erreur de chargement.')
     } finally {

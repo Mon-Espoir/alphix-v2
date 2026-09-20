@@ -11,6 +11,7 @@ import Header from '../components/layout/Header'
 import Sidebar from '../components/layout/Sidebar'
 import BottomNav from '../components/layout/BottomNav'
 import Footer from '../components/layout/Footer'
+import WelcomeGuide from '../components/onboarding/WelcomeGuide'
 
 /**
  * Squelette invité avec design system ALPHIX.
@@ -19,15 +20,19 @@ import Footer from '../components/layout/Footer'
 export default function GuestLayout() {
   return (
     <div className="app-shell app-shell--guest">
+      <a href="#main-content" className="ax-skip-link">
+        Aller au contenu principal
+      </a>
       <Header />
       <Sidebar />
 
-      <main className="app-main app-main--with-nav">
+      <main id="main-content" tabIndex={-1} className="app-main app-main--sidebar app-main--with-nav">
         <Outlet />
       </main>
 
       <Footer />
       <BottomNav />
+      <WelcomeGuide />
     </div>
   )
 }

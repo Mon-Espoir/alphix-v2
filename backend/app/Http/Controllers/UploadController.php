@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\DocumentResource;
+use App\Services\DocumentRecognitionService;
+use App\Services\SecondaryAIService;
 use App\Services\UploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,14 +12,15 @@ use Illuminate\Http\Request;
 class UploadController extends Controller
 {
     public function __construct(
-        protected UploadService $uploadService
-    ) {
-    }
+        protected UploadService $uploadService,
+        protected DocumentRecognitionService $recognitionService,
+        protected SecondaryAIService $secondaryAI
+    ) {}
 
     public function validateFile(Request $request): JsonResponse
     {
         $request->validate([
-            'file' => ['required', 'file', 'max:20480'], // Max 20MB
+            'file' => ['required', 'file', 'max:204800'], // Max 200 Mo (aligne sur UploadService)
         ]);
 
         $file = $request->file('file');
@@ -58,9 +61,31 @@ class UploadController extends Controller
         $document = $this->uploadService->findDuplicateByHash($hash);
 
         if (! $document) {
-            return response()->json(["message" => "No duplicate document found"], 404);
+            return response()->json(['message' => 'No duplicate document found'], 404);
         }
 
         return new DocumentResource($document);
+    }
+
+    /**
+     * Reconnaissance intelligente depuis le nom de fichier : heuristiques
+     * locales (base reelle) enrichies par l'IA si elle est active.
+     */
+    public function recognize(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'filename' => ['required', 'string', 'max:255'],
+        ]);
+
+        $recognition = $this->recognitionService->recognize($data['filename']);
+
+        // Enrichissement IA (type + mots-cles) : non-bloquant, repli silencieux.
+        $recognition['ai'] = $this->secondaryAI->analyze($data['filename']);
+
+        if (empty($recognition['doc_type']) && ! empty($recognition['ai']['doc_type'])) {
+            $recognition['doc_type'] = $recognition['ai']['doc_type'];
+        }
+
+        return response()->json(['data' => $recognition]);
     }
 }

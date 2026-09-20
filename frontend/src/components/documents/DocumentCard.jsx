@@ -3,6 +3,7 @@
  * Carte document : titre, badges type/statut, stats, actions Apercu / Telecharger.
  */
 
+import { memo } from 'react'
 import Card from '../ui/Card'
 import Badge from '../ui/Badge'
 import { docTypeLabel, docStatusMeta, formatFileSize, formatShortDate } from '../../utils/document'
@@ -15,7 +16,7 @@ import PreviewButton from './PreviewButton'
  * @param {(id: number|string) => void} [props.onDownloaded] - Callback post-telechargement.
  * @returns {import('react').JSX.Element}
  */
-export default function DocumentCard({ document: doc, onDownloaded }) {
+function DocumentCard({ document: doc, onDownloaded }) {
   const status = docStatusMeta(doc.status)
   return (
     <Card className="ax-doc-card">
@@ -37,8 +38,10 @@ export default function DocumentCard({ document: doc, onDownloaded }) {
       </ul>
       <div className="ax-form-actions ax-doc-card__actions">
         <PreviewButton documentId={doc.id} />
-        <DownloadButton documentId={doc.id} onDownloaded={onDownloaded} />
+        <DownloadButton documentId={doc.id} document={doc} onDownloaded={onDownloaded} />
       </div>
     </Card>
   )
 }
+
+export default memo(DocumentCard)

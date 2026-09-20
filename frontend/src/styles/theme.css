@@ -164,6 +164,10 @@
   --ax-bottom-nav-height: 64px;
   --ax-content-max-width: 1200px;
 
+  /* — Safe areas (notched / home-indicator devices) — */
+  --ax-safe-top: env(safe-area-inset-top, 0px);
+  --ax-safe-bottom: env(safe-area-inset-bottom, 0px);
+
   color-scheme: light;
 }
 
@@ -293,6 +297,21 @@ ul, ol {
 ::-webkit-scrollbar-thumb {
   background: var(--ax-gray-300);
   border-radius: var(--ax-radius-full);
+}
+
+/* — Mobile: keep inputs ≥16px to prevent iOS auto-zoom on focus — */
+@media (max-width: 767px) {
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='search'],
+  input[type='number'],
+  input[type='tel'],
+  input[type='url'],
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {

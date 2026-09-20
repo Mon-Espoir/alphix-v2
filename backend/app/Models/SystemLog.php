@@ -37,7 +37,11 @@ class SystemLog extends Model
         'module',
         'action',
         'level',
+        'status',
+        'event_type',
         'message',
+        'details',
+        'device_info',
         'context',
         'ip_address',
         'created_at',
@@ -50,6 +54,7 @@ class SystemLog extends Model
      */
     protected $casts = [
         'context' => 'array',
+        'device_info' => 'array',
         'created_at' => 'datetime',
     ];
 

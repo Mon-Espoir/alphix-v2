@@ -1,0 +1,86 @@
+# Dockerfile pour Render (backend Laravel)
+# Supporte PostgreSQL (prod) + SQLite (fallback local)
+# Image de base officielle PHP 8.3 + extensions nécessaires
+
+FROM php:8.3-fpm-alpine
+
+# Arguments de build
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+# Installation des dépendances système + extensions PHP
+RUN apk add --no-cache \
+    bash \
+    curl \
+    git \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev \
+    freetype-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    sqlite-dev \
+    postgresql-dev \
+    oniguruma-dev \
+    linux-headers \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) \
+    pdo \
+    pdo_pgsql \
+    pdo_sqlite \
+    mbstring \
+    zip \
+    gd \
+    bcmath \
+    pcntl \
+    && rm -rf /var/cache/apk/*
+
+# Installation de Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Création utilisateur non-root (sécurité)
+RUN addgroup -g ${GROUP_ID} -S appgroup \
+    && adduser -u ${USER_ID} -S appuser -G appgroup
+
+# Répertoire de travail
+WORKDIR /var/www/html
+
+# Copie des fichiers de dépendances en premier (cache Docker)
+COPY composer.json composer.lock ./
+
+# Installation des dépendances PHP (sans dev, optimisé)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
+
+# Copie du code source
+COPY --chown=appuser:appgroup . .
+
+# Création des dossiers nécessaires + permissions
+RUN mkdir -p \
+    storage/framework/{cache,sessions,views,testing} \
+    storage/logs \
+    bootstrap/cache \
+    database \
+    && chown -R appuser:appgroup storage bootstrap/cache database \
+    && chmod -R 775 storage bootstrap/cache database
+
+# Création du fichier SQLite si pas de PostgreSQL (fallback local/dev)
+RUN touch database/database.sqlite \
+    && chown appuser:appgroup database/database.sqlite \
+    && chmod 664 database/database.sqlite
+
+# Script d'entrée (gère migrations, cache, key generate)
+COPY --chown=appuser:appgroup docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Passage utilisateur non-root
+USER appuser
+
+# Exposition du port (Render injecte $PORT)
+EXPOSE 8000
+
+# Point d'entrée
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+# Commande par défaut (remplacée par startCommand dans render.yaml)
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

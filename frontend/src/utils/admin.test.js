@@ -103,8 +103,14 @@ describe('buildAdminDashboardStats', () => {
   it('produit les 15 KPIs', () => {
     const s = buildAdminDashboardStats({ users: [], documents: [], faculties: [], departments: [], courses: [], drives: [] })
     expect(s.totalUsers).toBe(0)
-    expect(s.serverHealth).toBe('healthy')
-    expect(s.appVersion).toBe('2.0.0')
+    expect(s.serverHealth).toBeNull()
+    expect(s.appVersion).toBeNull()
+  })
+  it('dérive serverHealth depuis les drives', () => {
+    const healthy = buildAdminDashboardStats({ users: [], documents: [], faculties: [], departments: [], courses: [], drives: [{ status: true, health_status: 'healthy' }] })
+    expect(healthy.serverHealth).toBe('healthy')
+    const critical = buildAdminDashboardStats({ users: [], documents: [], faculties: [], departments: [], courses: [], drives: [{ status: true, health_status: 'critical' }] })
+    expect(critical.serverHealth).toBe('critical')
   })
 })
 

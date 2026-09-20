@@ -11,9 +11,36 @@
 import httpService from '../services/httpService'
 
 /**
- * API Course — opérateurs CRUD (hors index/show) + endpoints de liaison.
+ * API Course — CRUD complet + recherche + liaison (source principale 867 cours).
  */
 export const CourseApi = {
+  /**
+   * Récupère tous les cours avec compteur documents (LEFT JOIN).
+   * @param {object} [params] - Filtres éventuels.
+   * @returns {Promise<any>} Tableau de cours avec documents_count.
+   */
+  list(params) {
+    return httpService.get('/courses', { params })
+  },
+
+  /**
+   * Récupère un cours par son ID.
+   * @param {number|string} id
+   * @returns {Promise<any>}
+   */
+  get(id) {
+    return httpService.get(`/courses/${id}`)
+  },
+
+  /**
+   * Recherche des cours par texte (code/nom).
+   * @param {object} params - {q ou query}
+   * @returns {Promise<any>}
+   */
+  search(params) {
+    return httpService.get('/courses/search', { params })
+  },
+
   /**
    * Crée un nouveau cours.
    * @param {object} data - Données du cours (name, code, department_id, semester_id, level_id, credits, etc.).

@@ -28,10 +28,11 @@ class DepartmentPolicy
 
     /**
      * Determine whether the user can create models.
+     * Lecture pour tous, ecriture reservee aux administrateurs.
      */
     public function create(User $user): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -39,7 +40,7 @@ class DepartmentPolicy
      */
     public function update(User $user, Department $department): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -47,7 +48,7 @@ class DepartmentPolicy
      */
     public function delete(User $user, Department $department): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -55,7 +56,7 @@ class DepartmentPolicy
      */
     public function restore(User $user, Department $department): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -63,6 +64,14 @@ class DepartmentPolicy
      */
     public function forceDelete(User $user, Department $department): bool
     {
-        return true;
+        return $this->isAdmin($user);
+    }
+
+    /**
+     * Roles d'administration (alignes sur frontend ADMIN_ROLES).
+     */
+    private function isAdmin(User $user): bool
+    {
+        return in_array(strtolower((string) $user->role), ['administrator', 'admin', 'super_admin', 'superadmin'], true);
     }
 }

@@ -23,6 +23,11 @@ class CourseResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            // Identifiants bruts : indispensables au filtrage cote client
+            // (cascade faculte -> departement -> niveau -> semestre).
+            'department_id' => $this->department_id,
+            'level_id' => $this->level_id,
+            'semester_id' => $this->semester_id,
             'department' => $this->whenLoaded(
                 'department',
                 fn () => $this->department
@@ -51,7 +56,8 @@ class CourseResource extends JsonResource
             'teacher' => $this->teacher,
             'color' => $this->color,
             'icon' => $this->icon,
-            'total_documents' => $this->total_documents,
+            'total_documents' => $this->documents_count ?? $this->total_documents,
+            'documents_count' => $this->when(isset($this->documents_count), $this->documents_count),
             'total_downloads' => $this->total_downloads,
             'total_views' => $this->total_views,
             'status' => $this->status,

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Http\Resources\DepartmentResource;
+use App\Models\Department;
 use App\Services\DepartmentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class DepartmentController extends Controller
 {
@@ -25,6 +27,8 @@ class DepartmentController extends Controller
 
     public function store(StoreDepartmentRequest $request): JsonResponse
     {
+        Gate::authorize('create', Department::class);
+
         $department = $this->departmentService->create($request->validated());
 
         return (new DepartmentResource($department))
@@ -41,6 +45,8 @@ class DepartmentController extends Controller
 
     public function update(UpdateDepartmentRequest $request, int $id): DepartmentResource
     {
+        Gate::authorize('update', $this->departmentService->find($id));
+
         $department = $this->departmentService->update($id, $request->validated());
 
         return new DepartmentResource($department);
@@ -48,6 +54,8 @@ class DepartmentController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
+        Gate::authorize('delete', $this->departmentService->find($id));
+
         $this->departmentService->delete($id);
 
         return response()->json(null, 204);

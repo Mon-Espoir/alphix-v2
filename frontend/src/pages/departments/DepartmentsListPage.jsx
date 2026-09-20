@@ -8,11 +8,13 @@
  * de donnee : toute valeur absente est rendue proprement par un tiret.
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { DepartmentApi } from '../../api/DepartmentApi'
 import { FacultyApi } from '../../api/FacultyApi'
 import { useNotification } from '../../hooks/useNotification'
+import { useAuth } from '../../hooks/useAuth'
+import { hasAdminAccess } from '../../utils/admin'
 import { ROUTE_PATHS } from '../../constants/routes'
 import { Container, Button, Badge, LoadingSpinner } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
@@ -58,6 +60,12 @@ const PlusIcon = () => (
  */
 export default function DepartmentsListPage() {
   const notify = useNotification()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  // Creation / modification / suppression reservees aux administrateurs.
+  const isAdmin = hasAdminAccess(user)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const facultyIdParam = searchParams.get('facultyId') || ''
 
   const [departments, setDepartments] = useState([])
   const [faculties, setFaculties] = useState({})
@@ -125,7 +133,17 @@ export default function DepartmentsListPage() {
   const facultyNameOf = (department) =>
     relationName(department, 'faculty') || faculties[department.faculty_id]?.name || ''
 
+  const facultyFilterName = useMemo(() => {
+    if (!facultyIdParam) return ''
+    return faculties[Number(facultyIdParam)]?.name || faculties[facultyIdParam]?.name || ''
+  }, [facultyIdParam, faculties])
+
   const filteredDepartments = departments.filter((department) => {
+    if (facultyIdParam && String(department.faculty_id) !== String(facultyIdParam)) {
+      // fallback relation imbriquee
+      const relId = String(department?.faculty?.id ?? '')
+      if (relId !== String(facultyIdParam)) return false
+    }
     if (!search.trim()) return true
     const q = search.toLowerCase()
     const faculty = facultyNameOf(department).toLowerCase()
@@ -152,19 +170,44 @@ export default function DepartmentsListPage() {
     }
   }
 
+  const clearFacultyFilter = () => {
+    const next = new URLSearchParams(searchParams)
+    next.delete('facultyId')
+    setSearchParams(next)
+  }
+
   return (
     <Container>
       <PageHeader
-        title="Departements"
-        subtitle={`${departments.length} departement${departments.length !== 1 ? 's' : ''}`}
+        title={facultyIdParam ? `Departements${facultyFilterName ? ` — ${facultyFilterName}` : ''}` : 'Departements'}
+        subtitle={
+          facultyIdParam
+            ? `${filteredDepartments.length} departement${filteredDepartments.length !== 1 ? 's' : ''} pour cette faculte`
+            : `${departments.length} departement${departments.length !== 1 ? 's' : ''}`
+        }
         actions={
-          <Link to={`${ROUTE_PATHS.DEPARTMENTS}/create`}>
-            <Button variant="primary" size="md">
-              <PlusIcon /> Nouveau departement
-            </Button>
-          </Link>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            {facultyIdParam && (
+              <Button variant="ghost" size="md" onClick={clearFacultyFilter}>
+                &larr; Toutes les facultes
+              </Button>
+            )}
+            {isAdmin && (
+              <Link to={`${ROUTE_PATHS.DEPARTMENTS}/create${facultyIdParam ? `?facultyId=${facultyIdParam}` : ''}`}>
+                <Button variant="primary" size="md">
+                  <PlusIcon /> Nouveau departement
+                </Button>
+              </Link>
+            )}
+          </div>
         }
       />
+      {facultyIdParam && (
+        <div className="ax-alert" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>Filtre actif : faculte #{facultyIdParam}{facultyFilterName ? ` — ${facultyFilterName}` : ''}</span>
+          <Button variant="ghost" size="sm" onClick={clearFacultyFilter}>Effacer le filtre</Button>
+        </div>
+      )}
 {/* Recherche */}
       <div className="ax-search-bar">
         <span className="ax-search-bar__icon"><SearchIcon /></span>
@@ -204,7 +247,7 @@ export default function DepartmentsListPage() {
               ? "Aucun resultat pour votre recherche. Essayez avec d'autres termes."
               : 'Commencez par creer votre premier departement.'}
           </p>
-          {!search && (
+          {!search && isAdmin && (
             <Link to={`${ROUTE_PATHS.DEPARTMENTS}/create`}>
               <Button variant="primary" size="md">
                 <PlusIcon /> Creer un departement
@@ -226,7 +269,7 @@ export default function DepartmentsListPage() {
                   <th>Faculte</th>
                   <th>Description</th>
                   <th>Statut</th>
-                  <th className="ax-table__actions-col">Actions</th>
+                  {isAdmin && <th className="ax-table__actions-col">Actions</th>}
                 </tr>
               </thead>
               <tbody>
@@ -234,8 +277,21 @@ export default function DepartmentsListPage() {
                   const faculty = facultyNameOf(department)
                   const active = isActiveStatus(department.status)
                   return (
-                    <tr key={department.id}>
-                      <td className="ax-table__cell--strong">{department.name}</td>
+                    <tr
+                      key={department.id}
+                      onClick={() => navigate(`${ROUTE_PATHS.COURSES}?departmentId=${department.id}`)}
+                      style={{ cursor: 'pointer' }}
+                      title={`Voir les cours de ${department.name}`}
+                    >
+                      <td className="ax-table__cell--strong">
+                        <Link
+                          to={`${ROUTE_PATHS.COURSES}?departmentId=${department.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px' }}
+                        >
+                          {department.name}
+                        </Link>
+                      </td>
                       <td>
                         {department.code ? (
                           <Badge variant="primary" size="sm">{department.code}</Badge>
@@ -256,20 +312,44 @@ export default function DepartmentsListPage() {
                       </td>
                       <td className="ax-table__cell--actions">
                         <Link
-                          to={`${ROUTE_PATHS.DEPARTMENTS}/${department.id}/edit`}
+                          to={`${ROUTE_PATHS.COURSES}?departmentId=${department.id}`}
                           className="ax-icon-btn ax-icon-btn--sm"
-                          aria-label={`Modifier ${department.name}`}
+                          aria-label={`Voir les cours de ${department.name}`}
+                          title="Voir les cours"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <EditIcon />
+                          {/* book icon */}
+                          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4z"/><path d="M4 4a2 2 0 0 1 2-2h8"/><path d="M7 8h6M7 12h6"/></svg>
                         </Link>
-                        <button
+                        <Link
+                          to={ROUTE_PATHS.LEVELS}
                           className="ax-icon-btn ax-icon-btn--sm"
-                          onClick={() => setDeleteTarget(department)}
-                          aria-label={`Supprimer ${department.name}`}
-                          style={{ color: 'var(--ax-danger)' }}
+                          aria-label={`Voir les niveaux`}
+                          title="Voir les niveaux"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <TrashIcon />
-                        </button>
+                          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 14l7-7 7 7"/><path d="M5 12l5-5 5 5"/></svg>
+                        </Link>
+                        {isAdmin && (
+                          <>
+                            <Link
+                              to={`${ROUTE_PATHS.DEPARTMENTS}/${department.id}/edit`}
+                              className="ax-icon-btn ax-icon-btn--sm"
+                              aria-label={`Modifier ${department.name}`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <EditIcon />
+                            </Link>
+                            <button
+                              className="ax-icon-btn ax-icon-btn--sm"
+                              onClick={(e) => { e.stopPropagation(); setDeleteTarget(department) }}
+                              aria-label={`Supprimer ${department.name}`}
+                              style={{ color: 'var(--ax-danger)' }}
+                            >
+                              <TrashIcon />
+                            </button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   )

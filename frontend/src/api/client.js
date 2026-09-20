@@ -57,6 +57,18 @@ apiClient.interceptors.request.use(
       }
     }
 
+    // FormData (upload de fichiers) : le Content-Type JSON par défaut DOIT être
+    // retiré. Sinon axios v1 sérialise le FormData en JSON (formDataToJSON) et
+    // le fichier binaire est perdu ({"file":{}} -> 422 "The file field is
+    // required."). Le navigateur posera alors lui-même le header
+    // multipart/form-data avec le bon boundary.
+    if (
+      typeof FormData !== 'undefined' &&
+      config.data instanceof FormData
+    ) {
+      config.headers?.set('Content-Type', undefined)
+    }
+
     // Flag interne consommé : ne doit pas fuiter vers l'adaptateur réseau.
     Reflect.deleteProperty(config, 'skipAuth')
 

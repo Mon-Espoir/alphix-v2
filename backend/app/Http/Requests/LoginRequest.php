@@ -20,8 +20,19 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
+            'identifier' => ['sometimes', 'required', 'string', 'max:255'],
+            'email' => ['sometimes', 'required', 'email', 'max:255'],
+            'login' => ['sometimes', 'required', 'string', 'max:255'],
             'password' => 'required|string',
         ];
+    }
+
+    /**
+     * Identifiant fusionne : `identifier` (nom d'utilisateur OU email) sinon
+     * `email` puis `login` (compatibilite avec les anciens/multiples clients).
+     */
+    public function identifier(): ?string
+    {
+        return $this->input('identifier') ?? $this->input('email') ?? $this->input('login');
     }
 }

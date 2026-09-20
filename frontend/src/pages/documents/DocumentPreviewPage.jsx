@@ -37,7 +37,8 @@ export default function DocumentPreviewPage() {
       setIsLoading(true)
       setError(null)
       try {
-        const data = await DocumentApi.get(id)
+        const raw = await DocumentApi.get(id)
+        const data = raw?.data ?? raw
         if (!cancelled) setDocument(data)
       } catch (err) {
         if (!cancelled) setError(err?.message || 'Erreur lors du chargement du document.')
@@ -107,6 +108,7 @@ export default function DocumentPreviewPage() {
           <div className="ax-form-actions" style={{ justifyContent: 'flex-start' }}>
             <DownloadButton
               documentId={document.id}
+              document={document}
               size="md"
               onDownloaded={() => notify.success('Telechargement enregistre.')}
             />

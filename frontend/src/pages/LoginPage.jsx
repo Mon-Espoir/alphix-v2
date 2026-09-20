@@ -17,7 +17,7 @@ import { Button } from '../components/ui'
 export default function LoginPage() {
   const { login, loading } = useAuth()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const [loginId, setLoginId] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
@@ -28,7 +28,7 @@ export default function LoginPage() {
     setGlobalError('')
 
     try {
-      await login({ email, password })
+      await login({ login: loginId, password })
       navigate(ROUTE_PATHS.DASHBOARD)
     } catch (err) {
       if (err?.errors) {
@@ -58,22 +58,24 @@ export default function LoginPage() {
           )}
 
           <div className="ax-form-group">
-            <label className="ax-form-group__label" htmlFor="login-email">Email</label>
+            <label className="ax-form-group__label" htmlFor="login-email">Nom d&apos;utilisateur ou Email</label>
             <input
               id="login-email"
-              className={`ax-form-group__input ${errors.email ? 'ax-form-group__input--error' : ''}`}
-              type="email"
-              placeholder="votre@email.com"
-              value={email}
+              className={`ax-form-group__input ${errors.login || errors.identifier ? 'ax-form-group__input--error' : ''}`}
+              type="text"
+              placeholder="votre@email.com ou votre.nom"
+              value={loginId}
               onChange={(e) => {
-                setEmail(e.target.value)
-                if (errors.email) setErrors((p) => { const n = { ...p }; delete n.email; return n })
+                setLoginId(e.target.value)
+                if (errors.login || errors.identifier) setErrors((p) => { const n = { ...p }; delete n.login; delete n.identifier; return n })
               }}
               required
-              autoComplete="email"
+              autoComplete="username"
               autoFocus
             />
-            {errors.email && <span className="ax-form-group__error">{errors.email[0]}</span>}
+            {(errors.login || errors.identifier) && (
+              <span className="ax-form-group__error">{(errors.login || errors.identifier)[0]}</span>
+            )}
           </div>
 
           <div className="ax-form-group">

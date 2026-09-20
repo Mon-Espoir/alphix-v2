@@ -7,7 +7,13 @@
  */
 
 /** Rôles disposant d'accès administrateur. */
-export const ADMIN_ROLES = Object.freeze(['admin', 'super_admin', 'superadmin'])
+export const ADMIN_ROLES = Object.freeze(['admin', 'administrator', 'super_admin', 'superadmin'])
+
+/** Rôles délégués (Espace Délégué, périmètre département). */
+export const DELEGATE_ROLES = Object.freeze(['delegate'])
+
+/** Tous les rôles reconnus par la plateforme (mirroir DB). */
+export const ALL_ROLES = Object.freeze(['student', 'teacher', 'contributor', 'moderator', 'delegate', 'admin', 'administrator', 'super_admin', 'superadmin'])
 
 /** Grades de criticité des logs système. */
 export const LOG_LEVELS = Object.freeze({
@@ -65,8 +71,10 @@ export const LOG_LEVEL_BADGE = Object.freeze({
 /** Libellés des rôles utilisateur (affichage). */
 export const ROLE_LABELS = Object.freeze({
   admin: 'Administrateur',
+  administrator: 'Administrateur',
   super_admin: 'Super admin',
   superadmin: 'Super admin',
+  delegate: 'Délégué',
   moderator: 'Modérateur',
   teacher: 'Enseignant',
   student: 'Étudiant',
@@ -76,8 +84,10 @@ export const ROLE_LABELS = Object.freeze({
 /** Variantes Badge par rôle. */
 export const ROLE_BADGE_VARIANT = Object.freeze({
   admin: 'danger',
+  administrator: 'danger',
   super_admin: 'danger',
   superadmin: 'danger',
+  delegate: 'primary',
   moderator: 'warning',
   teacher: 'primary',
   student: 'default',

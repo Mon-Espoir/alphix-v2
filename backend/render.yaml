@@ -1,0 +1,96 @@
+# Render Blueprint for ALPHIX V2 Backend
+# Déploiement 100% gratuit : Web Service + PostgreSQL (90 jours gratuits)
+# URL permanente : https://alphix-backend.onrender.com
+
+services:
+  # ──────────────────────────────────────────────
+  # Base de données PostgreSQL (gratuite 90 jours)
+  # ──────────────────────────────────────────────
+  - type: pserv
+    name: alphix-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: 16
+    databaseName: alphix
+    user: alphix
+    # La base est créée automatiquement, variables d'env injectées dans le web service
+
+  # ──────────────────────────────────────────────
+  # Web Service Laravel (gratuit, spin-down après 15 min inactivité)
+  # ──────────────────────────────────────────────
+  - type: web
+    name: alphix-backend
+    runtime: docker
+    plan: free
+    region: oregon
+    repo: https://github.com/<TON_GITHUB_USER>/alphix-v2
+    branch: main
+    rootDir: backend
+    dockerfilePath: ./Dockerfile.render
+    envVars:
+      - key: APP_NAME
+        value: ALPHIX
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://alphix-backend.onrender.com
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: error
+      - key: DB_CONNECTION
+        value: pgsql
+      # Variables injectées automatiquement depuis le pserv 'alphix-db' :
+      # DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+      - key: SESSION_DRIVER
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: MAIL_MAILER
+        value: log
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: alphix-backend.onrender.com
+    # Commande de build (exécutée à chaque deploy)
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader --no-interaction
+      php artisan key:generate --force --no-interaction
+      php artisan migrate --force --no-interaction
+      php artisan storage:link --no-interaction
+      php artisan config:cache --no-interaction
+      php artisan route:cache --no-interaction
+      php artisan view:cache --no-interaction
+    # Commande de démarrage
+    startCommand: |
+      php artisan serve --host=0.0.0.0 --port=$PORT
+    healthCheckPath: /api/v1/maintenance/status
+    autoDeploy: true
+
+  # ──────────────────────────────────────────────
+  # Cron Job pour le scheduler Laravel (gratuit)
+  # ──────────────────────────────────────────────
+  - type: cron
+    name: alphix-scheduler
+    runtime: docker
+    plan: free
+    region: oregon
+    repo: https://github.com/<TON_GITHUB_USER>/alphix-v2
+    branch: main
+    rootDir: backend
+    dockerfilePath: ./Dockerfile.render
+    schedule: "* * * * *"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DB_CONNECTION
+        value: pgsql
+      # DB_* injectés depuis alphix-db
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader --no-interaction
+    startCommand: |
+      php artisan schedule:run --verbose --no-interaction

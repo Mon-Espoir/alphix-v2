@@ -8,6 +8,8 @@ import { ROUTE_PATHS } from '../../constants/routes'
 import { useUiStore } from '../../store/uiStore'
 import { Avatar } from '../ui'
 import IconButton from '../ui/IconButton'
+import NotificationBell from '../notifications/NotificationBell'
+import { useAuth } from '../../hooks/useAuth'
 
 /**
  * SVG icon helpers (inline, no external dependencies).
@@ -20,27 +22,27 @@ const MenuIcon = () => (
   </svg>
 )
 
-const BellIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10 2a5 5 0 0 0-5 5v3l-1.3 1.3A.7.7 0 0 0 4.2 12.5h11.6a.7.7 0 0 0 .5-1.2L15 10V7a5 5 0 0 0-5-5z" />
-    <path d="M8 14.7a2 2 0 0 0 4 0" />
-  </svg>
-)
-
 /**
  * @param {{ user?: object|null }} props
  */
-export default function Header({ user }) {
+export default function Header({ user: propUser }) {
   const toggleSidebar = useUiStore((s) => s.toggleSidebar)
+  const isSidebarOpen = useUiStore((s) => s.isSidebarOpen)
+  const isOnboardingActive = useUiStore((s) => s.isOnboardingActive)
+  const { user: authUser } = useAuth()
+  const user = propUser ?? authUser
 
   return (
     <header className="ax-header">
       <div className="ax-header__left">
         <IconButton
           icon={<MenuIcon />}
-          label="Menu"
-          className="ax-header__menu-btn"
+          label={isSidebarOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+          className={`ax-header__menu-btn${isOnboardingActive ? ' ax-header__menu-btn--nudge' : ''}`}
           onClick={toggleSidebar}
+          aria-expanded={isSidebarOpen}
+          aria-controls="app-sidebar"
+          aria-haspopup="true"
         />
         <Link to={ROUTE_PATHS.HOME} className="ax-header__brand">
           <div className="ax-header__logo" aria-hidden="true">A</div>
@@ -52,12 +54,15 @@ export default function Header({ user }) {
       </div>
 
       <div className="ax-header__right">
-        <IconButton
-          icon={<BellIcon />}
-          label="Notifications"
-          badge={0}
-        />
-        <Avatar name={user?.name || 'Invite'} size="sm" />
+        <NotificationBell />
+        <Link
+          to={ROUTE_PATHS.DASHBOARD}
+          aria-label={`Aller au profil de ${user?.name || 'Invite'}`}
+          title={user?.name || 'Profil'}
+          style={{ display: 'inline-flex', borderRadius: '50%' }}
+        >
+          <Avatar name={user?.name || 'Invite'} size="sm" />
+        </Link>
       </div>
     </header>
   )

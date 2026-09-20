@@ -8,16 +8,18 @@
  */
 
 import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { DocumentApi } from '../../api/DocumentApi'
 import { DocumentTagApi } from '../../api/DocumentTagApi'
-import { DepartmentApi } from '../../api/DepartmentApi'
 import { CourseApi } from '../../api/CourseApi'
+import { UploadApi } from '../../api/UploadApi'
 import { ROUTE_PATHS } from '../../constants/routes'
 import { Container, Button, Badge } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
 import { useNotification } from '../../hooks/useNotification'
 import { normalizeApiList, slugify } from '../../utils/academic'
+import { cachedAcademicList } from '../../utils/academicCache'
+import { validateUploadFile } from '../../utils/upload'
 import { DOC_TYPES, DOC_STATUSES, DOC_VISIBILITIES, documentTitle } from '../../utils/document'
 
 /**
@@ -39,9 +41,11 @@ async function computeSha256(file) {
  */
 export default function DocumentFormPage() {
   const { id } = useParams()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const notify = useNotification()
   const isEditing = Boolean(id)
+  const preselectedCourseId = searchParams.get('course_id') || ''
 
   const [courses, setCourses] = useState([])
   const [tags, setTags] = useState([])
@@ -50,7 +54,7 @@ export default function DocumentFormPage() {
     originalName: '',
     description: '',
     docType: 'course',
-    courseId: '',
+    courseId: preselectedCourseId,
     academicYear: '',
     language: 'fr',
     pages: '',
@@ -60,22 +64,19 @@ export default function DocumentFormPage() {
     tagIds: [],
     driveUrl: '',
   })
+  const [selectedFile, setSelectedFile] = useState(null)
   const [fileInfo, setFileInfo] = useState(null)
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(Boolean(id))
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // References (echecs silencieux non bloquants).
+  // References (echecs silencieux non bloquants). Index cours unique + cache.
   useEffect(() => {
     let cancelled = false
     async function run() {
       try {
-        const depList = normalizeApiList(await DepartmentApi.list())
-        const firstDepartment = depList[0]
-        if (firstDepartment?.id != null) {
-          const courseList = normalizeApiList(await CourseApi.getByDepartment(firstDepartment.id))
-          if (!cancelled) setCourses(courseList)
-        }
+        const courseList = await cachedAcademicList('courses', () => CourseApi.list()).catch(() => [])
+        if (!cancelled) setCourses(normalizeApiList(courseList))
       } catch {
         // References manquantes : formulaire degrade mais fonctionnel.
       }
@@ -91,13 +92,16 @@ export default function DocumentFormPage() {
   }, [])
 
   // Pre-remplissage en edition (show + tags dedies).
+  // NOTE: deps volontaires [id] uniquement — notify/navigate stables via ref
+  // pour eviter la boucle refetch -> setIsLoading -> remontage -> clignotement.
   useEffect(() => {
     if (!id) return
     let cancelled = false
     async function run() {
       setIsLoading(true)
       try {
-        const data = await DocumentApi.get(id)
+        const raw = await DocumentApi.get(id)
+        const data = raw?.data ?? raw
         let loadedTags = []
         try {
           loadedTags = normalizeApiList(await DocumentTagApi.getByDocument(id))
@@ -107,19 +111,22 @@ export default function DocumentFormPage() {
         if (cancelled) return
         const metadataList = Array.isArray(data?.metadata) ? data.metadata : []
         const sourceEntry = metadataList.find((entry) => String(entry).startsWith('source_url:')) || ''
+        const loadedTagIds = normalizeApiList(loadedTags).map((tag) => tag.id).filter((v) => v != null)
+        // Fallback tags inclus dans show (relation chargee) si endpoint dedie vide.
+        const embeddedTagIds = Array.isArray(data?.tags) ? data.tags.map((tag) => tag.id).filter((v) => v != null) : []
         setFormData({
-          title: documentTitle(data) === '-' ? '' : data.title,
+          title: documentTitle(data) === '-' ? '' : (data?.title || ''),
           originalName: data?.original_name || '',
           description: data?.description || '',
           docType: data?.doc_type || 'other',
-          courseId: data?.course?.id ?? '',
+          courseId: data?.course?.id ?? data?.course_id ?? '',
           academicYear: data?.academic_year || '',
           language: data?.language || '',
           pages: data?.pages ?? '',
           visibility: data?.visibility || 'public',
           status: data?.status || 'pending',
           isFeatured: Boolean(data?.is_featured),
-          tagIds: loadedTags.map((tag) => tag.id),
+          tagIds: loadedTagIds.length > 0 ? loadedTagIds : embeddedTagIds,
           driveUrl: String(sourceEntry).replace('source_url:', ''),
         })
       } catch (err) {
@@ -133,7 +140,8 @@ export default function DocumentFormPage() {
     }
     run()
     return () => { cancelled = true }
-  }, [id, navigate, notify])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
   /**
    * Selection de fichier : derive nom original, MIME, taille et SHA-256.
@@ -142,6 +150,7 @@ export default function DocumentFormPage() {
   const handleFileChange = async (event) => {
     const file = event.target.files?.[0]
     if (!file) return
+    setSelectedFile(file)
     setFormData((prev) => ({ ...prev, originalName: file.name }))
     try {
       const hash = await computeSha256(file)
@@ -152,8 +161,32 @@ export default function DocumentFormPage() {
         name: file.name,
       })
     } catch {
+      setSelectedFile(null)
       setFileInfo(null)
       notify.error('Impossible de lire le fichier pour calculer son empreinte.')
+      return
+    }
+
+    // Reconnaissance intelligente (base réelle : facultés/départements/cours)
+    try {
+      const { data: rec } = await UploadApi.recognize(file.name)
+      if (!rec) return
+      setFormData((prev) => ({
+        ...prev,
+        docType: prev.docType === 'course' && rec.doc_type ? rec.doc_type : prev.docType,
+        academicYear: rec.academic_year || prev.academicYear,
+        courseId: rec.course_id ? String(rec.course_id) : prev.courseId,
+      }))
+
+      if (rec.course) {
+        notify.success(`Cours détecté automatiquement : ${rec.course.code} — ${rec.course.name}`)
+      } else if ((rec.suggestions?.length ?? 0) > 0) {
+        notify.info(
+          `${rec.suggestions.length} cours possible(s) détecté(s) — sélectionnez manuellement dans la liste.`,
+        )
+      }
+    } catch {
+      // Reconnaissance indisponible : saisie manuelle inchangée.
     }
   }
 
@@ -197,32 +230,75 @@ export default function DocumentFormPage() {
       setIsSubmitting(false)
       return
     }
-
-    const payload = {
-      course_id: formData.courseId ? Number(formData.courseId) : undefined,
-      title: formData.title.trim(),
-      original_name: fileInfo?.name || formData.originalName.trim(),
-      slug: slugify(formData.title.trim()) || `document-${Date.now()}`,
-      description: formData.description.trim() || undefined,
-      doc_type: formData.docType,
-      academic_year: formData.academicYear.trim() || undefined,
-      language: formData.language.trim() || undefined,
-      pages: formData.pages === '' ? undefined : Number(formData.pages),
-      file_size: fileInfo ? fileInfo.fileSize : undefined,
-      file_hash: fileInfo ? fileInfo.hash : undefined,
-      visibility: formData.visibility,
-      status: formData.status || undefined,
-      is_featured: Boolean(formData.isFeatured),
-      tags: formData.tagIds.length > 0 ? formData.tagIds.map(Number) : undefined,
-      metadata: formData.driveUrl.trim() ? [`source_url:${formData.driveUrl.trim()}`] : undefined,
+    if (!isEditing && !selectedFile) {
+      setErrors({ file: ['Veuillez sélectionner un fichier.'] })
+      setIsSubmitting(false)
+      return
     }
+    // Garde-fou local (MIME + 50 Mo) : evite un envoi inutile vers le serveur.
+    if (!isEditing && selectedFile) {
+      const verdict = validateUploadFile(selectedFile)
+      if (!verdict.valid) {
+        setErrors({ file: verdict.errors })
+        setIsSubmitting(false)
+        return
+      }
+    }
+    if (!isEditing && !fileInfo?.hash) {
+      setErrors({ file_hash: ['Veuillez patienter : empreinte du fichier en cours de calcul.'] })
+      setIsSubmitting(false)
+      return
+    }
+
+    // Construction FormData avec file binaire (correction rupture transmission)
+    const fd = new FormData()
+    if (formData.courseId) fd.append('course_id', String(Number(formData.courseId)))
+    fd.append('title', formData.title.trim())
+    fd.append('original_name', fileInfo?.name || formData.originalName.trim())
+    fd.append('slug', slugify(formData.title.trim()) || `document-${Date.now()}`)
+    if (formData.description.trim()) fd.append('description', formData.description.trim())
+    fd.append('doc_type', formData.docType)
+    if (formData.academicYear.trim()) fd.append('academic_year', formData.academicYear.trim())
+    if (formData.language.trim()) fd.append('language', formData.language.trim())
+    if (formData.pages !== '') fd.append('pages', String(Number(formData.pages)))
+    if (fileInfo) {
+      fd.append('file_size', String(fileInfo.fileSize))
+      fd.append('file_hash', fileInfo.hash)
+      fd.append('mime_type', fileInfo.mimeType)
+    }
+    fd.append('visibility', formData.visibility)
+    if (formData.status) fd.append('status', formData.status)
+    fd.append('is_featured', formData.isFeatured ? '1' : '0')
+    if (formData.tagIds.length > 0) formData.tagIds.forEach((tid) => fd.append('tags[]', String(Number(tid))))
+    if (formData.driveUrl.trim()) fd.append('metadata[]', `source_url:${formData.driveUrl.trim()}`)
+    // Le fichier binaire est indispensable pour POST /api/v1/documents
+    if (selectedFile) fd.append('file', selectedFile, selectedFile.name)
+    // Fallback fileInfo pour compatibilité si selectedFile perdu
+    if (!selectedFile && fileInfo?.name) fd.append('file', new Blob([]), fileInfo.name)
 
     try {
       if (isEditing) {
-        await DocumentApi.update(id, payload)
+        // En édition, le hash est immuable, on envoie JSON (pas de nouveau fichier)
+        const jsonPayload = {
+          course_id: formData.courseId ? Number(formData.courseId) : undefined,
+          title: formData.title.trim(),
+          original_name: formData.originalName.trim(),
+          slug: slugify(formData.title.trim()) || `document-${Date.now()}`,
+          description: formData.description.trim() || undefined,
+          doc_type: formData.docType,
+          academic_year: formData.academicYear.trim() || undefined,
+          language: formData.language.trim() || undefined,
+          pages: formData.pages === '' ? undefined : Number(formData.pages),
+          visibility: formData.visibility,
+          status: formData.status || undefined,
+          is_featured: Boolean(formData.isFeatured),
+          tags: formData.tagIds.length > 0 ? formData.tagIds.map(Number) : undefined,
+          metadata: formData.driveUrl.trim() ? [`source_url:${formData.driveUrl.trim()}`] : undefined,
+        }
+        await DocumentApi.update(id, jsonPayload)
         notify.success('Document mis a jour avec succes.')
       } else {
-        await DocumentApi.create(payload)
+        await DocumentApi.create(fd)
         notify.success('Document cree avec succes.')
       }
       navigate(ROUTE_PATHS.DOCUMENTS)
@@ -268,14 +344,18 @@ export default function DocumentFormPage() {
                 </label>
                 <input
                   id="document-file"
-                  className={`ax-form-group__input ${errors.file_hash ? 'ax-form-group__input--error' : ''}`}
+                  className={`ax-form-group__input ${errors.file || errors.file_hash ? 'ax-form-group__input--error' : ''}`}
                   type="file"
                   onChange={handleFileChange}
                   required
                 />
                 {fileInfo ? (
-                  <Badge variant="primary" size="sm">Empreinte SHA-256 calculee</Badge>
-                ) : null}
+                  <Badge variant="primary" size="sm">Empreinte SHA-256 calculee • {(fileInfo.fileSize / 1024).toFixed(1)} Ko</Badge>
+                ) : (
+                  <span className="ax-text--muted ax-text--xs">Sélectionnez un PDF, DOCX, PPTX, JPG ou PNG (max 20 Mo).</span>
+                )}
+                {errorTextFor('file') && <span className="ax-form-group__error">{errorTextFor('file')}</span>}
+                {errorTextFor('file_hash') && <span className="ax-form-group__error">{errorTextFor('file_hash')}</span>}
                 {errorTextFor('original_name') && (
                   <span className="ax-form-group__error">{errorTextFor('original_name')}</span>
                 )}
@@ -295,7 +375,7 @@ export default function DocumentFormPage() {
                 value={formData.title}
                 onChange={handleChange}
                 required
-                autoFocus
+                autoFocus={!isEditing}
               />
               {errorTextFor('title') && <span className="ax-form-group__error">{errorTextFor('title')}</span>}
             </div>
@@ -320,9 +400,9 @@ export default function DocumentFormPage() {
               {errorTextFor('doc_type') && <span className="ax-form-group__error">{errorTextFor('doc_type')}</span>}
             </div>
 
-            {/* Cours rattache */}
+            {/* Cours rattache — pré-sélectionné via ?course_id= depuis la recherche */}
             <div className="ax-form-group">
-              <label className="ax-form-group__label" htmlFor="document-course">Cours</label>
+              <label className="ax-form-group__label" htmlFor="document-course">Cours {preselectedCourseId ? <Badge variant="primary" size="sm">Pré-sélectionné</Badge> : null}</label>
               <select
                 id="document-course"
                 name="courseId"
@@ -331,10 +411,14 @@ export default function DocumentFormPage() {
                 onChange={handleChange}
               >
                 <option value="">Aucun cours</option>
+                {preselectedCourseId && !courses.some((c) => String(c.id) === String(preselectedCourseId)) && (
+                  <option value={preselectedCourseId}>Cours #{preselectedCourseId} (sélection depuis la recherche)</option>
+                )}
                 {courses.map((course) => (
-                  <option key={course.id} value={course.id}>{course.title || course.name}</option>
+                  <option key={course.id} value={course.id}>{course.code ? `${course.code} — ` : ''}{course.title || course.name}</option>
                 ))}
               </select>
+              {preselectedCourseId && <span className="ax-text--muted ax-text--xs">Cours pré-sélectionné depuis votre recherche. Vous pouvez le modifier.</span>}
               {errorTextFor('course_id') && <span className="ax-form-group__error">{errorTextFor('course_id')}</span>}
             </div>
 

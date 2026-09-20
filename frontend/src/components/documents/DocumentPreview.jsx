@@ -52,7 +52,7 @@ export default function DocumentPreview({ doc, onClose }) {
           onToggleFullScreen={() => setIsFullScreen((value) => !value)}
         />
         <div className="ax-form-actions">
-          {doc?.id ? <DownloadButton documentId={doc.id} size="md" /> : null}
+          {doc?.id ? <DownloadButton documentId={doc.id} document={doc} size="md" /> : null}
           <Button type="button" variant="ghost" size="md" onClick={onClose}>
             Fermer
           </Button>

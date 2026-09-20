@@ -20,6 +20,11 @@ class CourseService
     ) {
     }
 
+    public function find(int $id): Model
+    {
+        return $this->courseRepository->findOrFail($id);
+    }
+
     /**
      * Create a course.
      *
@@ -76,5 +81,25 @@ class CourseService
     public function byLevel(int $levelId): Collection
     {
         return $this->courseRepository->getByLevelId($levelId);
+    }
+
+    /**
+     * Retrieve all courses with real document counts (LEFT JOIN).
+     *
+     * @return Collection<int, Course>
+     */
+    public function allWithDocumentCounts(): Collection
+    {
+        return $this->courseRepository->getAllWithDocumentCounts();
+    }
+
+    /**
+     * Search courses with document counts.
+     *
+     * @return Collection<int, Course>
+     */
+    public function searchWithDocumentCounts(string $term): Collection
+    {
+        return $this->courseRepository->searchWithDocumentCounts($term);
     }
 }

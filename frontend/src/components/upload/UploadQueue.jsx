@@ -48,6 +48,8 @@ const ACTION_ICONS = {
  * @param {function(string): void} props.onRetry - Nouvelle tentative.
  * @param {function(string): void} props.onRemove - Suppression definitive.
  * @param {function(string, string): Promise<void>} props.onResolveDuplicate - Resolution doublon.
+ * @param {function(object): void} [props.onClassify] - Reouverture du fallback
+ *   de classification (document téléversé mais cours non identifié).
  * @param {boolean} [props.showGlobalActions=true] - Affiche pause/reprise.
  * @param {function(): void} [props.onPause] - Pause globale.
  * @param {function(): void} [props.onResume] - Reprise globale.
@@ -61,6 +63,7 @@ export default function UploadQueue({
   onRetry,
   onRemove,
   onResolveDuplicate,
+  onClassify,
   showGlobalActions = true,
   onPause,
   onResume,
@@ -242,6 +245,17 @@ export default function UploadQueue({
                   >
                     {ACTION_ICONS.retry}
                     <span className="ax-btn__content--hidden">Reessayer</span>
+                  </Button>
+                )}
+
+                {terminal && item.status === UPLOAD_ITEM_STATUS.UPLOADED && item.needsClassification && typeof onClassify === 'function' && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => onClassify(item)}
+                    aria-label="Preciser le cours du document"
+                  >
+                    🎓 Préciser le cours
                   </Button>
                 )}
 

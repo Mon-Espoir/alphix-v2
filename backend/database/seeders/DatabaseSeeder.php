@@ -28,6 +28,11 @@ class DatabaseSeeder extends Seeder
                 SemesterSeeder::class,
                 CourseSeeder::class,
                 DocumentTagSeeder::class,
+                UbAcademicSeeder::class,
+                AdminUserSeeder::class,
+                // Liens enseignants UB : garde interne si le JSON de scraping
+                // est absent (installations sans automation/scrape_ub_teachers.py).
+                TeacherLinksSeeder::class,
             ]);
         });
     }

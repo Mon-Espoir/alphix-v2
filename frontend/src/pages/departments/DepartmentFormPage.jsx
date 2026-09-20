@@ -11,6 +11,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { DepartmentApi } from '../../api/DepartmentApi'
 import { FacultyApi } from '../../api/FacultyApi'
 import { useNotification } from '../../hooks/useNotification'
+import { useAuth } from '../../hooks/useAuth'
+import { hasAdminAccess } from '../../utils/admin'
 import { ROUTE_PATHS } from '../../constants/routes'
 import { Container, Button } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
@@ -24,6 +26,9 @@ export default function DepartmentFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const notify = useNotification()
+  const { user } = useAuth()
+  // Creation / modification reservees aux administrateurs.
+  const isAdmin = hasAdminAccess(user)
   const isEditing = Boolean(id)
 
   const [faculties, setFaculties] = useState([])
@@ -140,6 +145,20 @@ export default function DepartmentFormPage() {
   }
 
   const facultyOptions = toSelectOptions(faculties)
+
+  if (!isAdmin) {
+    return (
+      <Container size="sm">
+        <PageHeader title="Acces refuse" subtitle="Creation et modification reservees aux administrateurs" />
+        <div className="ax-card ax-card--padded" role="alert">
+          <p>Votre compte ne dispose pas des privileges requis pour gerer les departements.</p>
+          <Button variant="primary" size="md" onClick={() => navigate(ROUTE_PATHS.DEPARTMENTS)}>
+            Retour aux departements
+          </Button>
+        </div>
+      </Container>
+    )
+  }
 
   if (isLoading) {
     return (

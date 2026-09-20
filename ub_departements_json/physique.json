@@ -1,0 +1,76 @@
+{
+  "faculty": {
+    "code": "FS",
+    "name": "Faculté des Sciences"
+  },
+  "department": {
+    "code": "PHY",
+    "name": "Département de Physique"
+  },
+  "courses": [
+    {"code": "MAT1101", "name": "Analyse I", "semester": 1, "credits": 6, "hours": 90},
+    {"code": "MAT1102", "name": "Algèbre I", "semester": 1, "credits": 3, "hours": 45},
+    {"code": "PHY1103", "name": "Mécanique Générale", "semester": 1, "credits": 6, "hours": 90},
+    {"code": "PHY1104", "name": "Mécanique analytique I", "semester": 1, "credits": 4, "hours": 60},
+    {"code": "PHY1105", "name": "Thermodynamique", "semester": 1, "credits": 3, "hours": 45},
+    {"code": "CHI1106", "name": "Chimie Générale I", "semester": 1, "credits": 2, "hours": 30},
+    {"code": "LAN1107", "name": "Anglais I", "semester": 1, "credits": 2, "hours": 30},
+    {"code": "INF1108", "name": "Initiation à l'informatique", "semester": 1, "credits": 2, "hours": 30},
+    {"code": "SH1109", "name": "Education civique et droits de l'homme", "semester": 1, "credits": 2, "hours": 30},
+
+    {"code": "MAT1210", "name": "Analyse II", "semester": 2, "credits": 6, "hours": 90},
+    {"code": "MAT1211", "name": "Géométrie I", "semester": 2, "credits": 3, "hours": 105},
+    {"code": "INF1212", "name": "Algorithmique", "semester": 2, "credits": 6, "hours": 90},
+    {"code": "INF1213", "name": "Calcul numérique et programmation", "semester": 2, "credits": 3, "hours": 45},
+    {"code": "MAT1214", "name": "Algèbre II", "semester": 2, "credits": 4, "hours": 60},
+    {"code": "MAT1215", "name": "Géométrie II", "semester": 2, "credits": 4, "hours": 60},
+    {"code": "SCT1216", "name": "Introduction aux sciences de la terre", "semester": 2, "credits": 2, "hours": 30},
+    {"code": "PHY1217", "name": "Astronomie", "semester": 2, "credits": 2, "hours": 30},
+
+    {"code": "MAT2501", "name": "Equations différentielles", "semester": 3, "credits": 5, "hours": 75},
+    {"code": "MAT2302", "name": "Analyse complexe", "semester": 3, "credits": 3, "hours": 45},
+    {"code": "PHY2303", "name": "Electricité et magnétisme", "semester": 3, "credits": 7, "hours": 105},
+    {"code": "PHY2304", "name": "Calcul des circuits électriques", "semester": 3, "credits": 3, "hours": 45},
+    {"code": "MAT2305", "name": "Mécanique analytique II", "semester": 3, "credits": 3, "hours": 45},
+    {"code": "PHY2306", "name": "Relativité restreinte", "semester": 3, "credits": 3, "hours": 45},
+    {"code": "PHY2307", "name": "Optique géométrique", "semester": 3, "credits": 2, "hours": null},
+    {"code": "PHY2308", "name": "Ondes", "semester": 3, "credits": 4, "hours": 45},
+
+    {"code": "MAT2409", "name": "Analyse Avancée pour Physiciens", "semester": 4, "credits": 4, "hours": 60},
+    {"code": "MAT2410", "name": "Algèbre de Boole", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "INF2411", "name": "Programmation", "semester": 4, "credits": 4, "hours": 60},
+    {"code": "INF2412", "name": "Algorithmique avancée", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "MAT2413", "name": "Probabilité et statistique", "semester": 4, "credits": 4, "hours": 60},
+    {"code": "PHY2414", "name": "Physique statistique", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "PHY2415", "name": "Introduction à la mécanique quantique", "semester": 4, "credits": 3, "hours": 45},
+    {"code": "PHY2416", "name": "Cristallographie", "semester": 4, "credits": 3, "hours": null},
+    {"code": "CHI2417", "name": "Chimie générale II", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "PHY2418", "name": "Initiation aux méthodes de recherche scientifique", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "LAN2419", "name": "Anglais II", "semester": 4, "credits": 2, "hours": 30},
+
+    {"code": "MAT3501", "name": "Méthodes mathématiques de la physique", "semester": 5, "credits": 5, "hours": 75},
+    {"code": "MAT3502", "name": "Analyse statistique sur ordinateur", "semester": 5, "credits": 2, "hours": null},
+    {"code": "MAT3503", "name": "Analyse Numérique et Programmation", "semester": 5, "credits": 3, "hours": 45},
+    {"code": "PHY3504", "name": "Travaux pratiques intégrés I", "semester": 5, "credits": 1, "hours": 15},
+    {"code": "PHY3505", "name": "Mécanique Analytique III", "semester": 5, "credits": 3, "hours": 45},
+    {"code": "PHY3506", "name": "Physique nucléaire", "semester": 5, "credits": 3, "hours": 45},
+    {"code": "PHY3507", "name": "Mécanique quantique non-relativiste", "semester": 5, "credits": 4, "hours": 60},
+    {"code": "PHY3508", "name": "Electrodynamique", "semester": 5, "credits": 4, "hours": 60},
+    {"code": "PHY3509", "name": "Physique du solide", "semester": 5, "credits": 3, "hours": 45},
+    {"code": "PHY3510", "name": "Spectroscopie instrumentale", "semester": 5, "credits": 2, "hours": 30},
+
+    {"code": "PHY3611", "name": "Physique atomique et moléculaire", "semester": 6, "credits": 4, "hours": 60},
+    {"code": "CHI3612", "name": "Chimie Physique", "semester": 6, "credits": 3, "hours": 45},
+    {"code": "PHY3613", "name": "Astrophysique", "semester": 6, "credits": 2, "hours": 30},
+    {"code": "PHY3614", "name": "Physique des atmosphères", "semester": 6, "credits": 2, "hours": 30},
+    {"code": "PHY3615", "name": "Electronique", "semester": 6, "credits": 4, "hours": 60},
+    {"code": "PHY3616", "name": "Mesures Electriques", "semester": 6, "credits": 3, "hours": 45},
+    {"code": "PHY3617", "name": "Travaux pratiques intégrés II", "semester": 6, "credits": 1, "hours": 15},
+    {"code": "PHY3618", "name": "Optique guidée", "semester": 6, "credits": 2, "hours": 45},
+    {"code": "LAN3619", "name": "Langues vivantes: Anglais III, Chinois, Swahili", "semester": 6, "credits": 2, "hours": 30},
+    {"code": "PHY3620", "name": "Entrepreneuriat", "semester": 6, "credits": 2, "hours": 30},
+    {"code": "PHY3621", "name": "Déroulement Stage", "semester": 6, "credits": 3, "hours": 45},
+    {"code": "PHY3622", "name": "Rapport de stage", "semester": 6, "credits": 1, "hours": 15},
+    {"code": "PHY3623", "name": "Séminaire", "semester": 6, "credits": 1, "hours": 15}
+  ]
+}

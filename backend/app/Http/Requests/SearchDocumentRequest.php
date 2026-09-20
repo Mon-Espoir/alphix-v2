@@ -48,6 +48,10 @@ class SearchDocumentRequest extends FormRequest
             'sort' => ['nullable', 'string', Rule::in(['relevance', 'date', 'title', 'downloads'])],
             'order' => ['nullable', 'string', Rule::in(['asc', 'desc'])],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'from_date' => ['nullable', 'date'],
+            'to_date' => ['nullable', 'date', 'after_or_equal:from_date'],
+            'min_downloads' => ['nullable', 'integer', 'min:0'],
+            'min_views' => ['nullable', 'integer', 'min:0'],
         ];
     }
 

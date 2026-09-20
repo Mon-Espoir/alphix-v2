@@ -1,6 +1,6 @@
 /**
  * ---------------------------------------------------------------------------
- * ALPHIX V2 — Configuration d'environnement centrale
+ * ALPHIX — Configuration d'environnement centrale
  * ---------------------------------------------------------------------------
  * Point d'accès UNIQUE aux variables d'environnement Vite (`import.meta.env`).
  *
@@ -20,7 +20,7 @@
 const DEFAULTS = Object.freeze({
   API_BASE_URL: 'http://localhost:8000/api/v1',
   API_TIMEOUT_MS: 15000,
-  APP_NAME: 'ALPHIX V2',
+  APP_NAME: 'ALPHIX',
   AUTH_MODE: 'token',
 })
 

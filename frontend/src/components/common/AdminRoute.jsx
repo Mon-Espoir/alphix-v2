@@ -7,7 +7,7 @@
  * Affiche un écran explicite en cas de refus plutôt qu'une redirection silencieuse.
  */
 
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { hasAdminAccess } from '../../utils/admin'
 import { ROUTE_PATHS } from '../../constants/routes'
@@ -15,11 +15,18 @@ import LoadingScreen from '../feedback/LoadingScreen'
 
 export default function AdminRoute({ children }) {
   const { user, isAuthenticated, loading } = useAuth()
+  const location = useLocation()
 
   if (loading && !isAuthenticated) return <LoadingScreen />
 
   if (!isAuthenticated) {
-    return <Navigate to={ROUTE_PATHS.LOGIN} replace />
+    return (
+      <Navigate
+        to={ROUTE_PATHS.LOGIN}
+        replace
+        state={{ from: location }}
+      />
+    )
   }
 
   if (!hasAdminAccess(user)) {

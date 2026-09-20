@@ -15,14 +15,18 @@ import { ROUTE_PATHS } from '../../constants/routes'
 import { Container, Button, Card } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
 import ConfirmModal from '../../components/common/ConfirmModal'
+import { Link } from 'react-router-dom'
 import DocumentBreadcrumb from '../../components/documents/DocumentBreadcrumb'
 import { buildAcademicTrail } from '../../utils/document'
+import { semesterLabel } from '../../utils/academic'
+import { hasAdminAccess } from '../../utils/admin'
 import DocumentMeta from '../../components/documents/DocumentMeta'
 import DocumentStatistics from '../../components/documents/DocumentStatistics'
 import DocumentTags from '../../components/documents/DocumentTags'
 import DownloadButton from '../../components/documents/DownloadButton'
 import PreviewButton from '../../components/documents/PreviewButton'
 import { useNotification } from '../../hooks/useNotification'
+import { useAuth } from '../../hooks/useAuth'
 
 /**
  * Page de details d'un document.
@@ -32,6 +36,9 @@ export default function DocumentDetailsPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const notify = useNotification()
+  const { user } = useAuth()
+  // Modification / suppression : tout rôle admin (admin, administrator, super_admin).
+  const isAdmin = hasAdminAccess(user)
 
   const [document, setDocument] = useState(null)
   const [tags, setTags] = useState([])
@@ -46,7 +53,8 @@ export default function DocumentDetailsPage() {
       setIsLoading(true)
       setError(null)
       try {
-        const data = await DocumentApi.get(id)
+        const raw = await DocumentApi.get(id)
+        const data = raw?.data ?? raw
         if (cancelled) return
         setDocument(data)
         // Tags charges via l'endpoint dedie (relation non incluse dans show).
@@ -59,6 +67,11 @@ export default function DocumentDetailsPage() {
         // Compteur de vues (endpoint public, echec silencieux).
         try {
           await DocumentApi.incrementView(id)
+          if (!cancelled) {
+            setDocument((prev) => (prev
+              ? { ...prev, views_count: (prev.views_count ?? 0) + 1 }
+              : prev))
+          }
         } catch {
           // L'increment ne doit jamais bloquer la consultation.
         }
@@ -142,27 +155,62 @@ export default function DocumentDetailsPage() {
             />
           </section>
 
-          {/* Actions principales */}
+          {/* Actions principales — Modifier/Supprimer reserves a l'administrateur */}
           <div className="ax-form-actions" style={{ justifyContent: 'flex-start' }}>
             <PreviewButton documentId={document.id} size="md" label="Apercu securise" />
-            <DownloadButton documentId={document.id} size="md" onDownloaded={handleDownloaded} />
-            <Button
-              type="button"
-              variant="ghost"
-              size="md"
-              onClick={() => navigate(`${ROUTE_PATHS.DOCUMENTS}/${document.id}/edit`)}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="danger"
-              size="md"
-              onClick={() => setIsDeleteOpen(true)}
-            >
-              Supprimer
-            </Button>
+            <DownloadButton documentId={document.id} document={document} size="md" onDownloaded={handleDownloaded} />
+            {isAdmin && (
+              <>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="md"
+                  onClick={() => navigate(`${ROUTE_PATHS.DOCUMENTS}/${document.id}/edit`)}
+                >
+                  Modifier
+                </Button>
+                <Button
+                  type="button"
+                  variant="danger"
+                  size="md"
+                  onClick={() => setIsDeleteOpen(true)}
+                >
+                  Supprimer
+                </Button>
+              </>
+            )}
           </div>
+
+          {/* Mapping academique (relations chargees par show) */}
+          <Card className="ax-card--padded">
+            <h3 style={{ marginTop: 0 }}>Contexte académique</h3>
+            {document.course ? (
+              <dl className="ax-definition-list">
+                <dt>Faculté</dt>
+                <dd>{document.course?.department?.faculty?.name || '—'}</dd>
+                <dt>Département</dt>
+                <dd>{document.course?.department?.name || '—'}</dd>
+                <dt>Niveau</dt>
+                <dd>{document.course?.level?.name || '—'}</dd>
+                <dt>Semestre</dt>
+                <dd>{semesterLabel(document.course) || document.course?.semester?.name || '—'}</dd>
+                <dt>Cours</dt>
+                <dd>
+                  {(document.course?.code ? `${document.course.code} — ` : '') + (document.course?.title || document.course?.name || '—')}{' '}
+                  <Link
+                    to={`${ROUTE_PATHS.DOCUMENTS}?course_id=${document.course.id}`}
+                    className="ax-link"
+                  >
+                    Voir les documents du cours
+                  </Link>
+                </dd>
+              </dl>
+            ) : (
+              <p className="ax-text--muted" style={{ margin: 0 }}>
+                Document non rattaché à un cours (course_id absent) — mapping académique indisponible.
+              </p>
+            )}
+          </Card>
 
           {/* Mapping academique + tags */}
           {tags.length > 0 && (
@@ -175,7 +223,7 @@ export default function DocumentDetailsPage() {
           {/* Metadonnees techniques */}
           <Card className="ax-card--padded">
             <h3 style={{ marginTop: 0 }}>Metadonnees</h3>
-            <DocumentMeta document={document} />
+            <DocumentMeta document={document} currentUser={user} />
           </Card>
         </>
       )}

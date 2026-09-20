@@ -48,7 +48,7 @@ export default function DocumentTable({ documents, onDownloaded }) {
                 <td className="ax-table__cell--actions">
                   <span style={{ display: 'inline-flex', gap: 'var(--ax-space-2)' }}>
                     <Badge variant={status.badge} size="sm">{status.label}</Badge>
-                    <DownloadButton documentId={doc.id} label="" onDownloaded={onDownloaded} />
+                    <DownloadButton documentId={doc.id} document={doc} label="" onDownloaded={onDownloaded} />
                   </span>
                 </td>
               </tr>

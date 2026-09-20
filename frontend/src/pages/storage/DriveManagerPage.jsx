@@ -21,13 +21,19 @@ import { Container, Button, Badge, LoadingSpinner } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
 import ConfirmModal from '../../components/common/ConfirmModal'
 import { useNotification } from '../../hooks/useNotification'
+import { useAuth } from '../../hooks/useAuth'
+import { hasAdminAccess } from '../../utils/admin'
 
 /**
  * Page de gestion des drives Google.
  * @returns {import('react').JSX.Element}
  */
 export default function DriveManagerPage() {
-  const notify = useNotification()
+  // Fonctions stables (useCallback) : evitent la boucle refetch -> render -> refetch.
+  const { error: notifyError, success: notifySuccess } = useNotification()
+  const { user } = useAuth()
+  // Gestion sensible : lecture seule pour les non-admins.
+  const isAdmin = hasAdminAccess(user)
   const [drives, setDrives] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [syncingId, setSyncingId] = useState(null)
@@ -37,9 +43,9 @@ export default function DriveManagerPage() {
     () =>
       GoogleDriveApi.list()
         .then((response) => setDrives(normalizeApiList(response)))
-        .catch(() => notify.error('Impossible de charger les drives.'))
+        .catch(() => notifyError('Impossible de charger les drives.'))
         .finally(() => setIsLoading(false)),
-    [notify],
+    [notifyError],
   )
 
   useEffect(() => {
@@ -50,14 +56,14 @@ export default function DriveManagerPage() {
     if (!defaultCandidateId) return
     try {
       await GoogleDriveApi.patch(defaultCandidateId, { is_default: true })
-      notify.success('Drive defini par defaut.')
+      notifySuccess('Drive defini par defaut.')
       await refresh()
     } catch {
-      notify.error('Echec de la mise a jour.')
+      notifyError('Echec de la mise a jour.')
     } finally {
       setDefaultCandidateId(null)
     }
-  }, [defaultCandidateId, notify, refresh])
+  }, [defaultCandidateId, notifyError, notifySuccess, refresh])
 
   const handlePriorityChange = useCallback(
     async (driveId, priority) => {
@@ -65,10 +71,10 @@ export default function DriveManagerPage() {
         await GoogleDriveApi.patch(driveId, { priority })
         await refresh()
       } catch {
-        notify.error('Echec du changement de priorite.')
+        notifyError('Echec du changement de priorite.')
       }
     },
-    [notify, refresh],
+    [notifyError, refresh],
   )
 
   const handleSync = useCallback(
@@ -76,28 +82,28 @@ export default function DriveManagerPage() {
       setSyncingId(driveId)
       try {
         await AutomationApi.synchronizeDrive(driveId)
-        notify.success('Synchronisation terminee.')
+        notifySuccess('Synchronisation terminee.')
         await refresh()
       } catch {
-        notify.error('Echec de la synchronisation.')
+        notifyError('Echec de la synchronisation.')
       } finally {
         setSyncingId(null)
       }
     },
-    [notify, refresh],
+    [notifyError, notifySuccess, refresh],
   )
 
   const handleToggleStatus = useCallback(
     async (driveId, nextStatus) => {
       try {
         await GoogleDriveApi.patch(driveId, { status: nextStatus })
-        notify.success(nextStatus ? 'Drive active.' : 'Drive desactive.')
+        notifySuccess(nextStatus ? 'Drive active.' : 'Drive desactive.')
         await refresh()
       } catch {
-        notify.error('Echec du changement de statut.')
+        notifyError('Echec du changement de statut.')
       }
     },
-    [notify, refresh],
+    [notifyError, notifySuccess, refresh],
   )
 
   const handleTestConnectivity = useCallback(
@@ -106,12 +112,12 @@ export default function DriveManagerPage() {
       try {
         await GoogleDriveApi.get(drive.id)
         const latencyMs = Math.round(performance.now() - startedAt)
-        notify.success(`Connectivite OK (${latencyMs} ms).`)
+        notifySuccess(`Connectivite OK (${latencyMs} ms).`)
       } catch {
-        notify.error('Drive injoignable.')
+        notifyError('Drive injoignable.')
       }
     },
-    [notify],
+    [notifyError, notifySuccess],
   )
 
   if (isLoading && drives.length === 0) {
@@ -138,13 +144,20 @@ export default function DriveManagerPage() {
     <Container>
       <PageHeader
         title="Gestion des drives Google"
-        subtitle="Priorites, drive par defaut, synchronisation et sante"
+        subtitle={isAdmin
+          ? 'Priorites, drive par defaut, synchronisation et sante'
+          : 'Liste en lecture seule — gestion réservée aux administrateurs'}
         actions={
           <Button variant="secondary" size="sm" onClick={() => refresh()} disabled={isLoading}>
             Actualiser
           </Button>
         }
       />
+      {!isAdmin && (
+        <p className="ax-text--muted ax-text--sm" style={{ marginBottom: 'var(--ax-space-4)' }}>
+          Les adresses email des drives sont masquées et les actions de gestion sont désactivées pour votre rôle.
+        </p>
+      )}
 
       {drives.length === 0 ? (
         <div className="ax-empty-state">
@@ -204,30 +217,36 @@ export default function DriveManagerPage() {
 
                   <div className="ax-drive-manager-card__priority">
                     <span className="ax-drive-manager-card__priority-label">Priorite</span>
-                    <div className="ax-drive-manager-card__priority-controls">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handlePriorityChange(drive.id, priority - 1)}
-                        disabled={priority <= 1}
-                        aria-label={`Monter la priorite de ${drive.name}`}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                          <path d="M10 15V5M6 9l4-4 4 4" />
-                        </svg>
-                      </Button>
-                      <span className="ax-drive-manager-card__priority-value">{priority}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handlePriorityChange(drive.id, priority + 1)}
-                        aria-label={`Descendre la priorite de ${drive.name}`}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                          <path d="M10 5v10M6 11l4 4 4-4" />
-                        </svg>
-                      </Button>
-                    </div>
+                    {isAdmin ? (
+                      <div className="ax-drive-manager-card__priority-controls">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handlePriorityChange(drive.id, priority - 1)}
+                          disabled={priority <= 1}
+                          aria-label={`Monter la priorite de ${drive.name}`}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <path d="M10 15V5M6 9l4-4 4 4" />
+                          </svg>
+                        </Button>
+                        <span className="ax-drive-manager-card__priority-value">{priority}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handlePriorityChange(drive.id, priority + 1)}
+                          aria-label={`Descendre la priorite de ${drive.name}`}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <path d="M10 5v10M6 11l4 4 4-4" />
+                          </svg>
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="ax-drive-manager-card__priority-value" aria-label={`Priorite ${priority}`}>
+                        {priority}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -262,7 +281,7 @@ export default function DriveManagerPage() {
                 </div>
 
                 <div className="ax-drive-manager-card__meta">
-                  <span>{drive.email || 'Email non renseigne'}</span>
+                  {isAdmin && <span>{drive.email || 'Email non renseigne'}</span>}
                   <span>
                     Derniere sync :
                     {' '}
@@ -273,37 +292,45 @@ export default function DriveManagerPage() {
                   <span>Envois : {drive.upload_count ?? 0}</span>
                 </div>
 
-                <div className="ax-drive-manager-card__actions">
-                  <Button
-                    variant={isDefault ? 'secondary' : 'outline'}
-                    size="sm"
-                    onClick={() => setDefaultCandidateId(drive.id)}
-                    disabled={isDefault}
-                  >
-                    {isDefault ? 'Par defaut' : 'Definir par defaut'}
-                  </Button>
+                {isAdmin ? (
+                  <div className="ax-drive-manager-card__actions">
+                    <Button
+                      variant={isDefault ? 'secondary' : 'outline'}
+                      size="sm"
+                      onClick={() => setDefaultCandidateId(drive.id)}
+                      disabled={isDefault}
+                    >
+                      {isDefault ? 'Par defaut' : 'Definir par defaut'}
+                    </Button>
 
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleSync(drive.id)}
-                    disabled={syncingId === drive.id}
-                  >
-                    {syncingId === drive.id ? 'Sync...' : 'Synchroniser'}
-                  </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleSync(drive.id)}
+                      disabled={syncingId === drive.id}
+                    >
+                      {syncingId === drive.id ? 'Sync...' : 'Synchroniser'}
+                    </Button>
 
-                  <Button variant="ghost" size="sm" onClick={() => handleTestConnectivity(drive)}>
-                    Tester la connexion
-                  </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleTestConnectivity(drive)}>
+                      Tester la connexion
+                    </Button>
 
-                  <Button
-                    variant={isActive ? 'ghost' : 'primary'}
-                    size="sm"
-                    onClick={() => handleToggleStatus(drive.id, !isActive)}
-                  >
-                    {isActive ? 'Desactiver' : 'Activer'}
-                  </Button>
-                </div>
+                    <Button
+                      variant={isActive ? 'ghost' : 'primary'}
+                      size="sm"
+                      onClick={() => handleToggleStatus(drive.id, !isActive)}
+                    >
+                      {isActive ? 'Desactiver' : 'Activer'}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="ax-drive-manager-card__actions">
+                    <Button variant="ghost" size="sm" onClick={() => handleTestConnectivity(drive)}>
+                      Tester la connexion
+                    </Button>
+                  </div>
+                )}
               </article>
             )
           })}

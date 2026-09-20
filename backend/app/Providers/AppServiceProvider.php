@@ -55,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(AutomationService::class);
         $this->app->singleton(UploadService::class);
         $this->app->singleton(AuthenticationService::class);
+        $this->app->singleton(SecondaryAIService::class);
     }
 
     /**

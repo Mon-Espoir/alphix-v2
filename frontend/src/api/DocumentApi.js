@@ -65,10 +65,21 @@ export const DocumentApi = {
   /**
    * Supprime un document par ID (authentifié).
    * @param {number|string} id - Identifiant du document.
-   * @returns {Promise<any>} Réponse vide (status 204).
+   * @returns {Promise<any>} Document supprimé.
    */
   delete(id) {
     return httpService.delete(`/documents/${id}`)
+  },
+
+  /**
+   * Classification manuelle d'un document en attente (fallback upload).
+   * Rattache le cours + le type choisis par l'étudiant (PATCH /documents/{id}/classify).
+   * @param {number|string} id - Identifiant du document.
+   * @param {{course_id: number, doc_type: string}} payload - Cours et type sélectionnés.
+   * @returns {Promise<any>} Document classifié.
+   */
+  classify(id, payload) {
+    return httpService.patch(`/documents/${id}/classify`, payload)
   },
 
   /**

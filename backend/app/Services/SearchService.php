@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Document;
 use App\Models\SearchQuery;
 use App\Repositories\SearchRepository;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Application service for search domain operations.
@@ -47,18 +46,6 @@ class SearchService
      */
     public function popularQueries(int $limit = 10): array
     {
-        return $this->searchRepository->all()
-            ->groupBy('query')
-            ->map(static function (Collection $items, string $query): array {
-                return [
-                    'query' => $query,
-                    'count' => $items->count(),
-                    'average_results' => round((float) $items->avg('results_count'), 2),
-                ];
-            })
-            ->sortByDesc('count')
-            ->take($limit)
-            ->values()
-            ->all();
+        return $this->searchRepository->popularQueries($limit);
     }
 }

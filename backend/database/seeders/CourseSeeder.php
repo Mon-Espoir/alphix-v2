@@ -21,7 +21,7 @@ class CourseSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function (): void {
-            $chimieId = Department::query()->where('code', 'CHM')->value('id');
+            $chimieId = Department::query()->where('code', 'CHI')->value('id') ?? Department::query()->where('code', 'CHM')->value('id');
             $informatiqueId = Department::query()->where('code', 'INF')->value('id');
             $biologieId = Department::query()->where('code', 'BIO')->value('id');
 

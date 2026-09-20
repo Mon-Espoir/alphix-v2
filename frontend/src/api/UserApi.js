@@ -97,4 +97,14 @@ export const UserApi = {
   getByRole(role, params) {
     return httpService.get(`/users/by-role/${role}`, { params })
   },
+
+  /**
+   * Réinitialise le mot de passe d'un utilisateur (admin).
+   * @param {number|string} id - Identifiant de l'utilisateur.
+   * @param {{password?: string}} [data] - Nouveau mot de passe (si absent, un temporaire est généré).
+   * @returns {Promise<any>} { data: { email, username, temporary_password } }.
+   */
+  resetPassword(id, data = {}) {
+    return httpService.post(`/users/${id}/reset-password`, data)
+  },
 }

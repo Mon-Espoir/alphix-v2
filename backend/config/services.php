@@ -35,4 +35,25 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | IA secondaire (recherche + reconnaissance de téléversements)
+    |--------------------------------------------------------------------------
+    | Endpoint compatible « chat completions » (OpenAI, DeepSeek, Ollama...).
+    | Réglé par l'admin via les paramètres (toggle ON/OFF + clé + modèle),
+    | avec repli sur les variables d'environnement ci-dessous.
+    | La recherche SQL reste la source de vérité : tout appel IA est
+    | non-bloquant (timeout court, repli silencieux si clé invalide/quota).
+    */
+
+    'secondary_ai' => [
+        // URL du service compatible OpenAI : https://api.openai.com/v1/chat/completions,
+        // https://api.deepseek.com/chat/completions, http://localhost:11434/v1/chat/completions (Ollama)
+        'endpoint' => env('SECONDARY_AI_URL', 'https://api.openai.com/v1/chat/completions'),
+        'key' => env('SECONDARY_AI_API_KEY', ''),
+        'model' => env('SECONDARY_AI_MODEL', 'gpt-4o-mini'),
+        'timeout' => (int) env('SECONDARY_AI_TIMEOUT', 4),
+        'max_suggestions' => (int) env('SECONDARY_AI_MAX_SUGGESTIONS', 10),
+    ],
+
 ];

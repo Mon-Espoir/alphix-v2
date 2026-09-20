@@ -1,0 +1,1276 @@
+{
+  "faculty": {
+    "code": "FSI",
+    "name": "Faculté des Sciences d'Ingénierie"
+  },
+  "department": {
+    "code": "EM",
+    "name": "Département d'Electro-Mécanique"
+  },
+  "levels": [
+    {
+      "level": "BAC I",
+      "option": "Tronc Commun (EM-GCE-AU)",
+      "semesters": [
+        {
+          "semester": 1,
+          "courses": [
+            {
+              "code": "BFSI1101",
+              "name": "Algèbre",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1102",
+              "name": "Analyse mathématique 1",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1103",
+              "name": "Géométrie analytique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1104",
+              "name": "Physique générale 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1105",
+              "name": "Electricité et magnétisme",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1106",
+              "name": "Chimie générale",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1107",
+              "name": "Anglais général",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1108",
+              "name": "Techniques d'expression écrite et de communication",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1109",
+              "name": "Informatique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1110",
+              "name": "Education à la citoyenneté",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 2,
+          "courses": [
+            {
+              "code": "BFSI1211",
+              "name": "Analyse Mathématique 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1212",
+              "name": "Trigonométrie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1213",
+              "name": "Probabilités et statistiques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1214",
+              "name": "Physique Générale 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1215",
+              "name": "Technologie des matériaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1216",
+              "name": "Statique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1217",
+              "name": "Géométrie descriptive",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1218",
+              "name": "Dessin industriel",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1219",
+              "name": "Initiation à la Recherche documentaire",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1220",
+              "name": "Langue chinoise",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1221",
+              "name": "Kiswahili",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC II",
+      "option": "Génie Mécanique et Énergétique",
+      "semesters": [
+        {
+          "semester": 3,
+          "courses": [
+            {
+              "code": "BGME2301",
+              "name": "Analyse Numérique et Modélisation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2302",
+              "name": "Modélisation et Simulation",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2303",
+              "name": "Métrologie Dimensionnelle",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2304",
+              "name": "Mesures électriques & électroniques",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2305",
+              "name": "Machines Electriques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2306",
+              "name": "Mécanique des fluides",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2307",
+              "name": "Mécanique rationnelle (Cinématique et dynamique)",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2308",
+              "name": "Résistance des matériaux 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2309",
+              "name": "Techniques d'assemblage 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 4,
+          "courses": [
+            {
+              "code": "BGME2410",
+              "name": "Résistance des matériaux 2",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2411",
+              "name": "Techniques d'assemblage 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2412",
+              "name": "Vibrations",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2413",
+              "name": "Turbomachines 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2414",
+              "name": "Thermodynamique technique",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2415",
+              "name": "Lectures des plans",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2416",
+              "name": "Dessin Industriel et DAO",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2417",
+              "name": "Anglais Technique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME2418",
+              "name": "Swahili",
+              "credits": 0,
+              "hours": 0,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "Génie Mécanique et Énergétique",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BGME3501",
+              "name": "Energies renouvelables",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3502",
+              "name": "Machines thermiques 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3503",
+              "name": "Ajustage Mécanique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3504",
+              "name": "Fabrication Mécanique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3505",
+              "name": "Organes des Machines 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3506",
+              "name": "Equipements motorisés",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3507",
+              "name": "Commandes et Contrôle Hydraulique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3508",
+              "name": "Asservissement et Régulation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BGME3609",
+              "name": "Etudes et Méthodes en fabrication mécanique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3610",
+              "name": "Technologie d'obtention et de réparation des pièces types",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3611",
+              "name": "Introduction aux méthodes des éléments finis",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3612",
+              "name": "Organes des Machines 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3613",
+              "name": "Machines thermiques 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3614",
+              "name": "Turbomachines 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3615",
+              "name": "Législation industrielle",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3616",
+              "name": "Santé et sécurité au travail",
+              "credits": 1,
+              "hours": 25,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3617",
+              "name": "Swahili",
+              "credits": 0,
+              "hours": 0,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3618",
+              "name": "Conception et réalisation d'un Projet technique 1",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME3619",
+              "name": "Cinématique et dynamique des Machines",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "Génie Mécanique et Énergétique",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BGME4701",
+              "name": "Technologie de l'automobile",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4702",
+              "name": "Climatisation et Réfrigération",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4703",
+              "name": "Acquisition des données (capteurs) Et instrumentation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4704",
+              "name": "Méthodologie à la recherche scientifique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4705",
+              "name": "Initiation à la Robotique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4706",
+              "name": "Acoustiques et vibrations Avancées",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4707",
+              "name": "Atelier de Mécanique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4708",
+              "name": "Machines Hydrauliques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4709",
+              "name": "Projet technique et efficacité énergétique",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4710",
+              "name": "Cours à option (aux choix) Langue Swahili, chinoise, Russe",
+              "credits": 0,
+              "hours": 0,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BGME4811",
+              "name": "Comptabilité Générale",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4812",
+              "name": "Ethique et Déontologie du métier",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4813",
+              "name": "Organisation et Gestion des Entreprises",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4814",
+              "name": "Entrepreneuriat",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4815",
+              "name": "Conception et réalisation d'un Projet Technique 2 (en groupe)",
+              "credits": 6,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4816",
+              "name": "Stage type technicien (en entreprise)",
+              "credits": 10,
+              "hours": 600,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGME4817",
+              "name": "Projet de Fin de Cycle (PFC)",
+              "credits": 6,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC II",
+      "option": "Génie Électrique",
+      "semesters": [
+        {
+          "semester": 3,
+          "courses": [
+            {
+              "code": "BGEL2301",
+              "name": "Analyse numérique et Modélisation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2302",
+              "name": "Modélisation et Simulation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2303",
+              "name": "Circuits électriques 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2304",
+              "name": "Appareillages électriques 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2305",
+              "name": "Electricité et Magnétisme 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2306",
+              "name": "Electronique de base",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2307",
+              "name": "Mécanique Rationnelle (Cinématique et Dynamique)",
+              "credits": 4,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2308",
+              "name": "Résistance des matériaux",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 4,
+          "courses": [
+            {
+              "code": "BGEL2409",
+              "name": "Machines électriques 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2410",
+              "name": "Mesures électriques 1",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2411",
+              "name": "Atelier d'Electricité 1",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2412",
+              "name": "Electromagnétisme et matériaux électrotechniques",
+              "credits": 3,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2413",
+              "name": "Electronique de puissance",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2414",
+              "name": "Techniques d'assemblage en Electricité",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2415",
+              "name": "Mesures électroniques",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2416",
+              "name": "Commande électropneumatique et hydraulique",
+              "credits": 4,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2417",
+              "name": "Anglais Technique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL2418",
+              "name": "Swahili",
+              "credits": 0,
+              "hours": 0,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "Génie Électrique",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BGEL3501",
+              "name": "Ondes électromagnétiques et matériaux",
+              "credits": 3,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3502",
+              "name": "Circuits électriques 2",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3503",
+              "name": "Appareillages Electriques 2",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3504",
+              "name": "Electronique Industrielle",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3505",
+              "name": "Installations électriques 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3506",
+              "name": "Mesures électriques 2",
+              "credits": 3,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3507",
+              "name": "Production de l'énergie électrique",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3508",
+              "name": "Atelier d'Electricité 2",
+              "credits": 5,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BGEL3609",
+              "name": "Installations Electriques 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3610",
+              "name": "Calcul, protection et réglage des réseaux Haute Tension 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3611",
+              "name": "Introduction aux méthodes des éléments finis",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3612",
+              "name": "Biomasse et Bioénergie",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3613",
+              "name": "Energies photovoltaïque et éolienne",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3614",
+              "name": "Entretien préventif des équipements électriques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3615",
+              "name": "Législation industrielle",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3616",
+              "name": "Santé et sécurité au travail",
+              "credits": 1,
+              "hours": 25,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3617",
+              "name": "Isolation et Surtension",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL3618",
+              "name": "Conception et Réalisation d'un projet technique 1",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "Génie Électrique",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BGEL4701",
+              "name": "Asservissement et régulation des machines",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4702",
+              "name": "Automatisme et Informatique Industrielle",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4703",
+              "name": "Acquisition des données (Capteurs) et instrumentation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4704",
+              "name": "Méthodologie à la Recherche Scientifique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4705",
+              "name": "Transport et distribution de l'énergie électrique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4706",
+              "name": "Calcul, protection et réglage des réseaux Haute Tension 2",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4707",
+              "name": "Machines électriques 2",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4708",
+              "name": "Projet technique et efficacité énergétique",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4709",
+              "name": "Langue Swahili",
+              "credits": 0,
+              "hours": 0,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4710",
+              "name": "Cours à option (aux choix) Langue chinoise, Russe…",
+              "credits": 0,
+              "hours": 0,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BGEL4811",
+              "name": "Comptabilité Générale",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4812",
+              "name": "Ethique et Déontologie du métier",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4813",
+              "name": "Organisation et Gestion des Entreprises",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4814",
+              "name": "Entrepreneuriat",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4815",
+              "name": "Conception et réalisation d'un Projet Technique 2 (en groupe)",
+              "credits": 6,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4816",
+              "name": "Stage type technicien (en entreprise)",
+              "credits": 10,
+              "hours": 600,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGEL4817",
+              "name": "Projet de Fin de Cycle (PFC)",
+              "credits": 6,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -57,6 +57,14 @@ export const ROUTE_PATHS = Object.freeze({
   ADMIN_LOGS: '/admin/logs',
   /** Administration - paramètres. */
   ADMIN_SETTINGS: '/admin/settings',
+  /** Plateforme d'automatisation. */
+  AUTOMATION: '/automation',
+  /** Espace Délégué (périmètre département). */
+  DELEGATE: '/delegate',
+  /** Favoris utilisateur (alias -> Mes Téléchargements). */
+  FAVORITES: '/favorites',
+  /** Mes téléchargements (téléchargés + favoris). */
+  DOWNLOADS: '/downloads',
 })
 
 /** Route de repli apres connexion. */

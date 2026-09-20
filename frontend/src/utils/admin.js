@@ -7,7 +7,7 @@
  * collections réellement renvoyées par les APIs.
  */
 
-import { ADMIN_ROLES } from '../constants/admin'
+import { ADMIN_ROLES, DELEGATE_ROLES } from '../constants/admin'
 
 /**
  * Vérifie si un rôle dispose du privilège administrateur.
@@ -29,6 +29,52 @@ export function hasAdminAccess(user) {
   if (!user || typeof user !== 'object') return false
   if (isAdminRole(user.role)) return true
   if (Array.isArray(user.roles)) return user.roles.some((r) => isAdminRole(r))
+  return false
+}
+
+/**
+ * Vérifie si un rôle est délégué (Espace Délégué, périmètre département).
+ * @param {string|null|undefined} role - Rôle à tester.
+ * @returns {boolean}
+ */
+export function isDelegateRole(role) {
+  if (!role || typeof role !== 'string') return false
+  return DELEGATE_ROLES.includes(role.trim().toLowerCase())
+}
+
+/**
+ * Vérifie si un utilisateur a accès à l'Espace Délégué.
+ * Tolère les schémas `user.role` ou `user.roles[]`.
+ * @param {object|null} user - Objet utilisateur.
+ * @returns {boolean}
+ */
+export function hasDelegateAccess(user) {
+  if (!user || typeof user !== 'object') return false
+  if (isDelegateRole(user.role)) return true
+  if (Array.isArray(user.roles)) return user.roles.some((r) => isDelegateRole(r))
+  return false
+}
+
+/**
+ * Vérifie si un rôle est super administrateur (créateur).
+ * @param {string|null|undefined} role - Rôle à tester.
+ * @returns {boolean}
+ */
+export function isSuperAdminRole(role) {
+  if (!role || typeof role !== 'string') return false
+  return ['super_admin', 'superadmin'].includes(role.trim().toLowerCase())
+}
+
+/**
+ * Vérifie si un utilisateur est super administrateur.
+ * Tolère les schémas `user.role` ou `user.roles[]`.
+ * @param {object|null} user - Objet utilisateur.
+ * @returns {boolean}
+ */
+export function hasSuperAdminAccess(user) {
+  if (!user || typeof user !== 'object') return false
+  if (isSuperAdminRole(user.role)) return true
+  if (Array.isArray(user.roles)) return user.roles.some((r) => isSuperAdminRole(r))
   return false
 }
 
@@ -157,6 +203,15 @@ export function buildAdminDashboardStats(input, now = new Date()) {
   const coursesTotal = Array.isArray(input.courses) ? input.courses.length : 0
   const storage = computeStorageStats(input.drives)
 
+  const hasDrives = Array.isArray(input.drives) && input.drives.length > 0
+  const healthFromDrives = !hasDrives
+    ? null
+    : input.drives.some((d) => d.health_status === 'critical')
+      ? 'critical'
+      : input.drives.some((d) => d.health_status === 'warning')
+        ? 'warning'
+        : 'healthy'
+
   return {
     totalUsers: users.total,
     activeUsers: users.active,
@@ -173,8 +228,8 @@ export function buildAdminDashboardStats(input, now = new Date()) {
     storageLimitBytes: storage.totalLimit,
     pendingValidations: docs.pending,
     failedUploads: docs.failed,
-    serverHealth: 'healthy',
-    appVersion: '2.0.0',
+    serverHealth: healthFromDrives,
+    appVersion: null,
   }
 }
 
@@ -189,7 +244,7 @@ export function filterUsers(users, { query = '', status = 'all', role = '' } = {
   const q = query.trim().toLowerCase()
   if (q) {
     list = list.filter((u) => {
-      const hay = `${u.name || ''} ${u.email || ''} ${u.role || ''}`.toLowerCase()
+      const hay = `${u.name || ''} ${u.username || ''} ${u.email || ''} ${u.role || ''}`.toLowerCase()
       return hay.includes(q)
     })
   }

@@ -1,0 +1,1961 @@
+{
+  "faculty": {
+    "code": "FSI",
+    "name": "Faculté des Sciences d'Ingénierie"
+  },
+  "department": {
+    "code": "TIC",
+    "name": "Département des Technologies de l'Information et de la Communication"
+  },
+  "levels": [
+    {
+      "level": "BAC I",
+      "option": "Tronc Commun",
+      "semesters": [
+        {
+          "semester": 1,
+          "courses": [
+            {
+              "code": "BTIC1101",
+              "name": "Physique générale",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1102",
+              "name": "Electrostatique/ électrodynamique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1103",
+              "name": "Algèbre linéaire",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1104",
+              "name": "Analyse mathématique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1105",
+              "name": "Logique mathématique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1106",
+              "name": "Calcul vectoriel et matriciel",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1107",
+              "name": "Analyse numérique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1108",
+              "name": "Electronique de base",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1109",
+              "name": "Circuits électriques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1110",
+              "name": "Anglais général",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1111",
+              "name": "Technique d'expression écrite et de communication",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1112",
+              "name": "Education à la citoyenneté",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 2,
+          "courses": [
+            {
+              "code": "BTIC1213",
+              "name": "Electronique analogique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1214",
+              "name": "Traitement du Signal Analogique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1215",
+              "name": "Architecture des ordinateurs",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1216",
+              "name": "Assembleur",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1217",
+              "name": "Algorithmique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1218",
+              "name": "Programmation C",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1219",
+              "name": "Mathématique discrètes",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1220",
+              "name": "Probabilités & Statistique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1221",
+              "name": "Kiswahili",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1222",
+              "name": "Langue chinoise",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BTIC1223",
+              "name": "Introduction à la recherche",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC II",
+      "option": "Commun Génie Informatique et Génie Logiciel",
+      "semesters": [
+        {
+          "semester": 3,
+          "courses": [
+            {
+              "code": "BGLI2301",
+              "name": "Recherche opérationnel",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2302",
+              "name": "Théorie des automates",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2303",
+              "name": "Traitement du signal numérique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2304",
+              "name": "Programmation Web",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2305",
+              "name": "Systèmes d'exploitation Windows et Linux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2306",
+              "name": "Programmation visuelle",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2307",
+              "name": "Structure des données Linéaires",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2308",
+              "name": "Théorie des Bases de données",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2309",
+              "name": "Ingénierie des logiciels",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2310",
+              "name": "Introduction aux Réseaux",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2311",
+              "name": "Design des Réseaux Informatiques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 4,
+          "courses": [
+            {
+              "code": "BGLI2412",
+              "name": "Structure de Données Non Linéaires",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2413",
+              "name": "Ingénierie des Bases de Données",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2414",
+              "name": "Administration de bases de données",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2415",
+              "name": "Programmation orienté objet C++ /C#",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2416",
+              "name": "Langage Java",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2417",
+              "name": "Microcontrôleurs",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2418",
+              "name": "Automates programmables",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2419",
+              "name": "Microprocesseurs",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2420",
+              "name": "Kiswahili",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLI2420",
+              "name": "Anglais technique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "Génie Informatique",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BGIN3501",
+              "name": "Systèmes parallèles",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3502",
+              "name": "Systèmes répartis",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3503",
+              "name": "Ergonomie",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3504",
+              "name": "Technologies Cognitives",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3505",
+              "name": "Réseaux WAN et Internet",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3506",
+              "name": "Réseaux IEEE 802.X",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3507",
+              "name": "Programmation en Java",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3508",
+              "name": "Programmation des services Réseaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3509",
+              "name": "Technologies et conception des systèmes embarqués",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3510",
+              "name": "Développement des applications des systèmes embarqués",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BGIN3611",
+              "name": "Technologies Multimédias",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3612",
+              "name": "Traitement des Signaux multimédias",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3613",
+              "name": "Programmation des réseaux Multimédias",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3614",
+              "name": "Sécurité des Réseaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3615",
+              "name": "Cryptologie",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3616",
+              "name": "Cybersécurité",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3617",
+              "name": "Compilation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3618",
+              "name": "Cloud Computing",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3619",
+              "name": "Marketing",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3620",
+              "name": "Entrepreneuriat",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3621",
+              "name": "Introduction à la Comptabilité",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN3622",
+              "name": "Ethique et déontologie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "Génie Informatique",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BGIN4701",
+              "name": "Intelligence artificielle",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4702",
+              "name": "Machine Learning",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4703",
+              "name": "Maintenance des systèmes",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4704",
+              "name": "Audit informatique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4705",
+              "name": "Fiabilité des systèmes",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4706",
+              "name": "Applications Web",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4707",
+              "name": "E-commerce",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4708",
+              "name": "Robotique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4709",
+              "name": "Test et simulation de systèmes",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BGIN4810",
+              "name": "Projet informatique",
+              "credits": 10,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGIN4811",
+              "name": "Stage",
+              "credits": 20,
+              "hours": 300,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "Génie Logiciel",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BGLO3501",
+              "name": "Ingénierie de systèmes avec MERISE",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3502",
+              "name": "Ingénierie de systèmes avec UML",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3503",
+              "name": "Ergonomie",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3504",
+              "name": "Technologies Cognitives",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3505",
+              "name": "Traitement d'images",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3506",
+              "name": "Codage et compression",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3507",
+              "name": "Réseaux WAN et Internet",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3508",
+              "name": "Réseaux IEEE 802.X",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3509",
+              "name": "Technologies et conception des systèmes embarqués",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3510",
+              "name": "Développement des applications des systèmes embarqués",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BGLO3611",
+              "name": "Théorie et méthodes de prise de décision",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3612",
+              "name": "Entrepôt de données",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3613",
+              "name": "Data mining",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3614",
+              "name": "Systèmes parallèles",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3615",
+              "name": "Systèmes répartis",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3616",
+              "name": "Programmation en Java mobile",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3617",
+              "name": "Programmation événementielle",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3618",
+              "name": "Marketing",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3619",
+              "name": "Entrepreneuriat",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3620",
+              "name": "Introduction à la Comptabilité",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO3621",
+              "name": "Ethique et déontologie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "Génie Logiciel",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BGLO4701",
+              "name": "Modèles de conception et de développement de logiciel",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4702",
+              "name": "Technologies de programmation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4703",
+              "name": "Etude comparative de langages de programmation",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4704",
+              "name": "Tests Logiciels",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4705",
+              "name": "Maintenance logicielle",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4706",
+              "name": "Audit informatique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4707",
+              "name": "Intelligence artificielle",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4708",
+              "name": "Machine Learning",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4709",
+              "name": "Systèmes multi-agents",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4710",
+              "name": "Services Web",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BGLO4811",
+              "name": "Projet informatique",
+              "credits": 10,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGLO4812",
+              "name": "Stage",
+              "credits": 20,
+              "hours": 300,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC II",
+      "option": "Systèmes Embarqués et Réseaux & Télécommunication",
+      "semesters": [
+        {
+          "semester": 3,
+          "courses": [
+            {
+              "code": "BSER2301",
+              "name": "Recherche opérationnelle",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2302",
+              "name": "Théorie des automates",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2303",
+              "name": "Traitement du signal numérique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2304",
+              "name": "Programmation Web",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2305",
+              "name": "Systèmes d'exploitation Windows et Linux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2306",
+              "name": "Bases de données",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2307",
+              "name": "Electronique numérique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2308",
+              "name": "Systèmes de communications",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2309",
+              "name": "Introduction aux Réseaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2310",
+              "name": "Design des réseaux informatiques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 4,
+          "courses": [
+            {
+              "code": "BSER2411",
+              "name": "Réseaux mobiles",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2412",
+              "name": "Propagation des ondes électromagnétiques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2413",
+              "name": "Antennes et hyperfréquence",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2414",
+              "name": "Programmation orientée objet C++/C#",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2415",
+              "name": "Langage Java",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2416",
+              "name": "Microprocesseurs",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2417",
+              "name": "Microcontrôleurs",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2418",
+              "name": "Automates programmables",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2419",
+              "name": "Kiswahili",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BSER2420",
+              "name": "Anglais technique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "Réseaux & Télécommunications",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BGRT3501",
+              "name": "Réseaux WAN et Internet",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3502",
+              "name": "Programmation des services réseaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3503",
+              "name": "Réseaux IEEE 802.X",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3504",
+              "name": "Théorie de l'Information",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3505",
+              "name": "Ergonomie",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3506",
+              "name": "Technologies et conception des systèmes embarqués",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3507",
+              "name": "Développement des applications des systèmes embarqués",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3508",
+              "name": "Systèmes de commutation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3509",
+              "name": "Communications numériques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3510",
+              "name": "Réseaux de transmission numérique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BGRT3611",
+              "name": "Technologies Multimédias",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3612",
+              "name": "Traitement des signaux multimédias",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3613",
+              "name": "Programmation des réseaux Multimédias",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3614",
+              "name": "Sécurité des Réseaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3615",
+              "name": "Cryptologie",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3616",
+              "name": "Cybersécurité",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3617",
+              "name": "Développement des applications mobiles",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3618",
+              "name": "Systèmes d'exploitation mobiles",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3619",
+              "name": "Marketing",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3620",
+              "name": "Entrepreneuriat",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3621",
+              "name": "Introduction à la Comptabilité",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT3622",
+              "name": "Ethique et déontologie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "Réseaux & Télécommunications",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BGRT4701",
+              "name": "Réseaux des données mobiles",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4702",
+              "name": "Architecture des réseaux mobiles avancés",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4703",
+              "name": "Ingénierie Radio &Télévision",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4704",
+              "name": "Faisceaux Hertziens",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4705",
+              "name": "Systèmes et Transmission optique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4706",
+              "name": "Téléphonie sur IP",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4707",
+              "name": "Applications Web",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4708",
+              "name": "Circuits programmables",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4709",
+              "name": "Plateformes de Traitement des signaux numérique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4710",
+              "name": "Radiocommunications",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4711",
+              "name": "Instrumentation et Capteurs",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BGRT4812",
+              "name": "Projet Réseaux et Télécommunications",
+              "credits": 10,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGRT4813",
+              "name": "Stage",
+              "credits": 20,
+              "hours": 300,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "Systèmes Embarqués",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BGSE3501",
+              "name": "Technologies Cognitives",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3502",
+              "name": "Ergonomie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3503",
+              "name": "Internet des Objets",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3504",
+              "name": "Programmation des services Réseaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3505",
+              "name": "Réseaux IEEE 802.X",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3506",
+              "name": "Physique des semi-conducteurs et Circuits Intégrés",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3507",
+              "name": "Technologies et conception de systèmes embarqués",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3508",
+              "name": "Développement des applications des systèmes embarqués",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3509",
+              "name": "Langages machines",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3510",
+              "name": "Systèmes parallèles",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BGSE3611",
+              "name": "Traitement et Technologies des Signaux multimédias",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3612",
+              "name": "Programmation des réseaux Multimédias",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3613",
+              "name": "Sécurité des Réseaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3614",
+              "name": "Cryptologie",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3615",
+              "name": "Cybersécurité",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3616",
+              "name": "Modélisation Mixte",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3617",
+              "name": "Systèmes Temps Réel Embarqués",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3618",
+              "name": "Marketing",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3619",
+              "name": "Entrepreneuriat",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3620",
+              "name": "Introduction à la Comptabilité",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE3621",
+              "name": "Ethique et déontologie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "Systèmes Embarqués",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BGSE4701",
+              "name": "Machine Learning",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4702",
+              "name": "Mécatronique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4703",
+              "name": "Electronique RF et HF",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4704",
+              "name": "Programmation des puces multiprocesseurs",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4705",
+              "name": "Régulation des systèmes embarqués",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4706",
+              "name": "Fiabilité des systèmes",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4707",
+              "name": "Plateformes de traitement des signaux numériques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4708",
+              "name": "Robotique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4709",
+              "name": "Optimisation de codes",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BGSE4810",
+              "name": "Projet systèmes embarqués",
+              "credits": 10,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BGSE4811",
+              "name": "Stage",
+              "credits": 20,
+              "hours": 300,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

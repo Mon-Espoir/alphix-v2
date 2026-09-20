@@ -7,7 +7,10 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { UserApi } from '../../api/UserApi'
-import { normalizeApiList } from '../../utils/academic'
+import { DelegateApi } from '../../api/DelegateApi'
+import { DepartmentApi } from '../../api/DepartmentApi'
+import { LevelApi } from '../../api/LevelApi'
+import { normalizeApiList, toSelectOptions } from '../../utils/academic'
 import { filterUsers, paginate } from '../../utils/admin'
 import { ROLE_LABELS, ROLE_BADGE_VARIANT } from '../../constants/admin'
 import PageHeader from '../../components/common/PageHeader'
@@ -29,6 +32,17 @@ export default function AdminUsersPage() {
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState(null)
   const [actionTarget, setActionTarget] = useState(null)
+  const [revokeTarget, setRevokeTarget] = useState(null)
+  const [nominateTarget, setNominateTarget] = useState(null)
+  const [resetTarget, setResetTarget] = useState(null)
+  const [resetPassword, setResetPassword] = useState('')
+  const [resetPasswordConfirm, setResetPasswordConfirm] = useState('')
+  const [resetErrors, setResetErrors] = useState({})
+  const [isResetting, setIsResetting] = useState(false)
+  const [departments, setDepartments] = useState([])
+  const [levels, setLevels] = useState([])
+  const [nominateDeptId, setNominateDeptId] = useState('')
+  const [nominateLevelId, setNominateLevelId] = useState('')
   const notify = useNotification()
 
   const load = useCallback(async (signal) => {
@@ -70,6 +84,108 @@ export default function AdminUsersPage() {
     }
   }, [actionTarget, notify])
 
+  const handleRevoke = useCallback(async () => {
+    if (!revokeTarget) return
+    try {
+      await DelegateApi.revoke(revokeTarget.id)
+      setUsers((prev) => prev.map((u) => (u.id === revokeTarget.id ? { ...u, role: 'student' } : u)))
+      notify.success('Délégué révoqué (rôle étudiant).')
+    } catch (err) {
+      notify.error(err?.message || 'Échec de la révocation.')
+    } finally {
+      setRevokeTarget(null)
+    }
+  }, [revokeTarget, notify])
+
+  const openResetPassword = useCallback((row) => {
+    setResetTarget(row)
+    setResetPassword('')
+    setResetPasswordConfirm('')
+    setResetErrors({})
+  }, [])
+
+  const handleResetPassword = useCallback(async () => {
+    if (!resetTarget) return
+    setResetErrors({})
+
+    // Laissez vide => mot de passe temporaire généré côté serveur.
+    const hasPassword = resetPassword.trim().length > 0
+
+    if (hasPassword && resetPassword.length < 8) {
+      setResetErrors((p) => ({ ...p, password: ['Le mot de passe doit contenir au moins 8 caractères.'] }))
+      return
+    }
+    if (hasPassword && resetPassword !== resetPasswordConfirm) {
+      setResetErrors((p) => ({ ...p, password_confirmation: ['La confirmation ne correspond pas.'] }))
+      return
+    }
+
+    setIsResetting(true)
+    try {
+      const res = await UserApi.resetPassword(resetTarget.id, hasPassword
+        ? { password: resetPassword, password_confirmation: resetPasswordConfirm }
+        : {})
+      const temporary = res?.data?.temporary_password
+      notify.success(
+        temporary
+          ? `Mot de passe temporaire généré pour ${resetTarget.email || resetTarget.name} : ${temporary}`
+          : `Mot de passe réinitialisé pour ${resetTarget.email || resetTarget.name}.`,
+      )
+      setResetTarget(null)
+      setResetPassword('')
+      setResetPasswordConfirm('')
+    } catch (err) {
+      if (err?.errors) setResetErrors(err.errors)
+      else notify.error(err?.message || 'Échec de la réinitialisation du mot de passe.')
+    } finally {
+      setIsResetting(false)
+    }
+  }, [resetTarget, resetPassword, resetPasswordConfirm, notify])
+
+  const openNominate = useCallback((row) => {
+    setNominateTarget(row)
+    setNominateDeptId(row._raw?.department_id != null ? String(row._raw.department_id) : '')
+    setNominateLevelId(row._raw?.level_id != null ? String(row._raw.level_id) : '')
+    DepartmentApi.list().then(
+      (res) => setDepartments(normalizeApiList(res)),
+      () => setDepartments([]),
+    )
+    LevelApi.list().then(
+      (res) => setLevels(normalizeApiList(res)),
+      () => setLevels([]),
+    )
+  }, [])
+
+  const handleNominate = useCallback(async () => {
+    if (!nominateTarget) return
+    if (!nominateLevelId) {
+      notify.warning('Sélectionnez la classe (niveau) du délégué.')
+      return
+    }
+    try {
+      await DelegateApi.promote({
+        user_id: nominateTarget.id,
+        ...(nominateDeptId ? { department_id: Number(nominateDeptId) } : {}),
+        level_id: Number(nominateLevelId),
+      })
+      setUsers((prev) => prev.map((u) => (u.id === nominateTarget.id
+        ? {
+          ...u,
+          role: 'delegate',
+          department_id: nominateDeptId ? Number(nominateDeptId) : u.department_id,
+          level_id: Number(nominateLevelId),
+        }
+        : u)))
+      notify.success(`Délégué nommé : ${nominateTarget.email || nominateTarget.name}.`)
+    } catch (err) {
+      notify.error(err?.message || 'Échec de la nomination.')
+    } finally {
+      setNominateTarget(null)
+      setNominateDeptId('')
+      setNominateLevelId('')
+    }
+  }, [nominateTarget, nominateDeptId, nominateLevelId, notify])
+
   if (loading) return <LoadingScreen label="Chargement des utilisateurs…" />
   if (error) {
     return (
@@ -94,17 +210,27 @@ export default function AdminUsersPage() {
     { key: 'last_login_at', label: 'Dernière connexion', render: (v) => (v ? new Date(v).toLocaleDateString('fr-FR') : '—') },
     {
       key: 'actions', label: 'Actions',
-      render: (_, row) => (
-        <span className="ax-admin-row-actions">
-          <Button variant="ghost" size="sm" onClick={() => setSelected(row)}>Profil</Button>
-          <Button variant={row.status ? 'ghost' : 'primary'} size="sm" onClick={() => setActionTarget(row)}>{row.status ? 'Désactiver' : 'Activer'}</Button>
-        </span>
-      ),
+      render: (_, row) => {
+        const role = String(row.role || '').toLowerCase()
+        return (
+          <span className="ax-admin-row-actions">
+            <Button variant="ghost" size="sm" onClick={() => setSelected(row)}>Profil</Button>
+            <Button variant={row.status ? 'ghost' : 'primary'} size="sm" onClick={() => setActionTarget(row)}>{row.status ? 'Désactiver' : 'Activer'}</Button>
+            <Button variant="ghost" size="sm" onClick={() => openResetPassword(row)}>Réinitialiser le mot de passe</Button>
+            {role === 'delegate' && (
+              <Button variant="danger" size="sm" onClick={() => setRevokeTarget(row)}>Révoquer</Button>
+            )}
+            {(role === 'student' || role === 'teacher') && (
+              <Button variant="primary" size="sm" onClick={() => openNominate(row)}>Nommer</Button>
+            )}
+          </span>
+        )
+      },
     },
   ]
 
   const rows = paginated.items.map((u) => ({
-    key: u.id, name: u.name, email: u.email, role: u.role, status: u.status, last_login_at: u.last_login_at, actions: null, _raw: u,
+    key: u.id, id: u.id, name: u.name, email: u.email, role: u.role, status: u.status, last_login_at: u.last_login_at, actions: null, _raw: u,
   }))
 
   return (
@@ -126,6 +252,7 @@ export default function AdminUsersPage() {
           <select className="ax-input" value={role} onChange={(e) => { setRole(e.target.value); setPage(1) }}>
             <option value="">Tous</option>
             <option value="admin">Admin</option>
+            <option value="delegate">Délégué</option>
             <option value="student">Étudiant</option>
             <option value="teacher">Enseignant</option>
           </select>
@@ -139,6 +266,7 @@ export default function AdminUsersPage() {
           <div className="ax-modal" role="dialog" aria-modal="true" aria-label={`Profil de ${selected.name}`} onClick={(e) => e.stopPropagation()}>
             <h2 className="ax-modal__title">{selected.name}</h2>
             <dl className="ax-definition-list">
+              <dt>Nom d&apos;utilisateur</dt><dd>{selected.username || '—'}</dd>
               <dt>Email</dt><dd>{selected.email}</dd>
               <dt>Rôle</dt><dd>{ROLE_LABELS[selected.role] || selected.role}</dd>
               <dt>Statut</dt><dd>{selected.status ? 'Actif' : 'Inactif'}</dd>
@@ -159,6 +287,111 @@ export default function AdminUsersPage() {
         onConfirm={handleToggle}
         onCancel={() => setActionTarget(null)}
       />
+
+      <ConfirmModal
+        open={Boolean(revokeTarget)}
+        title="Révoquer le délégué"
+        message={revokeTarget ? `Retirer le rôle délégué à ${revokeTarget.name} (retour étudiant) ?` : ''}
+        confirmLabel="Révoquer"
+        variant="danger"
+        onConfirm={handleRevoke}
+        onCancel={() => setRevokeTarget(null)}
+      />
+
+      {nominateTarget && (
+        <div className="ax-modal__overlay" role="presentation" onClick={() => setNominateTarget(null)}>
+          <div
+            className="ax-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Nommer délégué : ${nominateTarget.name}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="ax-modal__title">Nommer un délégué</h2>
+            <p className="ax-modal__message">
+              {nominateTarget.name} ({nominateTarget.email}) deviendra délégué de son département et de sa classe.
+            </p>
+            <label className="ax-field">
+              <span className="ax-field__label">Département</span>
+              <select
+                className="ax-input"
+                value={nominateDeptId}
+                onChange={(e) => setNominateDeptId(e.target.value)}
+                aria-label="Département du délégué"
+              >
+                <option value="">Conserver celui du compte…</option>
+                {toSelectOptions(departments).map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            <label className="ax-field">
+              <span className="ax-field__label">Classe (niveau) <span className="ax-form-group__required">*</span></span>
+              <select
+                className="ax-input"
+                value={nominateLevelId}
+                onChange={(e) => setNominateLevelId(e.target.value)}
+                aria-label="Classe (niveau) du délégué"
+                required
+              >
+                <option value="">BAC 1, BAC 2, BAC 3…</option>
+                {toSelectOptions(levels).map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+            <div className="ax-modal__actions">
+              <Button variant="ghost" size="sm" onClick={() => setNominateTarget(null)}>Annuler</Button>
+              <Button variant="primary" size="sm" onClick={handleNominate}>Nommer délégué</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {resetTarget && (
+        <div className="ax-modal__overlay" role="presentation" onClick={() => setResetTarget(null)}>
+          <div
+            className="ax-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Réinitialiser le mot de passe : ${resetTarget.name}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="ax-modal__title">Réinitialiser le mot de passe</h2>
+            <p className="ax-modal__message">
+              Saisissez un nouveau mot de passe pour <strong>{resetTarget.email || resetTarget.name}</strong>.
+            </p>
+            <label className="ax-field">
+              <span className="ax-field__label">Nouveau mot de passe</span>
+              <input
+                type="password"
+                className={`ax-input ${resetErrors.password ? 'ax-form-group__input--error' : ''}`}
+                placeholder="8 caractères minimum"
+                value={resetPassword}
+                onChange={(e) => { setResetPassword(e.target.value); setResetErrors((p) => { const n = { ...p }; delete n.password; return n }) }}
+                aria-label="Nouveau mot de passe"
+              />
+              {resetErrors.password && <span className="ax-form-group__error">{resetErrors.password[0]}</span>}
+            </label>
+            <label className="ax-field">
+              <span className="ax-field__label">Confirmer le mot de passe</span>
+              <input
+                type="password"
+                className={`ax-input ${resetErrors.password_confirmation ? 'ax-form-group__input--error' : ''}`}
+                placeholder="Répétez le nouveau mot de passe"
+                value={resetPasswordConfirm}
+                onChange={(e) => { setResetPasswordConfirm(e.target.value); setResetErrors((p) => { const n = { ...p }; delete n.password_confirmation; return n }) }}
+                aria-label="Confirmation du nouveau mot de passe"
+              />
+              {resetErrors.password_confirmation && <span className="ax-form-group__error">{resetErrors.password_confirmation[0]}</span>}
+            </label>
+            <div className="ax-modal__actions">
+              <Button variant="ghost" size="sm" onClick={() => setResetTarget(null)} disabled={isResetting}>Annuler</Button>
+              <Button variant="primary" size="sm" onClick={handleResetPassword} loading={isResetting}>Réinitialiser le mot de passe</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

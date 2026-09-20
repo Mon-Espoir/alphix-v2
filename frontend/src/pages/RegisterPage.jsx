@@ -18,6 +18,7 @@ export default function RegisterPage() {
   const { register, loading } = useAuth()
   const navigate = useNavigate()
   const [name, setName] = useState('')
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
@@ -32,7 +33,8 @@ export default function RegisterPage() {
     try {
       await register({
         name,
-        email,
+        username,
+        ...(email.trim() ? { email: email.trim() } : {}),
         password,
         password_confirmation: passwordConfirmation,
       })
@@ -87,7 +89,25 @@ export default function RegisterPage() {
           </div>
 
           <div className="ax-form-group">
-            <label className="ax-form-group__label" htmlFor="reg-email">Email</label>
+            <label className="ax-form-group__label" htmlFor="reg-username">Nom d&apos;utilisateur</label>
+            <input
+              id="reg-username"
+              className={`ax-form-group__input ${errors.username ? 'ax-form-group__input--error' : ''}`}
+              type="text"
+              placeholder="jean.n"
+              value={username}
+              onChange={(e) => { setUsername(e.target.value); clearFieldError('username') }}
+              required
+              minLength={3}
+              maxLength={50}
+              autoComplete="username"
+            />
+            <span className="ax-form-group__hint">Lettres minuscules, chiffres et . _ - (pas d&apos;espaces).</span>
+            {errors.username && <span className="ax-form-group__error">{errors.username[0]}</span>}
+          </div>
+
+          <div className="ax-form-group">
+            <label className="ax-form-group__label" htmlFor="reg-email">Email <span className="ax-form-group__hint">(facultatif)</span></label>
             <input
               id="reg-email"
               className={`ax-form-group__input ${errors.email ? 'ax-form-group__input--error' : ''}`}
@@ -95,9 +115,9 @@ export default function RegisterPage() {
               placeholder="votre@email.com"
               value={email}
               onChange={(e) => { setEmail(e.target.value); clearFieldError('email') }}
-              required
               autoComplete="email"
             />
+            <span className="ax-form-group__hint">Personnalisez votre email — connexion possible avec votre nom d&apos;utilisateur.</span>
             {errors.email && <span className="ax-form-group__error">{errors.email[0]}</span>}
           </div>
 

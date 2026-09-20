@@ -29,9 +29,17 @@ class UpdateUserRequest extends FormRequest
 
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'email' => [
+            'username' => [
                 'sometimes',
                 'required',
+                'string',
+                'min:3',
+                'max:50',
+                'regex:/^[a-zA-Z0-9._-]+$/',
+                Rule::unique('users', 'username')->ignore($userId),
+            ],
+            'email' => [
+                'nullable',
                 'string',
                 'email',
                 'max:255',
@@ -42,7 +50,7 @@ class UpdateUserRequest extends FormRequest
             'role' => [
                 'sometimes',
                 'string',
-                Rule::in(['student', 'teacher', 'contributor', 'moderator', 'administrator', 'super_admin']),
+                Rule::in(['student', 'teacher', 'contributor', 'moderator', 'administrator', 'super_admin', 'delegate']),
             ],
             'faculty_id' => ['nullable', 'integer', 'exists:faculties,id'],
             'department_id' => ['nullable', 'integer', 'exists:departments,id'],
@@ -63,9 +71,13 @@ class UpdateUserRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'username.required' => 'Le nom d\'utilisateur est obligatoire.',
+            'username.min' => 'Le nom d\'utilisateur doit contenir au moins :min caractères.',
+            'username.max' => 'Le nom d\'utilisateur ne peut pas dépasser :max caractères.',
+            'username.regex' => 'Le nom d\'utilisateur ne peut contenir que des lettres, chiffres, points, tirets et underscores.',
+            'username.unique' => 'Ce nom d\'utilisateur est déjà pris.',
             'name.required' => 'Le nom est obligatoire.',
             'name.max' => 'Le nom ne peut pas dépasser :max caractères.',
-            'email.required' => 'L\'adresse e-mail est obligatoire.',
             'email.email' => 'L\'adresse e-mail n\'est pas valide.',
             'email.unique' => 'Cette adresse e-mail est déjà utilisée.',
             'email.max' => 'L\'adresse e-mail ne peut pas dépasser :max caractères.',
@@ -93,6 +105,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => 'nom',
+            'username' => 'nom d\'utilisateur',
             'email' => 'adresse e-mail',
             'phone' => 'téléphone',
             'password' => 'mot de passe',

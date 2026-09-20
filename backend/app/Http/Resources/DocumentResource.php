@@ -24,6 +24,8 @@ class DocumentResource extends JsonResource
         return [
             'id' => $this->id,
             'uuid' => $this->uuid,
+            'course_id' => $this->course_id,
+            'google_drive_id' => $this->google_drive_id,
             'course' => $this->whenLoaded(
                 'course',
                 fn () => $this->course
@@ -59,6 +61,15 @@ class DocumentResource extends JsonResource
             'downloads_count' => $this->downloads_count,
             'ocr_status' => $this->ocr_status,
             'published_at' => $this->published_at,
+            // URL API robuste (sert le fichier depuis public OU private, sans dépendre du symlink seul).
+            // Le frontend fallback toujours sur drive_* si l'API échoue, mais file_url pointe désormais en priorité sur l'API.
+            'file_url' => url("/api/v1/documents/{$this->id}/file"),
+            'api_file_url' => url("/api/v1/documents/{$this->id}/file"),
+            'api_preview_url' => url("/api/v1/documents/{$this->id}/preview"),
+            'drive_file_id' => $this->drive_file_id,
+            'drive_web_view_link' => $this->drive_web_view_link,
+            'drive_download_link' => $this->drive_download_link,
+            'original_name' => $this->original_name,
             'tags' => $this->whenLoaded(
                 'tags',
                 fn () => DocumentTagResource::collection($this->tags)

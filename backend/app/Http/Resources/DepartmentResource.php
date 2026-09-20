@@ -21,6 +21,9 @@ class DepartmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            // Identifiant brut : requis par le filtrage cote client
+            // (cascade faculte -> departements).
+            'faculty_id' => $this->faculty_id,
             'faculty' => $this->whenLoaded(
                 'faculty',
                 fn () => $this->faculty

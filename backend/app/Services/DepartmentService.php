@@ -21,6 +21,16 @@ class DepartmentService
     }
 
     /**
+     * Retrieve all departments.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, Model>
+     */
+    public function all(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->departmentRepository->all();
+    }
+
+    /**
      * Create a department.
      *
      * @param  array<string, mixed>  $data

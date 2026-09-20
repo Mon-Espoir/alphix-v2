@@ -16,6 +16,8 @@ import {
   UploadQueue,
   UploadToolbar,
 } from '../../components/upload'
+import UploadModal from '../../components/documents/UploadModal'
+import { DocumentApi } from '../../api/DocumentApi'
 import { useUploadQueue } from '../../hooks/useUploadQueue'
 import { useNotification } from '../../hooks/useNotification'
 
@@ -35,11 +37,55 @@ export default function UploadCenterPage() {
     resume,
     resolveDuplicate,
     purgeItems,
+    markClassified,
+    onEvent,
   } = useUploadQueue()
 
   const notify = useNotification()
   const [drives, setDrives] = useState([])
   const [selectedDriveId, setSelectedDriveId] = useState(null)
+  // Fallback guidé : document téléversé mais cours non identifié.
+  const [classifyTarget, setClassifyTarget] = useState(null)
+
+  useEffect(() => onEvent((event) => {
+    // A la fin de chaque téléversement, si l'auto-identification a échoué
+    // (pas de cours ou type générique), on propose la sélection hiérarchique
+    // au lieu d'une erreur — jamais de blocage pour l'étudiant.
+    if (event?.type === 'completed' && event?.item?.needsClassification && event?.item?.documentId) {
+      setClassifyTarget({
+        itemId: event.itemId,
+        documentId: event.item.documentId,
+        fileName: event.item.name,
+        courseId: event.item.courseId,
+        docType: event.item.docType,
+      })
+    }
+  }), [onEvent])
+
+  const handleClassifyConfirm = useCallback(async ({ courseId, docType }) => {
+    if (!classifyTarget) return
+    await DocumentApi.classify(classifyTarget.documentId, { course_id: courseId, doc_type: docType })
+    markClassified(classifyTarget.itemId, { courseId, docType })
+    notify.success('Document rattaché à votre cours. Il part en validation.')
+    setClassifyTarget(null)
+  }, [classifyTarget, markClassified, notify])
+
+  const handleClassifyClose = useCallback(() => {
+    // « Plus tard » : le document reste en attente, reclassifiable depuis
+    // la file (« Préciser le cours ») — aucune erreur renvoyée à l'étudiant.
+    setClassifyTarget(null)
+  }, [])
+
+  const handleClassifyReopen = useCallback((item) => {
+    if (!item?.documentId) return
+    setClassifyTarget({
+      itemId: item.id,
+      documentId: item.documentId,
+      fileName: item.name,
+      courseId: item.courseId,
+      docType: item.docType,
+    })
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -145,8 +191,16 @@ export default function UploadCenterPage() {
           onRetry={retryItem}
           onRemove={removeItem}
           onResolveDuplicate={resolveDuplicate}
+          onClassify={handleClassifyReopen}
         />
       </div>
+
+      <UploadModal
+        open={classifyTarget !== null}
+        target={classifyTarget}
+        onClose={handleClassifyClose}
+        onConfirm={handleClassifyConfirm}
+      />
     </Container>
   )
 }

@@ -23,6 +23,7 @@ class UpdateProfileRequest extends FormRequest
 
         return [
             'name' => 'sometimes|string|max:255',
+            'username' => 'sometimes|string|min:3|max:50|regex:/^[a-zA-Z0-9._-]+$/|unique:users,username,' . $userId,
             'email' => 'sometimes|email|unique:users,email,' . $userId,
             'password' => 'sometimes|string|min:8|confirmed',
         ];

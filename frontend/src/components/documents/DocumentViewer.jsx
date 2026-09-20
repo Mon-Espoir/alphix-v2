@@ -7,7 +7,7 @@
 
 import { useRef } from 'react'
 import Button from '../ui/Button'
-import { resolveFileUrl } from '../../utils/document'
+import { resolveFileUrl, resolveDownloadUrl } from '../../utils/document'
 
 /**
  * @param {object} props
@@ -40,6 +40,25 @@ export default function DocumentViewer({
   }
 
   if (!fileUrl) {
+    const fallbackUrl = doc?.drive_web_view_link || resolveDownloadUrl(doc)
+    // Si même le fallback est une URL Drive /view, on peut l'utiliser en preview
+    const previewFallback = fallbackUrl && fallbackUrl.includes('/view') ? fallbackUrl.replace('/view', '/preview') : null
+    if (previewFallback) {
+      return (
+        <div
+          ref={containerRef}
+          className={`ax-doc-viewer ${isFullScreen ? 'ax-doc-viewer--fullscreen' : ''}`}
+        >
+          <div className="ax-doc-viewer__controls" role="toolbar" aria-label="Contrôles de la visionneuse">
+            <Button type="button" variant="outline" size="sm" onClick={() => onZoomChange(-0.25)} aria-label="Reduire le zoom">−</Button>
+            <span className="ax-doc-viewer__zoom" aria-live="polite">{Math.round(zoom * 100)}%</span>
+            <Button type="button" variant="outline" size="sm" onClick={() => onZoomChange(0.25)} aria-label="Augmenter le zoom">+</Button>
+            <Button type="button" variant="outline" size="sm" onClick={enterFullScreen}>{isFullScreen ? 'Quitter le plein ecran' : 'Plein ecran'}</Button>
+          </div>
+          <iframe className="ax-doc-viewer__frame" src={previewFallback} title={`Apercu du document ${doc?.title || ''}`} style={{ transform: `scale(${zoom})` }} allow="autoplay; fullscreen" allowFullScreen />
+        </div>
+      )
+    }
     return (
       <div className="ax-empty-state" ref={containerRef}>
         <p className="ax-empty-state__title">Apercu indisponible</p>
@@ -47,6 +66,14 @@ export default function DocumentViewer({
           Aucune URL de fichier n'est exposee pour ce document par la plateforme.
           Utilisez le telechargement pour y acceder.
         </p>
+        {fallbackUrl && (
+          <a className="ax-btn ax-btn--secondary ax-btn--sm" href={fallbackUrl} target="_blank" rel="noopener noreferrer">
+            Ouvrir dans Google Drive
+          </a>
+        )}
+        {!fallbackUrl && doc?.file_url && (
+          <a className="ax-btn ax-btn--primary ax-btn--sm" href={doc.file_url} target="_blank" rel="noopener noreferrer">Telecharger le fichier</a>
+        )}
       </div>
     )
   }
@@ -73,6 +100,8 @@ export default function DocumentViewer({
         src={fileUrl}
         title={`Apercu du document ${doc?.title || ''}`}
         style={{ transform: `scale(${zoom})` }}
+        allow="autoplay; fullscreen"
+        allowFullScreen
       />
     </div>
   )

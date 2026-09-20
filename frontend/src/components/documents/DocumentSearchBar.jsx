@@ -3,6 +3,8 @@
  * Recherche instantanee avec suggestions (autocomplete) et soumission clavier.
  */
 
+import { useEffect, useRef, useState } from 'react'
+
 /**
  * @param {object} props
  * @param {string} props.value - Valeur courante.
@@ -24,6 +26,38 @@ export default function DocumentSearchBar({
     ? suggestions.filter((s) => s.toLowerCase().includes(value.trim().toLowerCase())).slice(0, 6)
     : []
 
+  // Ménage d'ouverture du menu : fermé dès qu'on quitte le champ ou qu'on soumet,
+  // rouvert uniquement en re-tapant. Évite tout recouvrement des résultats.
+  const [open, setOpen] = useState(false)
+  const [highlightIndex, setHighlightIndex] = useState(-1)
+  const closeTimer = useRef(null)
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }
+  const requestClose = () => {
+    cancelClose()
+    closeTimer.current = setTimeout(() => setOpen(false), 120)
+  }
+
+  useEffect(() => () => cancelClose(), [])
+
+  const closeMenu = () => {
+    cancelClose()
+    setOpen(false)
+    setHighlightIndex(-1)
+  }
+
+  const showSuggestions = open && matches.length > 0
+
+  const selectSuggestion = (suggestion) => {
+    closeMenu()
+    onChange(suggestion)
+    if (onSubmit) onSubmit(suggestion)
+  }
+
   return (
     <div className="ax-search-bar" role="search">
       <span className="ax-search-bar__icon" aria-hidden="true">
@@ -38,25 +72,51 @@ export default function DocumentSearchBar({
         value={value}
         placeholder={placeholder}
         aria-label="Rechercher un document"
-        aria-controls={matches.length ? listId : undefined}
+        aria-controls={showSuggestions ? listId : undefined}
+        aria-autocomplete="list"
+        aria-activedescendant={showSuggestions && highlightIndex >= 0 ? `${listId}-opt-${highlightIndex}` : undefined}
         autoComplete="off"
-        onChange={(event) => onChange(event.target.value)}
+        onFocus={() => { cancelClose(); setOpen(true) }}
+        onBlur={requestClose}
+        onChange={(event) => {
+          setOpen(true)
+          setHighlightIndex(-1)
+          onChange(event.target.value)
+        }}
         onKeyDown={(event) => {
-          if (event.key === 'Enter' && onSubmit) {
+          if (event.key === 'ArrowDown' && showSuggestions) {
             event.preventDefault()
-            onSubmit(value)
+            setHighlightIndex((i) => (i + 1) % matches.length)
+          } else if (event.key === 'ArrowUp' && showSuggestions) {
+            event.preventDefault()
+            setHighlightIndex((i) => (i <= 0 ? matches.length - 1 : i - 1))
+          } else if (event.key === 'Escape') {
+            if (showSuggestions) event.preventDefault()
+            closeMenu()
+          } else if (event.key === 'Enter') {
+            event.preventDefault()
+            if (showSuggestions && highlightIndex >= 0 && matches[highlightIndex]) {
+              selectSuggestion(matches[highlightIndex])
+              return
+            }
+            closeMenu()
+            if (onSubmit) onSubmit(value)
           }
         }}
       />
-      {matches.length > 0 && (
+      {showSuggestions && (
         <ul className="ax-doc-suggestions" id={listId} role="listbox" aria-label="Suggestions">
-          {matches.map((suggestion) => (
+          {matches.map((suggestion, index) => (
             <li key={suggestion}>
               <button
                 type="button"
                 role="option"
-                aria-selected="false"
-                onClick={() => onChange(suggestion)}
+                id={`${listId}-opt-${index}`}
+                aria-selected={index === highlightIndex}
+                className={index === highlightIndex ? 'ax-doc-suggestions__item--active' : undefined}
+                onMouseDown={(event) => event.preventDefault()}
+                onMouseEnter={() => setHighlightIndex(index)}
+                onClick={() => selectSuggestion(suggestion)}
               >
                 {suggestion}
               </button>

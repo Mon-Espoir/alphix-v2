@@ -11,8 +11,10 @@ import { SearchApi } from '../../api/SearchApi'
 import { GoogleDriveApi } from '../../api/GoogleDriveApi'
 import { FacultyApi } from '../../api/FacultyApi'
 import { DepartmentApi } from '../../api/DepartmentApi'
+import { CourseApi } from '../../api/CourseApi'
 import { UserApi } from '../../api/UserApi'
 import { normalizeApiList } from '../../utils/academic'
+import { cachedAcademicList } from '../../utils/academicCache'
 import { buildDailyUploadSeries, groupDocumentsByFaculty, groupDocumentsByDepartment, buildUserGrowthSeries, findMissingDocuments } from '../../utils/admin'
 import PageHeader from '../../components/common/PageHeader'
 import LoadingScreen from '../../components/feedback/LoadingScreen'
@@ -22,7 +24,7 @@ import Button from '../../components/ui/Button'
 export default function AdminStatisticsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [data, setData] = useState({ documents: [], drives: [], faculties: [], departments: [], users: [], popular: [] })
+  const [data, setData] = useState({ documents: [], drives: [], faculties: [], departments: [], users: [], popular: [], courses: [] })
 
   const load = useCallback(async (signal) => {
     setLoading(true)
@@ -37,13 +39,18 @@ export default function AdminStatisticsPage() {
         SearchApi.getPopularQueries({ limit: 10 }).catch(() => []),
       ])
       if (signal?.aborted) return
+      const departments = normalizeApiList(deps)
+      // Index unique + cache (plus de fan-out N×departements).
+      const courses = await cachedAcademicList('courses', () => CourseApi.list()).catch(() => [])
+      if (signal?.aborted) return
       setData({
         documents: normalizeApiList(docs),
         drives: normalizeApiList(drives),
         faculties: normalizeApiList(facs),
-        departments: normalizeApiList(deps),
+        departments,
         users: normalizeApiList(users),
         popular: normalizeApiList(pop) || (Array.isArray(pop) ? pop : []),
+        courses,
       })
     } catch (err) {
       if (!signal?.aborted) setError(err.message || 'Erreur de chargement.')
@@ -63,9 +70,8 @@ export default function AdminStatisticsPage() {
   const byDept = useMemo(() => groupDocumentsByDepartment(data.documents), [data.documents])
   const growth = useMemo(() => buildUserGrowthSeries(data.users, 14), [data.users])
   const missing = useMemo(() => {
-    // Cours approx via departments - si vide, fallback vide
-    return findMissingDocuments([], data.documents)
-  }, [data.documents])
+    return findMissingDocuments(data.courses || [], data.documents)
+  }, [data.courses, data.documents])
 
   if (loading) return <LoadingScreen label="Chargement des statistiques…" />
   if (error) return <div className="ax-container"><PageHeader title="Statistiques" subtitle="Administration" /><div className="ax-card ax-card--padded" role="alert"><p>{error}</p><Button size="sm" onClick={() => load()}>Réessayer</Button></div></div>
