@@ -2,7 +2,8 @@
    ALPHIX V2 — UI Components
    ========================================================================== */
 
-/* --- Button ---------------------------------------------------------------- */
+/* --- Button ----------------------------------------------------------------
+   Mobile First: 48px minimum height on phones, press-down feedback. */
 .ax-btn {
   display: inline-flex;
   align-items: center;
@@ -14,8 +15,24 @@
   font-weight: var(--ax-font-medium);
   white-space: nowrap;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   transition: background var(--ax-transition-fast), color var(--ax-transition-fast),
-    border-color var(--ax-transition-fast), box-shadow var(--ax-transition-fast);
+    border-color var(--ax-transition-fast), box-shadow var(--ax-transition-fast),
+    transform var(--ax-transition-fast);
+}
+
+.ax-btn:active {
+  transform: scale(0.97);
+}
+
+/* Full-bleed thumb buttons on small phones */
+@media (max-width: 480px) {
+  .ax-btn--md,
+  .ax-btn--lg {
+    min-height: 48px;
+  }
 }
 
 .ax-btn:disabled {
@@ -24,9 +41,9 @@
   pointer-events: none;
 }
 
-.ax-btn--sm { padding: 6px 12px; font-size: var(--ax-text-sm); border-radius: var(--ax-radius-sm); }
-.ax-btn--md { padding: 10px 20px; font-size: var(--ax-text-sm); }
-.ax-btn--lg { padding: 12px 28px; font-size: var(--ax-text-base); border-radius: var(--ax-radius-lg); }
+.ax-btn--sm { padding: 6px 12px; font-size: var(--ax-text-sm); border-radius: var(--ax-radius-sm); min-height: 36px; }
+.ax-btn--md { padding: 10px 20px; font-size: var(--ax-text-sm); min-height: 44px; }
+.ax-btn--lg { padding: 12px 28px; font-size: var(--ax-text-base); border-radius: var(--ax-radius-lg); min-height: 48px; }
 
 .ax-btn--primary {
   background: var(--ax-primary);
@@ -75,16 +92,27 @@
 
 @keyframes ax-spin { to { transform: rotate(360deg); } }
 
-/* --- Card ------------------------------------------------------------------ */
+/* --- Card ------------------------------------------------------------------
+   Tappable cards get press feedback; padded variant is thumb-breathable. */
 .ax-card {
   background: var(--ax-surface);
   border: 1px solid var(--ax-border);
   border-radius: var(--ax-radius-lg);
   box-shadow: var(--ax-shadow-xs);
-  transition: box-shadow var(--ax-transition-base), border-color var(--ax-transition-base);
+  transition: box-shadow var(--ax-transition-base), border-color var(--ax-transition-base),
+    transform var(--ax-transition-base);
+}
+
+a.ax-card:active,
+button.ax-card:active {
+  transform: scale(0.99);
 }
 
 .ax-card--padded { padding: var(--ax-space-6); }
+
+@media (max-width: 767px) {
+  .ax-card--padded { padding: var(--ax-space-4); }
+}
 
 .ax-card__header {
   padding: var(--ax-space-6) var(--ax-space-6) 0;
@@ -212,7 +240,8 @@
   height: 100%;
 }
 
-/* --- IconButton ------------------------------------------------------------ */
+/* --- IconButton ------------------------------------------------------------
+   44px minimum everywhere (was md-only); press feedback for touch. */
 .ax-icon-btn {
   position: relative;
   display: inline-flex;
@@ -223,22 +252,18 @@
   background: transparent;
   color: var(--ax-text-secondary);
   cursor: pointer;
-  transition: background var(--ax-transition-fast), color var(--ax-transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background var(--ax-transition-fast), color var(--ax-transition-fast),
+    transform var(--ax-transition-fast);
 }
 
 .ax-icon-btn:hover { background: var(--ax-surface-hover); color: var(--ax-text); }
+.ax-icon-btn:active { transform: scale(0.92); }
 
-.ax-icon-btn--sm { width: 32px; height: 32px; }
-.ax-icon-btn--md { width: 40px; height: 40px; }
-.ax-icon-btn--lg { width: 48px; height: 48px; }
-
-/* Comfortable 44px touch targets on mobile */
-@media (max-width: 767px) {
-  .ax-icon-btn--md {
-    width: 44px;
-    height: 44px;
-  }
-}
+.ax-icon-btn--sm { width: 36px; height: 36px; min-width: 36px; min-height: 36px; }
+.ax-icon-btn--md { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+.ax-icon-btn--lg { width: 48px; height: 48px; min-width: 48px; min-height: 48px; }
 
 .ax-icon-btn__icon {
   display: flex;
@@ -266,7 +291,8 @@
   line-height: 1;
 }
 
-/* --- PageTitle -------------------------------------------------------------- */
+/* --- PageTitle --------------------------------------------------------------
+   Mobile First: title + full-width CTA stack (thumb reachable, no squeeze). */
 .ax-page-title {
   display: flex;
   align-items: flex-start;
@@ -296,6 +322,23 @@
 @media (max-width: 640px) {
   .ax-page-title {
     flex-direction: column;
+    padding: var(--ax-space-4) 0;
+  }
+
+  .ax-page-title__heading {
+    font-size: var(--ax-text-xl);
+  }
+
+  /* Primary actions go full-width: impossible to miss with a thumb */
+  .ax-page-title__actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ax-page-title__actions .ax-btn {
+    width: 100%;
+    min-height: 48px;
   }
 }
 

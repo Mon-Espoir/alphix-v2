@@ -129,12 +129,16 @@
   .ax-hero {
     padding: var(--ax-space-10) 0 var(--ax-space-12);
   }
+  /* Primary CTA first, full-bleed: the thumb never hunts */
   .ax-hero__actions {
     flex-direction: column;
+    align-items: stretch;
     width: 100%;
   }
   .ax-hero__actions .ax-btn {
     width: 100%;
+    min-height: 52px;
+    font-size: var(--ax-text-base);
   }
 }
 
@@ -317,15 +321,19 @@
 
 .ax-form-group__input {
   width: 100%;
-  padding: 10px 14px;
+  /* Thumb-height fields: 48px so the keyboard never feels cramped */
+  min-height: 48px;
+  padding: 12px 14px;
   border: 1px solid var(--ax-border);
   border-radius: var(--ax-radius-md);
   background: var(--ax-surface);
   color: var(--ax-text);
-  font-size: var(--ax-text-sm);
+  font-size: var(--ax-text-base);
   font-family: var(--ax-font-sans);
   transition: border-color var(--ax-transition-fast), box-shadow var(--ax-transition-fast);
   outline: none;
+  /* No double-tap zoom on rapid field hopping */
+  touch-action: manipulation;
 }
 
 .ax-form-group__input::placeholder {
@@ -445,20 +453,44 @@
 @media (max-width: 640px) {
   .ax-page-header {
     flex-direction: column;
+    align-items: stretch;
+    padding: var(--ax-space-4) 0;
+  }
+
+  .ax-page-header__actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ax-page-header__actions .ax-btn {
+    width: 100%;
+    min-height: 48px;
   }
 }
 
-/* --- Search Bar ------------------------------------------------------------ */
+/* --- Search Bar ------------------------------------------------------------
+   Sticky under the header on phones: always one thumb-tap away. */
 .ax-search-bar {
   display: flex;
   align-items: center;
   gap: var(--ax-space-2);
+  min-height: 48px;
   padding: var(--ax-space-3) var(--ax-space-4);
   background: var(--ax-surface);
   border: 1px solid var(--ax-border);
   border-radius: var(--ax-radius-lg);
   margin-bottom: var(--ax-space-4);
   transition: border-color var(--ax-transition-fast), box-shadow var(--ax-transition-fast);
+}
+
+@media (max-width: 767px) {
+  .ax-search-bar {
+    position: sticky;
+    top: calc(var(--ax-header-height) + var(--ax-safe-top) + var(--ax-space-2));
+    z-index: var(--ax-z-sticky);
+    box-shadow: var(--ax-shadow-sm);
+  }
 }
 
 .ax-search-bar:focus-within {
@@ -486,13 +518,18 @@
   color: var(--ax-text-tertiary);
 }
 
-/* --- Table ----------------------------------------------------------------- */
+/* --- Table -----------------------------------------------------------------
+   Horizontal swipe zone on phones: momentum scroll + edge fade hint. */
 .ax-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   border: 1px solid var(--ax-border);
   border-radius: var(--ax-radius-lg);
   background: var(--ax-surface);
   margin-bottom: var(--ax-space-4);
+  /* Thumb-friendly row height on touch devices */
+  touch-action: pan-x pan-y;
 }
 
 .ax-table {
@@ -564,6 +601,16 @@
   .ax-table th:nth-child(4),
   .ax-table td:nth-child(4) {
     display: none;
+  }
+
+  /* Airy rows for thumbs: no more fat-finger mis-taps */
+  .ax-table td {
+    padding-top: var(--ax-space-4);
+    padding-bottom: var(--ax-space-4);
+  }
+
+  .ax-table__cell--actions {
+    gap: var(--ax-space-2);
   }
 }
 

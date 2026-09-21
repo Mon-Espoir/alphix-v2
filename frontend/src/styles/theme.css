@@ -308,9 +308,39 @@ ul, ol {
   input[type='number'],
   input[type='tel'],
   input[type='url'],
+  input[type='date'],
   select,
   textarea {
     font-size: 16px;
+  }
+}
+
+/* ==========================================================================
+   Mobile First — tactile ergonomics (thumb reach, momentum, insets)
+   ========================================================================== */
+
+/* Momentum scrolling on iOS for every scroll container */
+.ax-sidebar,
+.ax-sheet__body,
+.ax-table-wrap,
+.ax-modal,
+.ax-filters-chips {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Contain scroll chains inside panels/sheets instead of moving the page */
+.ax-sidebar,
+.ax-sheet__body,
+.ax-modal,
+.ax-table-wrap {
+  overscroll-behavior: contain;
+}
+
+/* Larger lateral safe-area insets on notched phones (landscape) */
+@media (max-width: 767px) {
+  :root {
+    --ax-safe-left: env(safe-area-inset-left, 0px);
+    --ax-safe-right: env(safe-area-inset-right, 0px);
   }
 }
 

@@ -10,12 +10,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Compact 56px bar on phones = more content above the fold */
   height: calc(var(--ax-header-height) + var(--ax-safe-top));
   padding: var(--ax-safe-top) var(--ax-space-4) 0;
+  padding-left: calc(var(--ax-space-4) + env(safe-area-inset-left, 0px));
+  padding-right: calc(var(--ax-space-4) + env(safe-area-inset-right, 0px));
   background: var(--ax-surface);
   border-bottom: 1px solid var(--ax-border);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   background-color: rgba(255, 255, 255, 0.85);
+  /* Header never participates in scroll chaining */
+  overscroll-behavior: none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -118,16 +124,23 @@
   .ax-header__menu-btn--hint::after { animation: none; }
 }
 
-/* Mobile: comfortable 44px tap targets; hide subtitle (tight width) */
+/* Mobile: comfortable 44px tap targets; hide subtitle (tight width).
+   Header shrinks to 56px so the first screen shows more content. */
 @media (max-width: 767px) {
+  :root {
+    --ax-header-height: 56px;
+  }
   .ax-header__subtitle { display: none; }
   .ax-header__menu-btn { width: 44px; height: 44px; }
   .ax-header__right > a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
     padding: 6px;
     border-radius: 50%;
+    touch-action: manipulation;
   }
 }
 
@@ -140,13 +153,15 @@
   }
 }
 
-/* --- Sidebar --------------------------------------------------------------- */
+/* --- Sidebar ---------------------------------------------------------------
+   Mobile = overlay drawer (thumb reachable), Desktop = fixed rail.
+   Drawer caps at 85vw so content stays visible behind the scrim. */
 .ax-sidebar {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: var(--ax-sidebar-width);
+  width: min(var(--ax-sidebar-width), 85vw);
   background: var(--ax-surface);
   border-right: 1px solid var(--ax-border);
   z-index: var(--ax-z-overlay);
@@ -156,6 +171,8 @@
   flex-direction: column;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding-bottom: var(--ax-safe-bottom);
 }
 
 .ax-sidebar--open {
@@ -230,6 +247,8 @@
   display: flex;
   align-items: center;
   gap: var(--ax-space-3);
+  /* Thumb-first rows: 48px tall, instant tap response */
+  min-height: 48px;
   padding: var(--ax-space-3) var(--ax-space-4);
   border-radius: var(--ax-radius-md);
   color: var(--ax-text-secondary);
@@ -238,6 +257,8 @@
   font-weight: var(--ax-font-medium);
   transition: background var(--ax-transition-fast), color var(--ax-transition-fast);
   margin-bottom: 2px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .ax-sidebar__link:hover {
@@ -279,7 +300,9 @@
   }
 }
 
-/* --- BottomNav -------------------------------------------------------------- */
+/* --- BottomNav --------------------------------------------------------------
+   Thumb-zone navigation: 5 zones max, 48px+ targets, safe-area aware,
+   momentum-proof (no scroll chaining from the bar itself). */
 .ax-bottom-nav {
   position: fixed;
   bottom: 0;
@@ -287,13 +310,18 @@
   right: 0;
   z-index: var(--ax-z-sticky);
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-around;
-  height: calc(var(--ax-bottom-nav-height) + var(--ax-safe-bottom));
+  min-height: calc(var(--ax-bottom-nav-height) + var(--ax-safe-bottom));
   background: var(--ax-surface);
   border-top: 1px solid var(--ax-border);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding-bottom: var(--ax-safe-bottom);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  overscroll-behavior: none;
+  touch-action: pan-x;
 }
 
 @media (min-width: 768px) {
@@ -309,14 +337,20 @@
   justify-content: center;
   gap: 2px;
   padding: var(--ax-space-1) var(--ax-space-3);
-  min-height: 44px;
+  /* Thumb-friendly: 48px tall, 64px wide hit area */
+  min-height: 48px;
+  min-width: 64px;
   color: var(--ax-text-tertiary);
   text-decoration: none;
   font-size: 11px;
   font-weight: var(--ax-font-medium);
-  transition: color var(--ax-transition-fast);
+  transition: color var(--ax-transition-fast), transform var(--ax-transition-fast);
   -webkit-tap-highlight-color: transparent;
-  min-width: 56px;
+  touch-action: manipulation;
+}
+
+.ax-bottom-nav__item:active {
+  transform: scale(0.94);
 }
 
 .ax-bottom-nav__item:hover {
@@ -328,12 +362,20 @@
   color: var(--ax-primary);
 }
 
+/* Active pill behind the icon: clear "where am I" affordance on phones */
 .ax-bottom-nav__icon {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
+  padding: 4px 16px;
+  border-radius: var(--ax-radius-full);
+  transition: background var(--ax-transition-fast);
+}
+
+.ax-bottom-nav__item--active .ax-bottom-nav__icon {
+  background: var(--ax-primary-light);
 }
 
 /* --- Footer ----------------------------------------------------------------- */
@@ -394,6 +436,13 @@
 @media (min-width: 768px) {
   .ax-footer {
     padding: var(--ax-space-8) var(--ax-space-6);
+  }
+}
+
+/* Mobile: keep footer content clear of the fixed bottom nav + home bar */
+@media (max-width: 767px) {
+  .ax-footer {
+    padding-bottom: calc(var(--ax-bottom-nav-height) + var(--ax-safe-bottom) + var(--ax-space-6));
   }
 }
 
