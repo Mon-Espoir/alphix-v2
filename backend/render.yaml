@@ -50,7 +50,7 @@ services:
       - key: SANCTUM_STATEFUL_DOMAINS
         value: alphix-backend.onrender.com
     buildCommand: |
-      composer install --no-dev --optimize-autoloader --no-interaction
+      composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
       php artisan key:generate --force --no-interaction
       php artisan migrate --force --no-interaction
       php artisan storage:link --no-interaction
