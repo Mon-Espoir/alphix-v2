@@ -5,11 +5,17 @@
  * Formulaire de connexion avec validation Laravel 422.
  */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ROUTE_PATHS } from '../constants/routes'
 import { useAuth } from '../hooks/useAuth'
 import { Button } from '../components/ui'
+
+/**
+ * Délai avant d'afficher l'indication « réveil du serveur » : au-delà,
+ * c'est très probablement le cold start Render, pas un blocage.
+ */
+const WAKE_HINT_DELAY_MS = 8000
 
 /**
  * @returns {import('react').JSX.Element}
@@ -21,6 +27,21 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
   const [globalError, setGlobalError] = useState('')
+  const [waking, setWaking] = useState(false)
+  const wakeTimer = useRef(null)
+
+  // Pendant un cold start Render, la requête peut durer ~30-60 s :
+  // on l'explique plutôt que de laisser un spinner muet.
+  useEffect(() => {
+    if (loading) {
+      wakeTimer.current = setTimeout(() => setWaking(true), WAKE_HINT_DELAY_MS)
+    } else {
+      setWaking(false)
+    }
+    return () => {
+      if (wakeTimer.current) clearTimeout(wakeTimer.current)
+    }
+  }, [loading])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -99,6 +120,12 @@ export default function LoginPage() {
           <Button type="submit" variant="primary" size="lg" loading={loading} style={{ width: '100%' }}>
             Se connecter
           </Button>
+
+          {loading && waking && (
+            <p className="ax-auth-card__wake-hint" role="status" aria-live="polite">
+              ⏳ Réveil du serveur en cours (première connexion du jour)… merci de patienter.
+            </p>
+          )}
         </form>
 
         <div className="ax-auth-card__footer">

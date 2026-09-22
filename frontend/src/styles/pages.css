@@ -352,6 +352,19 @@
   color: var(--ax-text-secondary);
 }
 
+/* Indication de réveil serveur (cold start) : visible, calme, non bloquante. */
+.ax-auth-card__wake-hint {
+  margin: var(--ax-space-4) 0 0;
+  padding: var(--ax-space-3) var(--ax-space-4);
+  border-radius: var(--ax-radius-md);
+  background: var(--ax-primary-light);
+  color: var(--ax-text-secondary);
+  font-size: var(--ax-text-sm);
+  line-height: var(--ax-leading-relaxed);
+  text-align: center;
+  animation: ax-fade-in 300ms ease both;
+}
+
 .ax-auth-card__footer a {
   font-weight: var(--ax-font-medium);
 }

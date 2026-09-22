@@ -20,6 +20,7 @@ import { AUTH_STATUS } from '../constants/auth'
 import httpService from '../services/httpService'
 import { getToken, setToken, removeToken } from '../utils/storage'
 import { normalizeApiError, isUnauthorized } from '../utils/apiError'
+import { wakeServer } from '../utils/serverWake'
 import { API_ENDPOINTS } from '../constants/endpoints'
 
 /**
@@ -160,6 +161,9 @@ export const useAuthStore = create((set, get) => ({
   login: async (credentials) => {
     set({ status: AUTH_STATUS.LOADING, isLoading: true })
     try {
+      // Le backend (Render gratuit) peut dormir : le ping absorbe le cold
+      // start AVANT le POST /login pour éviter un timeout à 30 s.
+      await wakeServer()
       const data = await httpService.post(API_ENDPOINTS.AUTH.LOGIN, credentials)
 
       if (!data?.token) {
@@ -190,6 +194,8 @@ export const useAuthStore = create((set, get) => ({
   register: async (payload) => {
     set({ status: AUTH_STATUS.LOADING, isLoading: true })
     try {
+      // Même garde anti cold start que pour le login (voir ci-dessus).
+      await wakeServer()
       const data = await httpService.post(API_ENDPOINTS.AUTH.REGISTER, payload)
 
       if (!data?.token) {

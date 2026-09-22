@@ -24,7 +24,14 @@ export const AUTH_ENDPOINTS = Object.freeze({
   PROFILE: '/profile',
 })
 
+/** Endpoints système/infrastructure (publics, légers). */
+export const SYSTEM_ENDPOINTS = Object.freeze({
+  /** GET — Statut maintenance (léger, public). Sert aussi de "ping" de réveil. */
+  STATUS: '/maintenance/status',
+})
+
 /** Regroupement par domaine pour import sélectif. */
 export const API_ENDPOINTS = Object.freeze({
   AUTH: AUTH_ENDPOINTS,
+  SYSTEM: SYSTEM_ENDPOINTS,
 })
