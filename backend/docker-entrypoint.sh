@@ -70,6 +70,22 @@ echo "📊 Running migrations..."
 php artisan migrate --force --no-interaction
 
 # ──────────────────────────────────────────────
+# Seed automatique SI la base est vide (ex. Postgres recréé).
+# Tous les seeders sont idempotents (updateOrCreate/firstOrCreate) :
+# relancer sur une base pleine ne duplique rien.
+# En cas de doute (compte illisible), on NE seed PAS et on démarre.
+# ──────────────────────────────────────────────
+echo "🌱 Checking if database needs seeding..."
+FACULTY_COUNT=$(php artisan tinker --execute="echo App\\Models\\Faculty::query()->count();" 2>/dev/null | grep -E '^[0-9]+' | tail -1 || true)
+if [ "$FACULTY_COUNT" = "0" ]; then
+    echo "🌱 Empty database detected — seeding catalog + admin account..."
+    php artisan db:seed --force --no-interaction
+    echo "✅ Seeding done"
+else
+    echo "✅ Database already populated (faculties: ${FACULTY_COUNT:-?}) — skipping seed"
+fi
+
+# ──────────────────────────────────────────────
 # Storage link (pour fichiers publics)
 # ──────────────────────────────────────────────
 if [ ! -L public/storage ]; then
