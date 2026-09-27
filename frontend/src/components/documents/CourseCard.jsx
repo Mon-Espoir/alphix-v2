@@ -8,6 +8,7 @@
  * actions Voir documents / Ajouter. Utilisée par l'Explorer et la Recherche.
  */
 
+import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { Badge } from '../ui'
 import TeacherBadge from './TeacherBadge'
@@ -26,7 +27,11 @@ import { ROUTE_PATHS } from '../../constants/routes'
  * @param {object} [props.actionsStyle] - Style additionnel de la rangée d'actions.
  * @returns {import('react').JSX.Element | null}
  */
-export default function CourseCard({
+/**
+ * Mémoïsée : la page Explorer re-rend à chaque frappe clavier (recherche
+ * instantanée) — sans memo, les ~867 cartes se recalculaient toutes.
+ */
+function CourseCard({
   course,
   levels = [],
   semesters = [],
@@ -93,3 +98,5 @@ export default function CourseCard({
     </div>
   )
 }
+
+export default memo(CourseCard)

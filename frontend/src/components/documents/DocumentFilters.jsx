@@ -22,6 +22,9 @@ import { toSelectOptions, semesterOptionsForLevel } from '../../utils/academic'
  * @param {Array<object>} [props.allLevels] - Niveaux complets (API, pour le tiroir de classe).
  * @param {object} props.filters - Valeurs actives.
  * @param {(patch: object) => void} props.onChange - Patch de filtres.
+ * @param {boolean} [props.isLoading] - Référentiels en cours de chargement
+ *   (réseau lent) : le bouton de classe est désactivé et le tiroir affiche
+ *   un squelette au lieu de listes vides.
  * @returns {import('react').JSX.Element}
  */
 export default function DocumentFilters({
@@ -35,6 +38,7 @@ export default function DocumentFilters({
   allLevels = [],
   filters,
   onChange,
+  isLoading = false,
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isPickerOpen, setIsPickerOpen] = useState(false)
@@ -90,8 +94,10 @@ export default function DocumentFilters({
           type="button"
           className="ax-btn ax-btn--primary ax-btn--sm ax-filters-class-btn"
           onClick={() => setIsPickerOpen(true)}
+          disabled={isLoading}
+          aria-busy={isLoading}
         >
-          🎓 Choisir ma classe
+          {isLoading ? '⏳ Chargement…' : '🎓 Choisir ma classe'}
         </button>
         <button
           type="button"
@@ -112,6 +118,7 @@ export default function DocumentFilters({
           allLevels={allLevels}
           filters={filters}
           onChange={onChange}
+          isLoading={isLoading}
         />
         {!isExpanded && (
           <div className="ax-filters-chips" role="group" aria-label="Catégorie de document — 1 tap">

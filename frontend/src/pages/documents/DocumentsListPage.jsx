@@ -134,13 +134,15 @@ export default function DocumentsListPage() {
   }, [rawCourses, filters.facultyId, filters.departmentId])
 
   // 5e maillon de la cascade : les cours proposés suivent faculté/département/BAC/semestre.
+  // Index Map (O(n)) au lieu de base.find() dans map (O(n²) sur ~867 cours).
   const courseOptions = useMemo(() => {
     let base = fdCourses
     if (filters.levelId) base = base.filter((c) => resolveCourseIds(c).levelId === String(filters.levelId))
     if (filters.semesterId) base = base.filter((c) => resolveCourseIds(c).semesterId === String(filters.semesterId))
+    const byId = new Map(base.map((c) => [String(c.id), c]))
     return toSelectOptions(base, { labelKey: 'name' })
       .map((option) => {
-        const course = base.find((c) => String(c.id) === String(option.value))
+        const course = byId.get(String(option.value))
         return { value: option.value, label: `${course?.code ? `${course.code} — ` : ''}${option.label}` }
       })
   }, [fdCourses, filters.levelId, filters.semesterId])
@@ -250,6 +252,26 @@ export default function DocumentsListPage() {
 
   const visibleCount = courses.length
 
+  // Référentiels en cours de chargement (réseau lent) : le tiroir de classe
+  // affiche un squelette au lieu d'un faux « Aucune faculté disponible ».
+  const isRefsLoading = isLoading && references.faculties.length === 0 && references.levels.length === 0
+
+  // Liste progressive (mobile-first) : 867 cartes d'un coup figent les
+  // téléphones faibles. On affiche 48 cartes puis "Afficher plus".
+  const PAGE_SIZE = 48
+  const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE)
+
+  // Tout changement de critères repart du début de liste.
+  useEffect(() => {
+    setVisibleLimit(PAGE_SIZE)
+  }, [filters.facultyId, filters.departmentId, filters.levelId, filters.semesterId, filters.courseId, submittedQuery])
+
+  const visibleCourses = useMemo(
+    () => courses.slice(0, visibleLimit),
+    [courses, visibleLimit],
+  )
+  const remainingCount = courses.length - visibleCourses.length
+
   const handleSubmitSearch = (value) => {
     setSubmittedQuery(value.trim())
   }
@@ -264,10 +286,12 @@ export default function DocumentsListPage() {
 
   // Cascade : seuls les niveaux/semestres reels du contexte faculte/departement
   // sont proposes (plus de "semestre 10" fantome).
-  const availableLevels = references.levels.filter((l) =>
-    fdCourses.some((c) => resolveCourseIds(c).levelId === String(l.id)))
-  const availableSemesters = references.semesters.filter((s) =>
-    fdCourses.some((c) => resolveCourseIds(c).semesterId === String(s.id)))
+  // Mémoïsés : chaque frappe au clavier re-rend la page, et le balayage
+  // levels × 867 cours à chaque rendu fige les téléphones faibles.
+  const availableLevels = useMemo(() => references.levels.filter((l) =>
+    fdCourses.some((c) => resolveCourseIds(c).levelId === String(l.id))), [references.levels, fdCourses])
+  const availableSemesters = useMemo(() => references.semesters.filter((s) =>
+    fdCourses.some((c) => resolveCourseIds(c).semesterId === String(s.id))), [references.semesters, fdCourses])
 
   if (courseId) {
     return (
@@ -354,6 +378,7 @@ export default function DocumentsListPage() {
         courses={courseOptions}
         tags={references.tags}
         filters={filters}
+        isLoading={isRefsLoading}
         onChange={(patch) => {
           if (patch.reset) {
             setFilters(emptyFilters())
@@ -460,18 +485,30 @@ export default function DocumentsListPage() {
       )}
 
       {!docFiltersActive && !isLoading && !error && courses.length > 0 && (
-        <div className="ax-course-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--ax-space-4)' }}>
-          {courses.map((course) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              levels={references.levels}
-              semesters={references.semesters}
-              isAdmin={isAdmin}
-              actionsStyle={{ marginTop: 'var(--ax-space-3)' }}
-            />
-          ))}
-        </div>
+        <>
+          <div className="ax-course-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))', gap: 'var(--ax-space-4)' }}>
+            {visibleCourses.map((course) => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                levels={references.levels}
+                semesters={references.semesters}
+                isAdmin={isAdmin}
+                actionsStyle={{ marginTop: 'var(--ax-space-3)' }}
+              />
+            ))}
+          </div>
+          {remainingCount > 0 && (
+            <div className="ax-show-more">
+              <p className="ax-show-more__count" aria-live="polite">
+                {visibleCourses.length} sur {courses.length} cours affichés
+              </p>
+              <Button variant="outline" size="lg" onClick={() => setVisibleLimit((n) => n + PAGE_SIZE)}>
+                Afficher plus ({remainingCount} restants)
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </Container>
   )

@@ -20,6 +20,8 @@ import { resolveDepartmentFacultyId } from '../../utils/academic'
  * @param {Array<object>} [props.allLevels] - Niveaux complets (API) : garentit que tous les BAC sont proposes a l'etape 2.
  * @param {object} props.filters - Filtres actifs (pour pre-remplir / resume).
  * @param {(patch: object) => void} props.onChange - Patch de filtres (cascade geree par la page).
+ * @param {boolean} [props.isLoading] - Référentiels en cours de chargement :
+ *   affiche un squelette au lieu d'un faux « Aucune faculté disponible ».
  * @returns {import('react').JSX.Element | null}
  */
 export default function ClassPickerSheet({
@@ -31,6 +33,7 @@ export default function ClassPickerSheet({
   allLevels = [],
   filters,
   onChange,
+  isLoading = false,
 }) {
   const [step, setStep] = useState(1)
   const [expandedFacultyId, setExpandedFacultyId] = useState('')
@@ -143,6 +146,18 @@ export default function ClassPickerSheet({
   // « Tous les niveaux » est gere par commitWithLevel('') : la classe choisie
   // a l'etape 1 est appliquee, le niveau actif est purge.
 
+  // Squelette de chargement : 6 lignes animées (réseau lent sur mobile).
+  // Évite le faux « Aucune faculté disponible » qui faisait croire à un bug.
+  const skeleton = (
+    <ul className="ax-sheet__list" aria-hidden="true">
+      {Array.from({ length: 6 }, (_, i) => (
+        <li key={i} className="ax-sheet__skeleton-row">
+          <span className="ax-doc-skeleton__line" style={{ width: `${72 - i * 5}%` }} />
+        </li>
+      ))}
+    </ul>
+  )
+
   return createPortal(
     <div className="ax-sheet-overlay" role="presentation" onClick={onClose}>
       <section
@@ -160,6 +175,7 @@ export default function ClassPickerSheet({
         {step === 1 ? (
           <div className="ax-sheet__body">
             <p className="ax-sheet__hint">Etape 1 sur 2 — Choisis ta faculte puis ton departement.</p>
+            {isLoading ? skeleton : (
             <ul className="ax-sheet__list">
               {faculties.map((faculty) => {
                 const fid = String(faculty.id)
@@ -203,6 +219,7 @@ export default function ClassPickerSheet({
                 <li className="ax-sheet__empty">Aucune faculte disponible pour le moment.</li>
               )}
             </ul>
+            )}
           </div>
         ) : (
           <div className="ax-sheet__body">
@@ -212,6 +229,7 @@ export default function ClassPickerSheet({
             <button type="button" className="ax-sheet__back" onClick={() => setStep(1)}>
               ← Changer de departement
             </button>
+            {isLoading ? skeleton : (
             <ul className="ax-sheet__list">
               <li>
                 <button type="button" className="ax-sheet__row" onClick={() => commitWithLevel('')}>
@@ -237,6 +255,7 @@ export default function ClassPickerSheet({
                 <li className="ax-sheet__empty">Aucun niveau disponible pour le moment.</li>
               )}
             </ul>
+            )}
           </div>
         )}
 
