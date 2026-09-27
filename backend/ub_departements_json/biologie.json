@@ -1,0 +1,439 @@
+{
+  "faculty": {
+    "code": "FS",
+    "name": "Faculté des Sciences"
+  },
+  "department": {
+    "code": "BIO",
+    "name": "Département de Biologie"
+  },
+  "courses": [
+    {
+      "code": "BIO1101",
+      "name": "Mathématiques I",
+      "semester": 1,
+      "credits": 5,
+      "hours": 75
+    },
+    {
+      "code": "BIO1102",
+      "name": "Physique générale I",
+      "semester": 1,
+      "credits": 5,
+      "hours": 75
+    },
+    {
+      "code": "BIO1103",
+      "name": "Chimie générale I",
+      "semester": 1,
+      "credits": 6,
+      "hours": 90
+    },
+    {
+      "code": "BIOI1104",
+      "name": "Géologie générale I",
+      "semester": 1,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO1105",
+      "name": "Biologie générale",
+      "semester": 1,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO1106",
+      "name": "Biologie végétale I",
+      "semester": 1,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO1107",
+      "name": "Biologie animale I",
+      "semester": 1,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO1201",
+      "name": "Mathématiques II",
+      "semester": 2,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO1202",
+      "name": "Physique générale II",
+      "semester": 2,
+      "credits": 5,
+      "hours": 75
+    },
+    {
+      "code": "BIO1203",
+      "name": "Chimie générale II",
+      "semester": 2,
+      "credits": 6,
+      "hours": 90
+    },
+    {
+      "code": "BIO1204",
+      "name": "Géologie générale II",
+      "semester": 2,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO1205",
+      "name": "Education civique et Droits de l'homme",
+      "semester": 2,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO1206",
+      "name": "Psychologie générale",
+      "semester": 2,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO1207",
+      "name": "Informatique I",
+      "semester": 2,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "LAN1208",
+      "name": "Anglais I",
+      "semester": 2,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "MAT1209",
+      "name": "Probabilités statistique",
+      "semester": 2,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO2301",
+      "name": "Chimie organique",
+      "semester": 3,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO2302",
+      "name": "Biochimie structurale",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2303",
+      "name": "Biochimie métabolique",
+      "semester": 3,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO2304",
+      "name": "Biologie Végétale II",
+      "semester": 3,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO2305",
+      "name": "Phytosociologie",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2306",
+      "name": "Biologie des invertébrés terrestres",
+      "semester": 3,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO2307",
+      "name": "Biologie des invertébrés aquatiques",
+      "semester": 3,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO2308",
+      "name": "Informatique II",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2309",
+      "name": "Anglais II",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2310",
+      "name": "Biostatistique",
+      "semester": 3,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO2401",
+      "name": "Cytologie et Histologie animale",
+      "semester": 4,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO2402",
+      "name": "Initiation à la biologie moléculaire",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2403",
+      "name": "Génétique mendélienne et hérédité",
+      "semester": 4,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO2312",
+      "name": "Bactériologie et Virologie",
+      "semester": 4,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO-2305",
+      "name": "Mycologie",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2406",
+      "name": "Biologie Végétale III",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2407",
+      "name": "Physiologie Végétale",
+      "semester": 4,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO2408",
+      "name": "Biologie des vertébrés",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2409",
+      "name": "Physiologie animale",
+      "semester": 4,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO2410",
+      "name": "Initiation à la phytotechnie",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2411",
+      "name": "Initiation à la zootechnie",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO2412",
+      "name": "Initiation à la nutrition humaine",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3501",
+      "name": "Systématique des Invertébrés",
+      "semester": 5,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO3502",
+      "name": "Systématique des Vertébrés",
+      "semester": 5,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3503",
+      "name": "Evolution et Anthropologie",
+      "semester": 5,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3504",
+      "name": "Systématique des Végétaux inférieurs",
+      "semester": 5,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3505",
+      "name": "Systématique des Végétaux supérieurs",
+      "semester": 5,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "BIO3507",
+      "name": "Ecologie Générale",
+      "semester": 5,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3508",
+      "name": "Ecologie du paysage",
+      "semester": 5,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3509",
+      "name": "Biologie de la Conservation",
+      "semester": 5,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3510",
+      "name": "Embryologie Végétale",
+      "semester": 5,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3511",
+      "name": "Cytologie, Histologie et Anatomie Végétale",
+      "semester": 5,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3601",
+      "name": "Biogéographie",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3602",
+      "name": "Ethologie Animale",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3603",
+      "name": "Limnologie",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3604",
+      "name": "Embryologie Animale",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3605",
+      "name": "Anatomie Comparée",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3606",
+      "name": "Entomologie Appliquée",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3607",
+      "name": "Parasitologie",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3608",
+      "name": "Introduction aux Biotechnologies",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3609",
+      "name": "Initiation à la recherche",
+      "semester": 6,
+      "credits": 1,
+      "hours": 15
+    },
+    {
+      "code": "ENT3610",
+      "name": "Entreprenariat",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "BIO3611",
+      "name": "Déroulement/Immersion professionnelle",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3612",
+      "name": "Rapport",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "BIO3613",
+      "name": "Restitution",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    }
+  ]
+}

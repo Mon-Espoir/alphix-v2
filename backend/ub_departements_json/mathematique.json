@@ -1,0 +1,69 @@
+{
+  "faculty": {
+    "code": "FS",
+    "name": "Faculté des Sciences"
+  },
+  "department": {
+    "code": "MAT",
+    "name": "Département de Mathématiques"
+  },
+  "courses": [
+    {"code": "MAT1101", "name": "Analyse I", "semester": 1, "credits": 6, "hours": 90},
+    {"code": "MAT1102", "name": "Algèbre I", "semester": 1, "credits": 3, "hours": 45},
+    {"code": "PHY1103", "name": "Mécanique Générale", "semester": 1, "credits": 6, "hours": 90},
+    {"code": "PHY1104", "name": "Mécanique analytique I", "semester": 1, "credits": 4, "hours": 60},
+    {"code": "PHY1105", "name": "Thermodynamique", "semester": 1, "credits": 3, "hours": 45},
+    {"code": "CHI1106", "name": "Chimie Générale I", "semester": 1, "credits": 2, "hours": 30},
+    {"code": "LAN1107", "name": "Anglais I", "semester": 1, "credits": 2, "hours": 30},
+    {"code": "INF1108", "name": "Initiation à l'informatique", "semester": 1, "credits": 2, "hours": 30},
+    {"code": "CDH1109", "name": "Education civique et droits de l'homme", "semester": 1, "credits": 2, "hours": 30},
+
+    {"code": "MAT1210", "name": "Analyse II", "semester": 2, "credits": 6, "hours": 90},
+    {"code": "MAT1211", "name": "Géométrie I", "semester": 2, "credits": 3, "hours": 105},
+    {"code": "INF1212", "name": "Calcul numérique et programmation", "semester": 2, "credits": 3, "hours": 45},
+    {"code": "INF1213", "name": "Algorithmique I", "semester": 2, "credits": 6, "hours": 90},
+    {"code": "MAT1214", "name": "Algèbre II", "semester": 2, "credits": 4, "hours": 60},
+    {"code": "MAT1215", "name": "Géométrie II", "semester": 2, "credits": 4, "hours": 60},
+    {"code": "SCT1216", "name": "Introduction aux sciences de la terre", "semester": 2, "credits": 2, "hours": 30},
+    {"code": "PHY1217", "name": "Astronomie", "semester": 2, "credits": 2, "hours": 30},
+
+    {"code": "MAT2301", "name": "Analyse complexe", "semester": 3, "credits": 5, "hours": 75},
+    {"code": "MAT2302", "name": "Equations différentielles", "semester": 3, "credits": 5, "hours": 75},
+    {"code": "MAT2303", "name": "Algèbre III", "semester": 3, "credits": 6, "hours": 90},
+    {"code": "MAT2304", "name": "Géométrie Projective", "semester": 3, "credits": 4, "hours": 60},
+    {"code": "PHY2305", "name": "Mécanique analytique II", "semester": 3, "credits": 3, "hours": 45},
+    {"code": "PHY2306", "name": "Electromagnétisme", "semester": 3, "credits": 4, "hours": 60},
+    {"code": "PHY2307", "name": "Introduction à la mécanique quantique", "semester": 3, "credits": 3, "hours": 45},
+
+    {"code": "MAT2408", "name": "Analyse III", "semester": 4, "credits": 5, "hours": 75},
+    {"code": "MAT2303", "name": "Introduction à la géométrie différentielle", "semester": 4, "credits": 5, "hours": 75},
+    {"code": "MAT2410", "name": "Probabilité et statistique", "semester": 4, "credits": 4, "hours": 60},
+    {"code": "MAT2411", "name": "Logique mathématique", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "MAT2412", "name": "Algorithmique Avancée", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "MAT2413", "name": "Programmation", "semester": 4, "credits": 4, "hours": 90},
+    {"code": "MAT2414", "name": "Algèbre de Boole", "semester": 4, "credits": 2, "hours": 45},
+    {"code": "MAT2415", "name": "Analyse Statistique sur ordinateur", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "MAT2416", "name": "Initiation aux méthodes de recherche scientifique", "semester": 4, "credits": 2, "hours": 30},
+    {"code": "LAN2417", "name": "Anglais II", "semester": 4, "credits": 2, "hours": 30},
+
+    {"code": "MAT3501", "name": "Topologie Générale", "semester": 5, "credits": 4, "hours": 60},
+    {"code": "MAT3502", "name": "Théorie de la mesure", "semester": 5, "credits": 4, "hours": 60},
+    {"code": "PHY3503", "name": "Mécanique Analytique III", "semester": 5, "credits": 3, "hours": 45},
+    {"code": "PHY3504", "name": "MQNR", "semester": 5, "credits": 4, "hours": 60},
+    {"code": "MAT3505", "name": "Géométrie différentielle", "semester": 5, "credits": 4, "hours": 60},
+    {"code": "MAT3506", "name": "Analyse Fonctionnelle", "semester": 5, "credits": 4, "hours": 60},
+    {"code": "MAT3507", "name": "Techniques Appliquées de Modélisation", "semester": 5, "credits": 4, "hours": 60},
+    {"code": "MAT3508", "name": "Analyse Numérique II", "semester": 5, "credits": 3, "hours": 45},
+
+    {"code": "MAT3609", "name": "Utilisation des Logiciels en Maths", "semester": 6, "credits": 2, "hours": 30},
+    {"code": "MAT3610", "name": "Probabilité et Statistique inférentielle", "semester": 6, "credits": 4, "hours": 60},
+    {"code": "MAT3611", "name": "Algèbre Commutative et applications", "semester": 6, "credits": 4, "hours": 60},
+    {"code": "PHY3612", "name": "PTM", "semester": 6, "credits": 4, "hours": 60},
+    {"code": "PHY3613", "name": "Electrodynamique", "semester": 6, "credits": 4, "hours": 60},
+    {"code": "LAN3614", "name": "Cours à option (Anglais ou chinois ou swahili)", "semester": 6, "credits": 2, "hours": 30},
+    {"code": "ECO3615", "name": "Cours à option parmi : Recherche Op., Cryptographie, MAFINA ou Gestion des entreprises", "semester": 6, "credits": 2, "hours": 30},
+    {"code": "ECO3616", "name": "Entrepreneuriat", "semester": 6, "credits": 2, "hours": 30},
+    {"code": "MAT3617", "name": "Terrain ; Rapport de stage ; Restitution", "semester": 6, "credits": 4, "hours": 60},
+    {"code": "MAT3618", "name": "Séminaires", "semester": 6, "credits": 2, "hours": 30}
+  ]
+}

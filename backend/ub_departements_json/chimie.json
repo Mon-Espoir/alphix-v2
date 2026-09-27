@@ -1,0 +1,73 @@
+{
+  "faculty": {
+    "code": "FS",
+    "name": "Faculté des Sciences"
+  },
+  "department": {
+    "code": "CHI",
+    "name": "Département de Chimie"
+  },
+  "courses": [
+    {"code": "MAT1101", "name": "Mathématiques I", "semester": 1, "credits": 5, "hours": 75, "type": "", "teacher": ""},
+    {"code": "PHY1102", "name": "Physique générale I", "semester": 1, "credits": 5, "hours": 75, "type": "", "teacher": ""},
+    {"code": "MAT1103", "name": "Mathématiques II", "semester": 1, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "PHY1104", "name": "Physique générale II", "semester": 1, "credits": 5, "hours": 75, "type": "", "teacher": ""},
+    {"code": "EDH1105", "name": "Education à la citoyenneté", "semester": 1, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "PSY1106", "name": "Psychologie générale", "semester": 1, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "INF1107", "name": "Informatique I", "semester": 1, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "LAN1108", "name": "Anglais I", "semester": 1, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "MAT1109", "name": "Probabilités et statistiques", "semester": 1, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+
+    {"code": "CHI1210", "name": "Chimie générale I", "semester": 2, "credits": 6, "hours": 90, "type": "", "teacher": ""},
+    {"code": "SCT1211", "name": "Géologie générale I", "semester": 2, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "CHI1213", "name": "Chimie générale II", "semester": 2, "credits": 6, "hours": 90, "type": "", "teacher": ""},
+    {"code": "SCT1214", "name": "Géologie générale II", "semester": 2, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "BIO1215", "name": "Biologie générale", "semester": 2, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "BIO1216", "name": "Biologie végétale I", "semester": 2, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "BIO1217", "name": "Biologie animale I", "semester": 2, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+
+    {"code": "MAT2301", "name": "Mathématiques générales III", "semester": 3, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "PHY2302", "name": "Physique générale III", "semester": 3, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "PHY2303", "name": "Mécanique Analytique", "semester": 3, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI2304", "name": "Chimie Quantique", "semester": 3, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "CHI2305", "name": "Thermodynamique chimique et fondements statistiques", "semester": 3, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI2306", "name": "Méthodes physiques de la chimie", "semester": 3, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI2307", "name": "Spectroscopie moléculaire", "semester": 3, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI2308", "name": "Histoire des Sciences chimiques", "semester": 3, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "PHI2309", "name": "Philosophie", "semester": 3, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "INF2310", "name": "Informatique II", "semester": 3, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "LAN2311", "name": "Anglais II", "semester": 3, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+
+    {"code": "CHI2412", "name": "Chimie Inorganique", "semester": 4, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "SCT2413", "name": "Cristallographie", "semester": 4, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI2414", "name": "Chimie Analytique", "semester": 4, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "CHI2415", "name": "Traitement des données", "semester": 4, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI2416", "name": "Méthodes spectrales", "semester": 4, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI2417", "name": "Chimie organique I", "semester": 4, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI2418", "name": "Chimie organique II", "semester": 4, "credits": 6, "hours": 90, "type": "", "teacher": ""},
+    {"code": "CHI2419", "name": "Biochimie Structurale", "semester": 4, "credits": 5, "hours": 75, "type": "", "teacher": ""},
+    {"code": "BIO2420", "name": "Eléments de microbiologie", "semester": 4, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+
+    {"code": "CHI3501", "name": "Chimie Industrielle", "semester": 5, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3502", "name": "Chimie de coordination", "semester": 5, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3503", "name": "Analyse chimique instrumentale", "semester": 5, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3504", "name": "Biochimie Métabolique", "semester": 5, "credits": 5, "hours": 75, "type": "", "teacher": ""},
+    {"code": "CHI3505", "name": "Eléments de Biochimie Clinique", "semester": 5, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI3506", "name": "Mécanismes réactionnels", "semester": 5, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3507", "name": "Synthèse organique", "semester": 5, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3508", "name": "Chimie Physique et Calculs Physico-chimiques", "semester": 5, "credits": 6, "hours": 90, "type": "", "teacher": ""},
+    {"code": "CHI3509", "name": "Cinétique Chimique", "semester": 5, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+
+    {"code": "CHI3610", "name": "Méthodes et techniques de la recherche", "semester": 6, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "ENT3611", "name": "Entrepreneuriat", "semester": 6, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI3612", "name": "Chimie de l'Environnement", "semester": 6, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI3613", "name": "Chimie polymères", "semester": 6, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "CHI3614", "name": "Chimie Physique Moléculaire", "semester": 6, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3615", "name": "Chimie physique et méthodes de structure électronique", "semester": 6, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3616", "name": "Chimie hétérocyclique", "semester": 6, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3617", "name": "Pharmacognosie", "semester": 6, "credits": 4, "hours": 60, "type": "", "teacher": ""},
+    {"code": "CHI3618", "name": "Projet personnel et déroulement", "semester": 6, "credits": 3, "hours": 45, "type": "", "teacher": ""},
+    {"code": "CHI3619", "name": "Restitution / séminaires", "semester": 6, "credits": 2, "hours": 30, "type": "", "teacher": ""},
+    {"code": "CHI3620", "name": "Rapport de stage", "semester": 6, "credits": 2, "hours": 30, "type": "", "teacher": ""}
+  ]
+}

@@ -1,0 +1,404 @@
+{
+  "faculty": {
+    "code": "FS",
+    "name": "Faculté des Sciences"
+  },
+  "department": {
+    "code": "SCT",
+    "name": "Département des Sciences de la Terre"
+  },
+  "courses": [
+    {
+      "code": "SCT1101",
+      "name": "Mathématiques I",
+      "semester": 1,
+      "credits": 5,
+      "hours": 75
+    },
+    {
+      "code": "SCT1102",
+      "name": "Physique générale I",
+      "semester": 1,
+      "credits": 5,
+      "hours": 75
+    },
+    {
+      "code": "SCT1103",
+      "name": "Chimie générale I",
+      "semester": 1,
+      "credits": 6,
+      "hours": 90
+    },
+    {
+      "code": "SCT1104",
+      "name": "Géologie générale I",
+      "semester": 1,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT1105",
+      "name": "Biologie générale",
+      "semester": 1,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT1106",
+      "name": "Biologie végétale I",
+      "semester": 1,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT1107",
+      "name": "Biologie animale I",
+      "semester": 1,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT1201",
+      "name": "Mathématiques II",
+      "semester": 2,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT1202",
+      "name": "Physique générale II",
+      "semester": 2,
+      "credits": 5,
+      "hours": 75
+    },
+    {
+      "code": "SCT1203",
+      "name": "Chimie générale II",
+      "semester": 2,
+      "credits": 6,
+      "hours": 90
+    },
+    {
+      "code": "SCT1204",
+      "name": "Géologie générale II",
+      "semester": 2,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT1205",
+      "name": "Education à la citoyenneté",
+      "semester": 2,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT1206",
+      "name": "Psychologie générale",
+      "semester": 2,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT1207",
+      "name": "Informatique I",
+      "semester": 2,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT1208",
+      "name": "Anglais I",
+      "semester": 2,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT1209",
+      "name": "Probabilités et statistiques",
+      "semester": 2,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "SCT2301",
+      "name": "Mathématiques Générales III",
+      "semester": 3,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT2302",
+      "name": "Physique Générale III",
+      "semester": 3,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT2303",
+      "name": "Mécanique Analytique",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT2304",
+      "name": "Cristallographie",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT2305",
+      "name": "Minéralogie",
+      "semester": 3,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "SCT2306",
+      "name": "Optique cristalline",
+      "semester": 3,
+      "credits": 5,
+      "hours": 75
+    },
+    {
+      "code": "SCT2307",
+      "name": "Anglais II",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT2308",
+      "name": "Paléobotanique",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT2309",
+      "name": "Informatique II",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT2310",
+      "name": "Traitement des données",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT2311",
+      "name": "Paléontologie",
+      "semester": 3,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT2401",
+      "name": "Eléments de Chimie Physique",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT2402",
+      "name": "Chimie Inorganique",
+      "semester": 4,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT2403",
+      "name": "Chimie Analytique",
+      "semester": 4,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT2404",
+      "name": "Géologie Structurale",
+      "semester": 4,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT2405",
+      "name": "Sédimentologie",
+      "semester": 4,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "SCT2406",
+      "name": "Stratigraphie",
+      "semester": 4,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "SCT2407",
+      "name": "Cartographie Géologique",
+      "semester": 4,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT2408",
+      "name": "Topographie",
+      "semester": 4,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT2409",
+      "name": "Excursions I",
+      "semester": 4,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT3501",
+      "name": "Pétrologie Endogène",
+      "semester": 5,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT3502",
+      "name": "Géologie Régionale",
+      "semester": 5,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT3503",
+      "name": "Excursions II",
+      "semester": 5,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT3503_bis",
+      "name": "Lever géologique I",
+      "semester": 5,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT3504",
+      "name": "Hydrogéologie",
+      "semester": 5,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT3505",
+      "name": "Mécanique des sols",
+      "semester": 5,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT3506",
+      "name": "Géophysique",
+      "semester": 5,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT3507",
+      "name": "Mécaniques des roches",
+      "semester": 5,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT3508",
+      "name": "Télédétection et photogéologie",
+      "semester": 5,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT3509",
+      "name": "Systèmes d'Information géographiques",
+      "semester": 5,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT3601",
+      "name": "Pédologie",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "SCT3602",
+      "name": "Géologie des Terrains Superficiels",
+      "semester": 6,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT3603",
+      "name": "Géochimie théorique",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "SCT3604",
+      "name": "Métallogénie et Gitologie",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "SCT3605",
+      "name": "Prospection minière",
+      "semester": 6,
+      "credits": 3,
+      "hours": 45
+    },
+    {
+      "code": "SCT3606",
+      "name": "Excursions III",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT3607",
+      "name": "Lever Géologique II",
+      "semester": 6,
+      "credits": 4,
+      "hours": 60
+    },
+    {
+      "code": "SCT3608",
+      "name": "Entrepreneuriat",
+      "semester": 6,
+      "credits": 1,
+      "hours": 15
+    },
+    {
+      "code": "SCT3609",
+      "name": "Séminaires",
+      "semester": 6,
+      "credits": 2,
+      "hours": 30
+    },
+    {
+      "code": "SCT3610",
+      "name": "Stage d'immersion professionnelle",
+      "semester": 6,
+      "credits": 5,
+      "hours": 75
+    }
+  ]
+}

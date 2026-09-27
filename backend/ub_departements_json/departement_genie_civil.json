@@ -1,0 +1,1179 @@
+{
+  "faculty": {
+    "code": "FSI",
+    "name": "Faculté des Sciences d'Ingénierie"
+  },
+  "department": {
+    "code": "GC",
+    "name": "Département de Génie Civil"
+  },
+  "levels": [
+    {
+      "level": "BAC I",
+      "option": "Tronc Commun (EM-GC-AU)",
+      "semesters": [
+        {
+          "semester": 1,
+          "courses": [
+            {
+              "code": "BFSI1101",
+              "name": "Algèbre",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1102",
+              "name": "Analyse mathématique 1",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1103",
+              "name": "Géométrie analytique",
+              "credits": 3,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1104",
+              "name": "Physique générale 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1105",
+              "name": "Electricité et magnétisme",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1106",
+              "name": "Chimie générale",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1107",
+              "name": "Anglais général",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1108",
+              "name": "Techniques d'expression écrite et de communication",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1109",
+              "name": "Informatique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1110",
+              "name": "Education à la citoyenneté",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 2,
+          "courses": [
+            {
+              "code": "BFSI1211",
+              "name": "Analyse Mathématique 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1212",
+              "name": "Trigonométrie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1213",
+              "name": "Probabilités et statistiques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1214",
+              "name": "Physique Générale 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1215",
+              "name": "Technologie des matériaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1216",
+              "name": "Statique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1217",
+              "name": "Géométrie descriptive",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1218",
+              "name": "Dessin industriel",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1219",
+              "name": "Initiation à la Recherche documentaire",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1220",
+              "name": "Langue chinoise",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1221",
+              "name": "Kiswahili",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC II",
+      "option": "Identique pour les deux options",
+      "semesters": [
+        {
+          "semester": 3,
+          "courses": [
+            {
+              "code": "BCGC2301",
+              "name": "Cinématique et Dynamique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2302",
+              "name": "Résistance des matériaux 1",
+              "credits": 6,
+              "hours": 150,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2303",
+              "name": "Chimie des Matériaux de Construction",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2304",
+              "name": "Matériaux de Construction",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2305",
+              "name": "Dessin du Bâtiment",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2306",
+              "name": "Géométrie cotée",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2307",
+              "name": "Analyse numérique et Applications",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2308",
+              "name": "Dessin assisté par ordinateur",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2309",
+              "name": "Hydrologie de l'Ingénieur",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2310",
+              "name": "Géologie de l'Ingénieur",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 4,
+          "courses": [
+            {
+              "code": "BCGC2411",
+              "name": "Mécanique des fluides",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2412",
+              "name": "Hydraulique générale",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2413",
+              "name": "Mécanique des Sols 1",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2414",
+              "name": "Résistance des matériaux 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2415",
+              "name": "Technologie du Béton",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2416",
+              "name": "Technologie de Construction",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2417",
+              "name": "Topographie",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2418",
+              "name": "Travaux de terrain de Topographie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2419",
+              "name": "Architecture 1",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGC2420",
+              "name": "Stage Ouvrier (3 Semaines)",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "Bâtiments et Infrastructures",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BCBI3501",
+              "name": "Architecture II",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3502",
+              "name": "Physique du Bâtiment",
+              "credits": 3,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3503",
+              "name": "Introduction à la sécurité des ouvrages",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3504",
+              "name": "Mécanique des Sols II",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3505",
+              "name": "Mécanique des Structures",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3506",
+              "name": "Béton Armé I",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3507",
+              "name": "Equipement de construction",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3508",
+              "name": "Béton Armé II",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3509",
+              "name": "Système d'Informations géographiques",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3510",
+              "name": "Etude d'impact environnemental",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3511",
+              "name": "Droit de l'environnement, foncier et de la construction",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BCBI3612",
+              "name": "Structures Métalliques",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3613",
+              "name": "Structures en Maçonnerie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3614",
+              "name": "Fondations",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3615",
+              "name": "Alimentation en eau potable",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3616",
+              "name": "Assainissement urbain",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3617",
+              "name": "Constructions Hydrauliques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3618",
+              "name": "Hygiène, santé et sécurité sur chantiers",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3619",
+              "name": "Construction des Routes",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3620",
+              "name": "Conception Assistée par Ordinateur",
+              "credits": 2,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3621",
+              "name": "Anglais technique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI3622",
+              "name": "Stage en entreprise (3semaines)",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "Bâtiments et Infrastructures",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BCBI4701",
+              "name": "Electricité du bâtiment et Climatisation",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4702",
+              "name": "Atelier de Génie civil",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4703",
+              "name": "Organisation, Planning et contrôle des chantiers",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4704",
+              "name": "Energies renouvelables",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4705",
+              "name": "Essais géotechniques",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4706",
+              "name": "Structures en bois",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4707",
+              "name": "Béton précontraint",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4708",
+              "name": "Conception et Exécution des Ponts",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4709",
+              "name": "Spécifications, Métré et Marchés",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4710",
+              "name": "Ethique et Déontologie professionnelle",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4711",
+              "name": "Introduction à la comptabilité",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4712",
+              "name": "Entrepreneuriat et gestion des projets",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4713",
+              "name": "Gestion des ressources humaines",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BCBI4814",
+              "name": "Déroulement du Stage",
+              "credits": 10,
+              "hours": 250,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4815",
+              "name": "Rapport de stage",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4816",
+              "name": "Elaboration du Projet",
+              "credits": 12,
+              "hours": 300,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCBI4817",
+              "name": "Présentation du Projet",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "Génie Hydraulique",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BCGH3501",
+              "name": "Gestion intégrée des Ressources en eau",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3502",
+              "name": "Système d'Informations géographiques",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3503",
+              "name": "Hydraulique Appliquée",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3504",
+              "name": "Mécanique des Sols II",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3505",
+              "name": "Mécanique des Structures",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3506",
+              "name": "Barrages et Ouvrages connexes I",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3507",
+              "name": "Equipement de construction",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3508",
+              "name": "Béton Armé",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3509",
+              "name": "Architecture II",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3510",
+              "name": "Introduction à la sécurité des ouvrages",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3511",
+              "name": "Droit de l'environnement, foncier et de la construction",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3512",
+              "name": "Etude d'impact environnemental",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BCGH3613",
+              "name": "Fondations",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3614",
+              "name": "Construction des Routes",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3615",
+              "name": "Alimentation en eau potable",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3616",
+              "name": "Hydrogéologie de l'Ingénieur",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3617",
+              "name": "Assainissement urbain",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3618",
+              "name": "Métrologie et instrumentation en hydraulique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3619",
+              "name": "Barrages et Ouvrages connexes II",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3620",
+              "name": "Irrigation et Drainage",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3621",
+              "name": "Anglais technique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3622",
+              "name": "Hygiène, santé et sécurité sur chantiers",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH3623",
+              "name": "Stage en Enterprise (3semaines)",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "Génie Hydraulique",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BCGH4701",
+              "name": "Pompes et stations de pompage",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4702",
+              "name": "Énergies renouvelables",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4703",
+              "name": "Structures Métalliques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4704",
+              "name": "Conception Assistée par Ordinateur",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4705",
+              "name": "Eléments d'hydraulique souterraine et calcul des puits",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4706",
+              "name": "Traitement des eaux usées et déchets solides",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4707",
+              "name": "Spécifications, Métré et Marchés",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4708",
+              "name": "Organisation, Planning et contrôle des chantiers",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4709",
+              "name": "Gestion des ressources humaines",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4710",
+              "name": "Ethique et Déontologie professionnelle",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4711",
+              "name": "Introduction à la comptabilité",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4712",
+              "name": "Entrepreneuriat et gestion des projets",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BCGH4813",
+              "name": "Déroulement du Stage",
+              "credits": 10,
+              "hours": 250,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4814",
+              "name": "Rapport de stage",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4815",
+              "name": "Elaboration du Projet",
+              "credits": 12,
+              "hours": 300,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BCGH4816",
+              "name": "Présentation du Projet",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

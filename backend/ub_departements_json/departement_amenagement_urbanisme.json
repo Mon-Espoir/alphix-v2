@@ -1,0 +1,805 @@
+{
+  "faculty": {
+    "code": "FSI",
+    "name": "Faculté des Sciences d'Ingénierie"
+  },
+  "department": {
+    "code": "AMU",
+    "name": "Département d'Aménagement et Urbanisme"
+  },
+  "levels": [
+    {
+      "level": "BAC I",
+      "option": "",
+      "semesters": [
+        {
+          "semester": 1,
+          "courses": [
+            {
+              "code": "BFSI1101",
+              "name": "Algèbre",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1102",
+              "name": "Analyse mathématique 1",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1103",
+              "name": "Géométrie analytique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1104",
+              "name": "Physique générale 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1105",
+              "name": "Electricité et magnétisme",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1106",
+              "name": "Chimie générale",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1107",
+              "name": "Anglais général",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1108",
+              "name": "Techniques d'expression écrite et de communication",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1109",
+              "name": "Informatique",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1110",
+              "name": "Education à la citoyenneté",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 2,
+          "courses": [
+            {
+              "code": "BFSI1211",
+              "name": "Analyse Mathématique 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1212",
+              "name": "Trigonométrie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1213",
+              "name": "Probabilités et statistiques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1214",
+              "name": "Physique Générale 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1215",
+              "name": "Technologie des matériaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1216",
+              "name": "Statique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1217",
+              "name": "Géométrie descriptive",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1218",
+              "name": "Dessin industriel",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1219",
+              "name": "Initiation à la Recherche documentaire",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1220",
+              "name": "Langue chinoise",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BFSI1221",
+              "name": "Kiswahili",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC II",
+      "option": "",
+      "semesters": [
+        {
+          "semester": 3,
+          "courses": [
+            {
+              "code": "BAMU2301",
+              "name": "Principes de l'Economie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2302",
+              "name": "Perspectives de Développement Durable",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2303",
+              "name": "Démographie",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2304",
+              "name": "Cinématique et Dynamique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2305",
+              "name": "Mécanique des Fluides",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2306",
+              "name": "Résistance des Matériaux 1",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2307",
+              "name": "Technologie de Construction",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2308",
+              "name": "Dessin Assisté par Ordinateur",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2309",
+              "name": "Géométrie Cotée",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2310",
+              "name": "Dessin du Bâtiment",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 4,
+          "courses": [
+            {
+              "code": "BAMU2401",
+              "name": "Topographie",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2402",
+              "name": "Travaux de Terrain de Topographie",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2403",
+              "name": "Histoire des Villes",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2404",
+              "name": "Résistance des Matériaux 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2405",
+              "name": "Matériaux de Construction",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2406",
+              "name": "Hydrologie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2407",
+              "name": "Introduction à la Géologie de l'Ingénieur",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2408",
+              "name": "Mécanique de sol",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2409",
+              "name": "Hydraulique Générale",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2410",
+              "name": "Technologie du Béton",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU2411",
+              "name": "Architecture 1",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC III",
+      "option": "",
+      "semesters": [
+        {
+          "semester": 5,
+          "courses": [
+            {
+              "code": "BAMU3501",
+              "name": "Droit Foncier",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3502",
+              "name": "Economie urbaine",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3503",
+              "name": "Analyse Socio-économique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3504",
+              "name": "Anglais Technique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3505",
+              "name": "Béton Armé",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3506",
+              "name": "Géotechnique",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3507",
+              "name": "Route 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3508",
+              "name": "Informatique Appliquée",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3509",
+              "name": "Organisation de l'Espace 1",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3510",
+              "name": "Architecture 2",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3511",
+              "name": "Cartographie",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 6,
+          "courses": [
+            {
+              "code": "BAMU3601",
+              "name": "Physique du Bâtiment",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3602",
+              "name": "Organisation, Métré, Planning et Contrôle des Travaux",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3603",
+              "name": "Route 2",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3604",
+              "name": "Structures Métalliques",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3605",
+              "name": "Alimentation en Eau Potable",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3606",
+              "name": "Système d'Information Géographique",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3607",
+              "name": "Planification et Gestion du Transport Urbain",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3608",
+              "name": "Organisation de l'Espace 2",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3609",
+              "name": "Assainissement Urbain",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU3610",
+              "name": "Electrification Urbaine",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": "BAC IV",
+      "option": "",
+      "semesters": [
+        {
+          "semester": 7,
+          "courses": [
+            {
+              "code": "BAMU4701",
+              "name": "Planification et Gestion Intégrée de l'Environnement",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4702",
+              "name": "Planification Urbaine et Ecologie",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4703",
+              "name": "Planification et Gestion des Projets",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4704",
+              "name": "Entretien, Réhabilitation et Gestion des Routes",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4705",
+              "name": "Ouvrages Hydrauliques",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4706",
+              "name": "Génie Rural",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4707",
+              "name": "Changement Climatique et Planification Territoriale",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4708",
+              "name": "Système d'Information Géographique 2",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4709",
+              "name": "Entrepreneuriat",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4710",
+              "name": "Développement Urbain et Régional",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4711",
+              "name": "Ethique, Déontologie Professionnelle et Bonne Gouvernance",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        },
+        {
+          "semester": 8,
+          "courses": [
+            {
+              "code": "BAMU4801",
+              "name": "Module d'urbanisme",
+              "credits": 5,
+              "hours": 125,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4802",
+              "name": "Module VRD : Voirie",
+              "credits": 3,
+              "hours": 75,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4802",
+              "name": "Module VRD : Alimentation en Eau potable",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4802",
+              "name": "Module VRD : Alimentation en Electricité",
+              "credits": 2,
+              "hours": 50,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4803",
+              "name": "Module de construction",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4804",
+              "name": "Stage",
+              "credits": 10,
+              "hours": 250,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            },
+            {
+              "code": "BAMU4805",
+              "name": "Rapport de stage",
+              "credits": 4,
+              "hours": 100,
+              "type": "",
+              "teacher": "",
+              "documents": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
