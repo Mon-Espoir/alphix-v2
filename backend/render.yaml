@@ -1,6 +1,9 @@
-# Render Blueprint for ALPHIX V2 Backend
-# Déploiement 100% gratuit : Web Service + PostgreSQL (90 jours gratuits)
-# URL permanente : https://alphix-backend.onrender.com
+# Render Blueprint for ALPHIX V2 (100% gratuit)
+# - alphix-backend  : Web Service Laravel + PostgreSQL (spin-down après 15 min)
+# - alphix-frontend : Site statique React (CDN mondial, jamais endormi)
+# URLs permanentes :
+#   https://alphix-backend.onrender.com  (API)
+#   https://alphix-frontend.onrender.com (site)
 
 databases:
   - name: alphix-db
@@ -20,6 +23,9 @@ services:
     branch: master
     rootDir: backend
     dockerfilePath: ./Dockerfile.render
+    buildFilter:
+      paths:
+        - backend/**
     envVars:
       - key: APP_NAME
         value: ALPHIX
@@ -58,4 +64,33 @@ services:
       php artisan route:cache --no-interaction
       php artisan view:cache --no-interaction
     healthCheckPath: /api/v1/maintenance/status
+    autoDeploy: true
+
+  # Site statique React (gratuit, CDN mondial, ne dort JAMAIS).
+  # Le build Vite fige les variables VITE_* ci-dessous dans le JS compilé.
+  - type: web
+    name: alphix-frontend
+    runtime: static
+    repo: https://github.com/Mon-Espoir/alphix-v2
+    branch: master
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    buildFilter:
+      paths:
+        - frontend/**
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://alphix-backend.onrender.com/api/v1
+      - key: VITE_APP_NAME
+        value: ALPHIX
+      - key: VITE_AUTH_MODE
+        value: token
+      - key: VITE_API_TIMEOUT_MS
+        value: "30000"
+    routes:
+      # SPA React Router : toutes les pages renvoient index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
     autoDeploy: true
