@@ -67,7 +67,7 @@ export default function DocumentsListPage() {
           cachedAcademicList('departments', () => DepartmentApi.list()),
           cachedAcademicList('levels', () => LevelApi.list()),
           cachedAcademicList('semesters', () => SemesterApi.list()),
-          cachedAcademicList('document-tags', () => DocumentTagApi.list()),
+          cachedAcademicList('document-tags', () => DocumentTagApi.list().catch(() => [])),
         ])
         if (cancelled) return
         setReferences({

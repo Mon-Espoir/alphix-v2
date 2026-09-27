@@ -59,6 +59,13 @@ Route::prefix('v1')->group(function () {
 
     Route::get('maintenance/status', [MaintenanceController::class, 'status'])->name('maintenance.status');
 
+    // Tags : LECTURE publique (les filtres invités en dépendent — un 401 ici
+    // blanchissait Explorer et Recherche). Écritures protégées plus bas.
+    Route::get('document-tags', [DocumentTagController::class, 'index'])->name('document-tags.index.public');
+    Route::get('document-tags/by-slug/{slug}', [DocumentTagController::class, 'bySlug'])->name('document-tags.bySlug.public');
+    Route::get('document-tags/{document_tag}', [DocumentTagController::class, 'show'])->name('document-tags.show.public');
+    Route::get('documents/{document}/tags', [DocumentTagController::class, 'byDocument'])->name('documents.tags.public');
+
     Route::get('search', [SearchController::class, 'search'])->name('search.documents');
     Route::get('search/popular', [SearchController::class, 'popularQueries'])->name('search.popularQueries');
 
@@ -83,9 +90,7 @@ Route::prefix('v1')->group(function () {
         // éviter toute capture par {document} (PATCH documents/{document} = update).
         Route::patch('documents/{id}/classify', [DocumentController::class, 'classify'])->name('documents.classify');
 
-        Route::apiResource('document-tags', DocumentTagController::class);
-        Route::get('document-tags/by-slug/{slug}', [DocumentTagController::class, 'bySlug'])->name('document-tags.bySlug');
-        Route::get('documents/{document}/tags', [DocumentTagController::class, 'byDocument'])->name('documents.tags');
+        Route::apiResource('document-tags', DocumentTagController::class)->except(['index', 'show']);
 
         Route::post('maintenance/toggle', [MaintenanceController::class, 'toggle'])->middleware('check.role:admin,administrator,super_admin,superadmin')->name('maintenance.toggle');
 

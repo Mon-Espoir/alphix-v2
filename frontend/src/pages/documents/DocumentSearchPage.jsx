@@ -87,7 +87,7 @@ export default function DocumentSearchPage() {
       const [facs, deps, t, levs, sems, all] = await Promise.all([
         cachedAcademicList('faculties', () => FacultyApi.list()),
         cachedAcademicList('departments', () => DepartmentApi.list()),
-        cachedAcademicList('document-tags', () => DocumentTagApi.list()),
+        cachedAcademicList('document-tags', () => DocumentTagApi.list().catch(() => [])),
         cachedAcademicList('levels', () => LevelApi.list()),
         cachedAcademicList('semesters', () => SemesterApi.list()),
         cachedAcademicList('courses', () => CourseApi.list()),
