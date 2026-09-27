@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreGoogleDriveRequest;
 use App\Http\Requests\UpdateGoogleDriveRequest;
 use App\Http\Resources\GoogleDriveResource;
+use App\Models\GoogleDrive;
 use App\Services\GoogleDriveService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class GoogleDriveController extends Controller
 {
@@ -25,6 +27,8 @@ class GoogleDriveController extends Controller
 
     public function store(StoreGoogleDriveRequest $request): JsonResponse
     {
+        Gate::authorize('create', GoogleDrive::class);
+
         $googleDrive = $this->googleDriveService->create($request->validated());
 
         return (new GoogleDriveResource($googleDrive))
@@ -41,6 +45,12 @@ class GoogleDriveController extends Controller
 
     public function update(UpdateGoogleDriveRequest $request, int $id): GoogleDriveResource
     {
+        $existing = $this->googleDriveService->find($id);
+        if ($existing === null) {
+            abort(404, 'Drive introuvable.');
+        }
+        Gate::authorize('update', $existing);
+
         $googleDrive = $this->googleDriveService->update($id, $request->validated());
 
         return new GoogleDriveResource($googleDrive);
@@ -48,6 +58,12 @@ class GoogleDriveController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
+        $existing = $this->googleDriveService->find($id);
+        if ($existing === null) {
+            abort(404, 'Drive introuvable.');
+        }
+        Gate::authorize('delete', $existing);
+
         $this->googleDriveService->delete($id);
 
         return response()->json(null, 204);

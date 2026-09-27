@@ -12,6 +12,7 @@ import { DocumentApi } from '../api/DocumentApi'
 import { normalizeApiList, normalizeApiPagination } from '../utils/academic'
 import { PageTitle, StatCard, Card, Container, LoadingSpinner, Badge } from '../components/ui'
 import { levelForUploadCount, badgesForUploadCount } from '../utils/gamification'
+import { hasAdminAccess } from '../utils/admin'
 
 /**
  * @returns {import('react').JSX.Element}
@@ -53,13 +54,17 @@ export default function DashboardPage() {
           }
         }
 
+        // Compteur d'utilisateurs : endpoint désormais réservé aux admins
+        // (anti-énumération). Les non-admins gardent users: 0 sans requête 403.
         let users = 0
-        try {
-          const { UserApi } = await import('../api/UserApi.js')
-          const u = await UserApi.list().catch(() => null)
-          if (u) users = normalizeApiList(u).length
-        } catch {
-          users = 0
+        if (hasAdminAccess(user)) {
+          try {
+            const { UserApi } = await import('../api/UserApi.js')
+            const u = await UserApi.list().catch(() => null)
+            if (u) users = normalizeApiList(u).length
+          } catch {
+            users = 0
+          }
         }
 
         if (!cancelled) setStats({ faculties: faculties.length, departments, documents, users })

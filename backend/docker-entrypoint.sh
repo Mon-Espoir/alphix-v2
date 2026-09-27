@@ -95,5 +95,17 @@ echo "✅ Backend ready - starting server on port ${PORT:-8000}"
 
 # ──────────────────────────────────────────────
 # Exécution de la commande passée (startCommand render.yaml)
+# Render injecte $PORT (souvent ≠ 8000) : on l'applique au serveur
+# Laravel sans toucher aux autres arguments.
 # ──────────────────────────────────────────────
+if [ -n "${PORT:-}" ]; then
+  ARGS=()
+  for arg in "$@"; do
+    if [ "$arg" = "--port=8000" ]; then
+      arg="--port=${PORT}"
+    fi
+    ARGS+=("$arg")
+  done
+  set -- "${ARGS[@]}"
+fi
 exec "$@"

@@ -12,6 +12,8 @@ class GoogleDrivePolicy
 
     /**
      * Determine whether the user can view any models.
+     * Lecture ouverte : le centre d'upload (tous les connectés) a besoin
+     * du drive actif par priorité.
      */
     public function viewAny(User $user): bool
     {
@@ -28,10 +30,11 @@ class GoogleDrivePolicy
 
     /**
      * Determine whether the user can create models.
+     * Écriture réservée aux admins (les pages d'écriture sont AdminRoute).
      */
     public function create(User $user): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -39,7 +42,7 @@ class GoogleDrivePolicy
      */
     public function update(User $user, GoogleDrive $googleDrive): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -47,7 +50,7 @@ class GoogleDrivePolicy
      */
     public function delete(User $user, GoogleDrive $googleDrive): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -55,7 +58,7 @@ class GoogleDrivePolicy
      */
     public function restore(User $user, GoogleDrive $googleDrive): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -63,6 +66,14 @@ class GoogleDrivePolicy
      */
     public function forceDelete(User $user, GoogleDrive $googleDrive): bool
     {
-        return true;
+        return $this->isAdmin($user);
+    }
+
+    /**
+     * Roles d'administration (alignes sur UserPolicy / frontend ADMIN_ROLES).
+     */
+    private function isAdmin(User $user): bool
+    {
+        return in_array(strtolower((string) $user->role), ['administrator', 'admin', 'super_admin', 'superadmin'], true);
     }
 }

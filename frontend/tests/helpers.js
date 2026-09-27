@@ -1,7 +1,9 @@
 // Shared helpers for ALPHIX V2 e2e — no hardcoded hierarchy, real API driven
+// Identifiants via environnement (NE JAMAIS committer de mot de passe réel) :
+//   ALPHIX_ADMIN_EMAIL / ALPHIX_ADMIN_PASSWORD
 export const API_BASE = 'https://alphix-backend.onrender.com/api/v1';
-export const ADMIN_EMAIL = 'monirankunda@gmail.com';
-export const ADMIN_PASSWORD = 'monespoir.443125';
+export const ADMIN_EMAIL = process.env.ALPHIX_ADMIN_EMAIL || '';
+export const ADMIN_PASSWORD = process.env.ALPHIX_ADMIN_PASSWORD || '';
 export const STORAGE_KEY = 'alphix.v2:auth:token';
 
 export async function apiFetch(path) {
@@ -15,6 +17,9 @@ export function normalizeList(json) {
   return [];
 }
 export async function loginViaApi(email = ADMIN_EMAIL, password = ADMIN_PASSWORD) {
+  if (!email || !password) {
+    throw new Error('Identifiants de test absents : définissez ALPHIX_ADMIN_EMAIL et ALPHIX_ADMIN_PASSWORD.');
+  }
   const res = await fetch(`${API_BASE}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },

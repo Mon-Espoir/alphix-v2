@@ -24,9 +24,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    // Auth routes
-    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
-    Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+    // Auth routes — throttled : anti brute-force (5 essais/min login).
+    Route::post('register', [AuthController::class, 'register'])->middleware('throttle:10,1')->name('auth.register');
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('auth.login');
 
     // Public routes — Explorer (cours comme source principale, LEFT JOIN documents)
     Route::get('faculties', [FacultyController::class, 'index'])->name('faculties.index.public');
@@ -87,13 +87,16 @@ Route::prefix('v1')->group(function () {
         Route::get('document-tags/by-slug/{slug}', [DocumentTagController::class, 'bySlug'])->name('document-tags.bySlug');
         Route::get('documents/{document}/tags', [DocumentTagController::class, 'byDocument'])->name('documents.tags');
 
-        Route::post('maintenance/toggle', [MaintenanceController::class, 'toggle'])->name('maintenance.toggle');
+        Route::post('maintenance/toggle', [MaintenanceController::class, 'toggle'])->middleware('check.role:admin,administrator,super_admin,superadmin')->name('maintenance.toggle');
 
-        Route::apiResource('users', UserController::class);
-        Route::post('users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
-        Route::get('users/by-email/{email}', [UserController::class, 'byEmail'])->name('users.byEmail');
-        Route::get('users/by-uuid/{uuid}', [UserController::class, 'byUuid'])->name('users.byUuid');
-        Route::get('users/by-role/{role}', [UserController::class, 'byRole'])->name('users.byRole');
+        // Gestion des utilisateurs : administration uniquement (anti-énumération).
+        Route::middleware(['check.role:admin,administrator,super_admin,superadmin'])->group(function () {
+            Route::apiResource('users', UserController::class);
+            Route::post('users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.resetPassword');
+            Route::get('users/by-email/{email}', [UserController::class, 'byEmail'])->name('users.byEmail');
+            Route::get('users/by-uuid/{uuid}', [UserController::class, 'byUuid'])->name('users.byUuid');
+            Route::get('users/by-role/{role}', [UserController::class, 'byRole'])->name('users.byRole');
+        });
 
         // Spécifiques avant la ressource (évite la capture par {google_drive})
         Route::get('google-drives/default', [GoogleDriveController::class, 'defaultDrive'])->name('google-drives.default');
@@ -114,12 +117,12 @@ Route::prefix('v1')->group(function () {
             Route::patch('{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
         });
 
-        Route::prefix('statistics')->group(function () {
+        Route::prefix('statistics')->middleware('check.role:admin,administrator,super_admin,superadmin')->group(function () {
             Route::post('{documentId}/popularity', [StatisticsController::class, 'updatePopularity'])->name('statistics.updatePopularity');
             Route::post('recalculate', [StatisticsController::class, 'recalculate'])->name('statistics.recalculate');
         });
 
-        Route::prefix('automation')->group(function () {
+        Route::prefix('automation')->middleware('check.role:admin,administrator,super_admin,superadmin')->group(function () {
             Route::post('{driveId}/sync', [AutomationController::class, 'synchronizeDrive'])->name('automation.synchronizeDrive');
             Route::post('process-pending', [AutomationController::class, 'processPendingDocuments'])->name('automation.processPendingDocuments');
             Route::get('target-drive', [AutomationController::class, 'resolveTargetDrive'])->name('automation.resolveTargetDrive');
@@ -133,14 +136,14 @@ Route::prefix('v1')->group(function () {
             Route::post('recognize', [UploadController::class, 'recognize'])->name('upload.recognize');
         });
 
-        Route::get('system-logs', [SystemLogController::class, 'index'])->name('system-logs.index');
+        Route::get('system-logs', [SystemLogController::class, 'index'])->middleware('check.role:admin,administrator,super_admin,superadmin')->name('system-logs.index');
 
         // Historique des telechargements (table existante, sans migration).
         Route::get('downloads/mine', [DownloadsController::class, 'mine'])->name('downloads.mine');
 
         // IA secondaire : statut + toggle/cle (admin, lecture seule, sans DB).
-        Route::get('secondary-ai/status', [SecondaryAIController::class, 'status'])->name('secondary-ai.status');
-        Route::put('secondary-ai/settings', [SecondaryAIController::class, 'update'])->name('secondary-ai.update');
+        Route::get('secondary-ai/status', [SecondaryAIController::class, 'status'])->middleware('check.role:admin,administrator,super_admin,superadmin')->name('secondary-ai.status');
+        Route::put('secondary-ai/settings', [SecondaryAIController::class, 'update'])->middleware('check.role:admin,administrator,super_admin,superadmin')->name('secondary-ai.update');
 
         // Espace Delegue : stats scopees, passation autonome, revocation admin.
         Route::prefix('delegate')->group(function () {

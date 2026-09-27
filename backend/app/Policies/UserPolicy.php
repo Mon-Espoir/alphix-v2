@@ -11,10 +11,12 @@ class UserPolicy
 
     /**
      * Determine whether the user can view any models.
+     * Admins uniquement : la liste des utilisateurs est sensible
+     * (anti-énumération). Les stats publiques ne doivent pas passer par ici.
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -22,7 +24,7 @@ class UserPolicy
      */
     public function view(User $currentUser, User $modelUser): bool
     {
-        return true;
+        return $this->isAdmin($currentUser);
     }
 
     /**

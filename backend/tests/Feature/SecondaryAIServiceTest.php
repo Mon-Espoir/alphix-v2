@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Services\SecondaryAIService;
 use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class SecondaryAIServiceTest extends TestCase
 {
+    use RefreshDatabase;
     private function service(): SecondaryAIService
     {
         return app(SecondaryAIService::class);
@@ -104,7 +107,9 @@ class SecondaryAIServiceTest extends TestCase
 
     public function test_controller_status_and_update_roundtrip(): void
     {
-        $this->withoutMiddleware(Authenticate::class);
+        // Chemin réel sécurisé : admin authentifié (les non-admins reçoivent 403).
+        $admin = User::factory()->create(['role' => 'administrator']);
+        $this->actingAs($admin);
 
         $response = $this->putJson('/api/v1/secondary-ai/settings', [
             'enabled' => true,
@@ -126,9 +131,22 @@ class SecondaryAIServiceTest extends TestCase
 
     public function test_invalid_payload_is_rejected(): void
     {
-        $this->withoutMiddleware(Authenticate::class);
+        $admin = User::factory()->create(['role' => 'administrator']);
+        $this->actingAs($admin);
 
         $this->putJson('/api/v1/secondary-ai/settings', ['enabled' => 'pas-un-boolean'])
             ->assertStatus(422);
+    }
+
+    public function test_non_admin_cannot_update_settings(): void
+    {
+        $student = User::factory()->create(['role' => 'student']);
+        $this->actingAs($student);
+
+        $this->putJson('/api/v1/secondary-ai/settings', ['enabled' => true])
+            ->assertForbidden();
+
+        $this->getJson('/api/v1/secondary-ai/status')
+            ->assertForbidden();
     }
 }

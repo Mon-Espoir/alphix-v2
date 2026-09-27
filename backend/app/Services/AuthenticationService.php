@@ -4,12 +4,20 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthenticationService
 {
+    /**
+     * Durée de validité des jetons d'authentification (30 jours).
+     * Non rétroactif : les jetons existants (expires_at NULL) restent
+     * valides jusqu'au prochain logout ; seuls les nouveaux expirent.
+     */
+    private const TOKEN_TTL_DAYS = 30;
+
     /**
      * Create a new service instance.
      */
@@ -30,7 +38,7 @@ class AuthenticationService
 
         /** @var User $user */
         $user = $this->userRepository->create($userData);
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = $user->createToken('auth-token', ['*'], Carbon::now()->addDays(self::TOKEN_TTL_DAYS))->plainTextToken;
 
         return [
             'user' => $user,
@@ -56,7 +64,7 @@ class AuthenticationService
             ]);
         }
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = $user->createToken('auth-token', ['*'], Carbon::now()->addDays(self::TOKEN_TTL_DAYS))->plainTextToken;
 
         return [
             'user' => $user,

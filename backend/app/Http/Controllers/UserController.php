@@ -22,6 +22,8 @@ class UserController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
+        Gate::authorize('viewAny', User::class);
+
         $users = $this->userService->all();
 
         return UserResource::collection($users);
@@ -41,6 +43,10 @@ class UserController extends Controller
     public function show(int $id): UserResource
     {
         $user = $this->userService->find($id);
+        if ($user === null) {
+            abort(404, 'Utilisateur introuvable.');
+        }
+        Gate::authorize('view', $user);
 
         return new UserResource($user);
     }
@@ -65,6 +71,8 @@ class UserController extends Controller
 
     public function byEmail(string $email): UserResource
     {
+        Gate::authorize('viewAny', User::class);
+
         $user = $this->userService->findByEmail($email);
 
         return new UserResource($user);
@@ -72,6 +80,8 @@ class UserController extends Controller
 
     public function byUuid(string $uuid): UserResource
     {
+        Gate::authorize('viewAny', User::class);
+
         $user = $this->userService->findByUuid($uuid);
 
         return new UserResource($user);
@@ -79,6 +89,8 @@ class UserController extends Controller
 
     public function byRole(string $role): AnonymousResourceCollection
     {
+        Gate::authorize('viewAny', User::class);
+
         $users = $this->userService->byRole($role);
 
         return UserResource::collection($users);

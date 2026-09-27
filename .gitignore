@@ -1,0 +1,16 @@
+# Racine ALPHIX V2 — ne jamais versionner :
+# - dépendances (le vrai backend a son propre .gitignore)
+/vendor/
+/composer.json
+/composer.lock
+/node_modules/
+# - copie de sauvegarde divergente (code mort)
+/backend_backup/
+# - secrets et configs locales
+.env
+.env.backup
+.env.production
+automation/.env
+# - journaux et artefacts
+frontend/nohup.out
+nohup.out
