@@ -15,6 +15,26 @@ fi
 echo "🚀 ALPHIX V2 Backend - Starting..."
 
 # ──────────────────────────────────────────────
+# Connexion Google Drive (rclone) — 100% additive.
+# Si RCLONE_CONFIG_CONTENT est fourni (variable Render, jamais Git),
+# on l'écrit dans un fichier éphémère et on pointe RCLONE_CONFIG dessus
+# AVANT tout artisan/config:cache. Sinon : comportement inchangé
+# (l'upload garde son fallback local actuel).
+# ──────────────────────────────────────────────
+if [ -n "${RCLONE_CONFIG_CONTENT:-}" ] && [ -z "${RCLONE_CONFIG:-}" ]; then
+    echo "🔌 Rclone config detected — wiring Google Drive..."
+    mkdir -p /tmp/rclone
+    printf '%s' "$RCLONE_CONFIG_CONTENT" > /tmp/rclone/rclone.conf
+    chmod 600 /tmp/rclone/rclone.conf
+    export RCLONE_CONFIG=/tmp/rclone/rclone.conf
+    if command -v rclone >/dev/null 2>&1 && rclone lsd "${RCLONE_REMOTE:-mon_drive}:" --config "$RCLONE_CONFIG" >/dev/null 2>&1; then
+        echo "✅ Google Drive reachable"
+    else
+        echo "⚠️ Google Drive unreachable (uploads will use local fallback)"
+    fi
+fi
+
+# ──────────────────────────────────────────────
 # Génération de la clé APP_KEY si absente
 # ──────────────────────────────────────────────
 if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "" ]; then

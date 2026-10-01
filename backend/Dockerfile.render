@@ -9,10 +9,12 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 
 # Installation des dépendances système + extensions PHP
+# (+ rclone : transfert réel des documents vers Google Drive)
 RUN apk add --no-cache \
     bash \
     curl \
     git \
+    rclone \
     libpng-dev \
     libjpeg-turbo-dev \
     libwebp-dev \

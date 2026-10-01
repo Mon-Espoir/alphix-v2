@@ -55,6 +55,20 @@ services:
         value: log
       - key: SANCTUM_STATEFUL_DOMAINS
         value: alphix-backend.onrender.com
+      # --- Transfert Drive via rclone (ajouts uniquement : sans la conf,
+      # l'upload garde son comportement actuel = fallback local) ---
+      - key: RCLONE_BINARY
+        value: rclone
+      - key: RCLONE_REMOTE
+        value: mon_drive
+      - key: RCLONE_FOLDER
+        value: ALPHIX
+      - key: RCLONE_TIMEOUT
+        value: "300"
+      # Contenu du fichier rclone.conf ([mon_drive]) — JAMAIS dans Git :
+      # Render demande la valeur à la synchronisation du Blueprint.
+      - key: RCLONE_CONFIG_CONTENT
+        sync: false
     buildCommand: |
       composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
       php artisan key:generate --force --no-interaction
