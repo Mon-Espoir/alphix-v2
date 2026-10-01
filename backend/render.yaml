@@ -54,7 +54,7 @@ services:
       - key: DB_DATABASE
         fromDatabase:
           name: alphix-db
-          property: databaseName
+          property: database
       - key: DB_USERNAME
         fromDatabase:
           name: alphix-db
