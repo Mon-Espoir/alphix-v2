@@ -27,7 +27,9 @@ if [ -n "${RCLONE_CONFIG_CONTENT:-}" ] && [ -z "${RCLONE_CONFIG:-}" ]; then
     printf '%s' "$RCLONE_CONFIG_CONTENT" > /tmp/rclone/rclone.conf
     chmod 600 /tmp/rclone/rclone.conf
     export RCLONE_CONFIG=/tmp/rclone/rclone.conf
-    if RCLONE_TEST_OUT=$(rclone lsd "${RCLONE_REMOTE:-mon_drive}:" --config "$RCLONE_CONFIG" 2>&1); then
+    # `timeout 25` : un remote invalide peut faire pendre rclone (refresh
+    # OAuth) — le boot ne doit JAMAIS rester bloqué là-dessus.
+    if RCLONE_TEST_OUT=$(timeout 25 rclone lsd "${RCLONE_REMOTE:-mon_drive}:" --config "$RCLONE_CONFIG" 2>&1); then
         echo "✅ Google Drive reachable"
     else
         echo "⚠️ Google Drive unreachable (uploads will use local fallback)"
