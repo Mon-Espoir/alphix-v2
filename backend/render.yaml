@@ -41,8 +41,28 @@ services:
         value: error
       - key: DB_CONNECTION
         value: pgsql
-      # Variables injectées automatiquement depuis la database 'alphix-db' :
-      # DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+      # Liaison Postgres explicite (sans elle, Render n'injecte RIEN et
+      # l'app bascule sur SQLite éphémère = données perdues à chaque deploy).
+      - key: DB_HOST
+        fromDatabase:
+          name: alphix-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: alphix-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: alphix-db
+          property: databaseName
+      - key: DB_USERNAME
+        fromDatabase:
+          name: alphix-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: alphix-db
+          property: password
       - key: SESSION_DRIVER
         value: database
       - key: QUEUE_CONNECTION

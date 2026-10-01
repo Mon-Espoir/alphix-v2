@@ -27,10 +27,11 @@ if [ -n "${RCLONE_CONFIG_CONTENT:-}" ] && [ -z "${RCLONE_CONFIG:-}" ]; then
     printf '%s' "$RCLONE_CONFIG_CONTENT" > /tmp/rclone/rclone.conf
     chmod 600 /tmp/rclone/rclone.conf
     export RCLONE_CONFIG=/tmp/rclone/rclone.conf
-    if command -v rclone >/dev/null 2>&1 && rclone lsd "${RCLONE_REMOTE:-mon_drive}:" --config "$RCLONE_CONFIG" >/dev/null 2>&1; then
+    if RCLONE_TEST_OUT=$(rclone lsd "${RCLONE_REMOTE:-mon_drive}:" --config "$RCLONE_CONFIG" 2>&1); then
         echo "✅ Google Drive reachable"
     else
         echo "⚠️ Google Drive unreachable (uploads will use local fallback)"
+        echo "   rclone says: $(echo "$RCLONE_TEST_OUT" | head -3 | tr '\n' ' ')"
     fi
 fi
 
