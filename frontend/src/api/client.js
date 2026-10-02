@@ -17,6 +17,7 @@ import { apiConfig } from '../config/api'
 import { getToken } from '../utils/storage'
 import { normalizeApiError } from '../utils/apiError'
 import { AUTHORIZATION_HEADER, AUTH_BEARER_PREFIX } from '../constants/api'
+import { wakeServer, markServerWarm } from '../utils/serverWake'
 
 /**
  * Instance Axios configurée pour toute l'application.
@@ -39,14 +40,15 @@ const apiClient = axios.create({
 })
 
 /**
- * INTERCEPTOR DE REQUÊTE — authentification JWT/Bearer.
- * Injecte "Authorization: Bearer <token>" si :
- *   - le mode d'authentification est 'token' ;
- *   - un jeton existe dans le storage ;
- *   - la requête n'a pas demandé d'opt-out ({ skipAuth: true }).
+ * INTERCEPTOR DE REQUÊTE — réveil serveur + authentification JWT/Bearer.
+ * Le `await wakeServer()` absorbe le cold start Render (gratuit) AVANT la
+ * vraie requête : fini les timeouts à 30 s sur première visite. No-op
+ * immédiat quand le serveur est déjà chaud (99 % des cas).
  */
 apiClient.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    await wakeServer()
+
     const shouldAttachToken = apiConfig.useBearer && config.skipAuth !== true
 
     if (shouldAttachToken) {
@@ -83,7 +85,11 @@ apiClient.interceptors.request.use(
  * Erreur : remplacée par une ApiError typée avant d'atteindre l'appelant.
  */
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Toute réponse réussie prouve un serveur chaud : mémorisé (gratuit).
+    markServerWarm()
+    return response
+  },
   (error) => {
     const normalizedError = normalizeApiError(error)
 

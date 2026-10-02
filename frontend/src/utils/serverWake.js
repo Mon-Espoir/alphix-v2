@@ -14,14 +14,29 @@
  *   - en cas de timeout/réseau, on retente UNE fois (le 2e appel trouve un
  *     serveur déjà chaud et répond en ~1 s) ;
  *   - état "chaud" mémorisé 10 min (TTL < 15 min d'endormissement Render)
- *     pour ne pas payer un ping à chaque action.
+ *     pour ne pas payer un ping à chaque action ;
+ *   - appels concurrents mutualisés (une seule vague de ping à la fois).
+ *
+ * Le ping utilise une instance Axios DÉDIÉE (sans interceptors) : cela évite
+ * toute dépendance circulaire avec api/client.js et toute récursion
+ * (l'intercepteur global appelle wakeServer, jamais l'inverse).
  *
  * Aucune logique métier : uniquement de la résilience transport.
  */
 
-import apiClient from '../api/client'
+import axios from 'axios'
+import { ENV } from '../config/env'
 import { API_ENDPOINTS } from '../constants/endpoints'
 import { API_ERROR_TYPES } from '../constants/api'
+
+/**
+ * Client minimal réservé au ping de réveil (pas de jeton, pas d'interceptors).
+ */
+const wakeClient = axios.create({
+  baseURL: ENV.API_BASE_URL,
+  timeout: 90_000,
+  headers: { Accept: 'application/json' },
+})
 
 /** Timeout du ping de réveil : absorbe le cold start Render (25-60 s). */
 export const WAKE_TIMEOUT_MS = 90_000
@@ -31,6 +46,9 @@ export const WARM_TTL_MS = 10 * 60_000
 
 /** Horodatage du dernier ping réussi (0 = jamais). */
 let lastWarmAt = 0
+
+/** Ping en cours (mutualisé entre appels concurrents). */
+let pendingWake = null
 
 /**
  * Indique si le serveur est supposé chaud (ping réussi il y a < 10 min).
@@ -50,18 +68,27 @@ export function markServerWarm() {
 
 /**
  * Réveille le serveur si nécessaire. Ne rejette JAMAIS : au pire, la
- * requête d'authentification suivante tentera sa chance normalement.
+ * requête suivante tentera sa chance normalement.
  * @returns {Promise<void>}
  */
-export async function wakeServer() {
-  if (isServerWarm()) return
+export function wakeServer() {
+  if (isServerWarm()) return Promise.resolve()
+  if (!pendingWake) {
+    pendingWake = doWake().finally(() => {
+      pendingWake = null
+    })
+  }
+  return pendingWake
+}
 
+/**
+ * Vague de ping effective (retry unique). Erreurs avalées.
+ * @returns {Promise<void>}
+ */
+async function doWake() {
   for (let attempt = 1; attempt <= 2; attempt += 1) {
     try {
-      await apiClient.get(API_ENDPOINTS.SYSTEM.STATUS, {
-        timeout: WAKE_TIMEOUT_MS,
-        skipAuth: true,
-      })
+      await wakeClient.get(API_ENDPOINTS.SYSTEM.STATUS)
       markServerWarm()
       return
     } catch (error) {
