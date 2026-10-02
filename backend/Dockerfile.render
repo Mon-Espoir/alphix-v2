@@ -71,6 +71,9 @@ RUN touch database/database.sqlite \
     && chown appuser:appgroup database/database.sqlite \
     && chmod 664 database/database.sqlite
 
+# Config PHP production (uploads jusqu'à 200 Mo)
+COPY php.render.ini $PHP_INI_DIR/conf.d/alphix.ini
+
 # Script d'entrée (gère migrations, cache, key generate)
 COPY --chown=appuser:appgroup docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
