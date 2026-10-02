@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AutomationController;
+use App\Http\Controllers\BulkDocumentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DelegateController;
 use App\Http\Controllers\DepartmentController;
@@ -126,6 +127,12 @@ Route::prefix('v1')->group(function () {
             Route::post('{documentId}/popularity', [StatisticsController::class, 'updatePopularity'])->name('statistics.updatePopularity');
             Route::post('recalculate', [StatisticsController::class, 'recalculate'])->name('statistics.recalculate');
         });
+
+        // Import massif : declare des metadonnees pour des fichiers DEJA sur
+        // Drive (aucun octet ne transite par le backend). Reserve aux admins.
+        Route::post('documents/bulk', [BulkDocumentController::class, 'store'])
+            ->middleware('check.role:admin,administrator,super_admin,superadmin')
+            ->name('documents.bulk');
 
         Route::prefix('automation')->middleware('check.role:admin,administrator,super_admin,superadmin')->group(function () {
             Route::post('{driveId}/sync', [AutomationController::class, 'synchronizeDrive'])->name('automation.synchronizeDrive');
