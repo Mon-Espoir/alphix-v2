@@ -31,8 +31,43 @@ return new class extends Migration
 
     /**
      * Reconstruit users avec la liste de roles donnee (ordre colonnes inchange).
+     * SQLite : rebuild de table (le CHECK est inline dans le DDL).
+     * PostgreSQL : le CHECK est une contrainte nommée -> DROP + ADD.
      */
     private function rebuild(array $roles): void
+    {
+        if (DB::getDriverName() === 'pgsql') {
+            $this->rebuildPgsql($roles);
+            return;
+        }
+
+        $this->rebuildSqlite($roles);
+    }
+
+    /**
+     * PostgreSQL : remplace toute contrainte CHECK portant sur "role".
+     */
+    private function rebuildPgsql(array $roles): void
+    {
+        $quoted = implode(', ', array_map(fn ($r) => "'{$r}'", $roles));
+
+        $existing = DB::select(
+            "SELECT conname FROM pg_constraint
+             WHERE conrelid = 'users'::regclass AND contype = 'c'
+             AND pg_get_constraintdef(oid) ILIKE '%role%'"
+        );
+        foreach ($existing as $row) {
+            DB::statement("ALTER TABLE users DROP CONSTRAINT IF EXISTS \"{$row->conname}\"");
+        }
+
+        DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (\"role\" in ({$quoted}))");
+    }
+
+    /**
+     * SQLite : rebuild de table (le CHECK est inline dans le DDL).
+     * Code d'origine inchangé (dev local).
+     */
+    private function rebuildSqlite(array $roles): void
     {
         $quoted = implode(', ', array_map(fn ($r) => "'{$r}'", $roles));
 
