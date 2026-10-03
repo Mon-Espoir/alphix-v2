@@ -9,8 +9,12 @@
 # - secrets et configs locales
 .env
 .env.backup
-.env.production
 automation/.env
+# EXCEPTION PERMANENTE : frontend/.env.production ne contient AUCUN secret
+# (URL publique de l'API, nom d'app, mode auth, timeout). Il est VERSIONNE
+# volontairement pour que chaque `vite build` / APK pointe TOUJOURS la
+# production, sans manipulation manuelle. Ne jamais y mettre de secret.
+!frontend/.env.production
 # - journaux et artefacts
 frontend/nohup.out
 nohup.out

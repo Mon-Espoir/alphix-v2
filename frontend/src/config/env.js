@@ -19,7 +19,7 @@
  */
 const DEFAULTS = Object.freeze({
   API_BASE_URL: 'https://alphix-backend.onrender.com/api/v1',
-  API_TIMEOUT_MS: 15000,
+  API_TIMEOUT_MS: 30000,
   APP_NAME: 'ALPHIX',
   AUTH_MODE: 'token',
 })
