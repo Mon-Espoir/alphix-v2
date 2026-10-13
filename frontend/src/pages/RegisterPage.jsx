@@ -19,7 +19,6 @@ export default function RegisterPage() {
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [errors, setErrors] = useState({})
@@ -32,9 +31,10 @@ export default function RegisterPage() {
 
     // --- Vérifications INSTANTANÉES (sans réseau) : l'étudiant sait
     // immédiatement ce qui ne va pas, dans sa langue, champ par champ. ---
+    // Pas de champ email : inutile (aucune récupération par email n'existe,
+    // la connexion se fait au nom d'utilisateur). 3 champs suffisent.
     const cleanName = name.trim()
     const cleanUsername = username.trim().toLowerCase()
-    const cleanEmail = email.trim().toLowerCase()
     const localErrors = {}
     if (!cleanName) {
       localErrors.name = ['Indique ton nom complet (ex. Jean Ndayisaba).']
@@ -56,7 +56,6 @@ export default function RegisterPage() {
       await register({
         name: cleanName,
         username: cleanUsername,
-        ...(cleanEmail ? { email: cleanEmail } : {}),
         password,
         password_confirmation: passwordConfirmation,
       })
@@ -126,21 +125,6 @@ export default function RegisterPage() {
             />
             <span className="ax-form-group__hint">Lettres minuscules, chiffres et . _ - (pas d&apos;espaces).</span>
             {errors.username && <span className="ax-form-group__error">{errors.username[0]}</span>}
-          </div>
-
-          <div className="ax-form-group">
-            <label className="ax-form-group__label" htmlFor="reg-email">Email <span className="ax-form-group__hint">(facultatif)</span></label>
-            <input
-              id="reg-email"
-              className={`ax-form-group__input ${errors.email ? 'ax-form-group__input--error' : ''}`}
-              type="email"
-              placeholder="votre@email.com"
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); clearFieldError('email') }}
-              autoComplete="email"
-            />
-            <span className="ax-form-group__hint">Personnalisez votre email — connexion possible avec votre nom d&apos;utilisateur.</span>
-            {errors.email && <span className="ax-form-group__error">{errors.email[0]}</span>}
           </div>
 
           <div className="ax-form-group">
