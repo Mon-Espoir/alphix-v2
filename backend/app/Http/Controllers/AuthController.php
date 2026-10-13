@@ -40,7 +40,7 @@ class AuthController extends Controller
             'message' => 'User registered successfully',
             'user' => $result['user'],
             'token' => $result['token'],
-        ], 211);
+        ], 201);
     }
 
     /**

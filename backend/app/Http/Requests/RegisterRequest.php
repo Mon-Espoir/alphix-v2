@@ -37,11 +37,19 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'name.required' => 'Le nom complet est obligatoire.',
+            'name.max' => 'Le nom complet ne peut pas dépasser :max caractères.',
             'username.required' => 'Le nom d\'utilisateur est obligatoire.',
             'username.min' => 'Le nom d\'utilisateur doit contenir au moins :min caractères.',
             'username.max' => 'Le nom d\'utilisateur ne peut pas dépasser :max caractères.',
             'username.regex' => 'Le nom d\'utilisateur ne peut contenir que des lettres minuscules, chiffres, points, tirets et underscores (3 à 50 caractères).',
             'username.unique' => 'Ce nom d\'utilisateur est déjà pris.',
+            'email.email' => 'Cette adresse email n\'est pas valide.',
+            'email.max' => 'L\'adresse email ne peut pas dépasser :max caractères.',
+            'email.unique' => 'Un compte existe déjà avec cette adresse email.',
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.min' => 'Le mot de passe doit contenir au moins :min caractères.',
+            'password.confirmed' => 'Les deux mots de passe ne correspondent pas.',
         ];
     }
 }

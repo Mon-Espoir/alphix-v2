@@ -30,11 +30,33 @@ export default function RegisterPage() {
     setErrors({})
     setGlobalError('')
 
+    // --- Vérifications INSTANTANÉES (sans réseau) : l'étudiant sait
+    // immédiatement ce qui ne va pas, dans sa langue, champ par champ. ---
+    const cleanName = name.trim()
+    const cleanUsername = username.trim().toLowerCase()
+    const cleanEmail = email.trim().toLowerCase()
+    const localErrors = {}
+    if (!cleanName) {
+      localErrors.name = ['Indique ton nom complet (ex. Jean Ndayisaba).']
+    }
+    if (!/^[a-z0-9][a-z0-9._-]{2,49}$/.test(cleanUsername)) {
+      localErrors.username = ['Minuscules, chiffres et . _ - uniquement, 3 à 50 caractères, sans espaces.']
+    }
+    if (password.length < 8) {
+      localErrors.password = ['Ton mot de passe doit contenir au moins 8 caractères.']
+    } else if (password !== passwordConfirmation) {
+      localErrors.password = ['Les deux mots de passe ne correspondent pas, vérifie la confirmation.']
+    }
+    if (Object.keys(localErrors).length > 0) {
+      setErrors(localErrors)
+      return
+    }
+
     try {
       await register({
-        name,
-        username,
-        ...(email.trim() ? { email: email.trim() } : {}),
+        name: cleanName,
+        username: cleanUsername,
+        ...(cleanEmail ? { email: cleanEmail } : {}),
         password,
         password_confirmation: passwordConfirmation,
       })
@@ -133,6 +155,7 @@ export default function RegisterPage() {
               required
               autoComplete="new-password"
             />
+            <span className="ax-form-group__hint">8 caractères minimum.</span>
             {errors.password && <span className="ax-form-group__error">{errors.password[0]}</span>}
           </div>
 
