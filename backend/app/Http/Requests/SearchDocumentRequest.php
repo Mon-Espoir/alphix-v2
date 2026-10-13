@@ -26,9 +26,13 @@ class SearchDocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'query' => ['required', 'string', 'max:255'],
+            // Mot-cle OPTIONNEL : sans query, la recherche devient une
+            // navigation par filtres (ex. tous les examens de Chimie).
+            // Exiger query cassait tous les filtres seuls (422).
+            'query' => ['nullable', 'string', 'max:255'],
             'faculty_id' => ['nullable', 'integer', 'exists:faculties,id'],
             'department_id' => ['nullable', 'integer', 'exists:departments,id'],
+            'course_id' => ['nullable', 'integer', 'exists:courses,id'],
             'doc_type' => [
                 'nullable',
                 'string',
@@ -63,7 +67,6 @@ class SearchDocumentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'query.required' => 'La requête de recherche est obligatoire.',
             'query.max' => 'La requête ne peut pas dépasser :max caractères.',
             'faculty_id.exists' => 'La faculté sélectionnée est invalide.',
             'department_id.exists' => 'Le département sélectionné est invalide.',

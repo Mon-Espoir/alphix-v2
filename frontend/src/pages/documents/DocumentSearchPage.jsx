@@ -164,8 +164,11 @@ export default function DocumentSearchPage() {
   // --- Recherche DOCUMENTS unifiée (SQL + fuzzy + IA fallback) ---
   useEffect(() => {
     const term = submittedQuery.trim()
-    // Documents visibles dès qu'une recherche est lancée OU qu'un filtre doc est actif
-    const shouldSearchDocs = hasSearched && term !== '' || Boolean(filters.docType)
+    const hasAcademicFilter = Boolean(filters.facultyId || filters.departmentId || filters.courseId)
+    // Documents visibles des qu'une recherche est lancee, qu'un filtre
+    // academique est pose OU qu'un filtre doc est actif (le backend accepte
+    // les recherches sans mot-cle : navigation par filtres).
+    const shouldSearchDocs = (hasSearched && term !== '') || hasAcademicFilter || Boolean(filters.docType)
     if (!shouldSearchDocs) {
       setDocResults([])
       setAiSuggestions([])
@@ -187,7 +190,14 @@ export default function DocumentSearchPage() {
         }
         const isGroup = groupMap[filters.docType]
         const apiDocType = isGroup ? undefined : (filters.docType || undefined)
-        const params = { query: term || undefined, doc_type: apiDocType, per_page: 50 }
+        const params = {
+          query: term || undefined,
+          doc_type: apiDocType,
+          faculty_id: filters.facultyId || undefined,
+          department_id: filters.departmentId || undefined,
+          course_id: filters.courseId || undefined,
+          per_page: 50,
+        }
         // Nettoie les params vides
         Object.keys(params).forEach((k) => params[k] === undefined && delete params[k])
         const res = await SearchApi.search(params)
@@ -210,7 +220,7 @@ export default function DocumentSearchPage() {
     }
     run()
     return () => { cancelled = true }
-  }, [hasSearched, submittedQuery, filters.docType])
+  }, [hasSearched, submittedQuery, filters.docType, filters.facultyId, filters.departmentId, filters.courseId])
 
   useEffect(() => {
     if ((courses.length > 0 || docResults.length > 0) && resultsRef.current) {

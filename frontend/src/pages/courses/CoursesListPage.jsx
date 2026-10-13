@@ -405,7 +405,15 @@ export default function CoursesListPage() {
                         <span className="ax-text-tertiary">-</span>
                       )}
                     </td>
-                    <td className="ax-table__cell--strong">{course.title || course.name || '-'}</td>
+                    <td className="ax-table__cell--strong">
+                      <Link
+                        to={`${ROUTE_PATHS.DOCUMENTS}?course_id=${course.id}`}
+                        aria-label={`Voir les documents de ${course.title || course.name || course.code}`}
+                        style={{ textDecoration: 'underline' }}
+                      >
+                        {course.title || course.name || '-'}
+                      </Link>
+                    </td>
                     <td>{course.credits != null ? course.credits : '-'}</td>
                     <td>
                       <Badge variant={isActiveStatus(course.status) ? 'primary' : 'default'} size="sm">
@@ -413,7 +421,14 @@ export default function CoursesListPage() {
                       </Badge>
                     </td>
                     <td>
-                      {course.total_documents != null ? (
+                      {course.total_documents != null && course.total_documents > 0 ? (
+                        <Link
+                          to={`${ROUTE_PATHS.DOCUMENTS}?course_id=${course.id}`}
+                          aria-label={`Voir les documents de ${course.title || course.name || course.code}`}
+                        >
+                          <Badge variant="primary" size="sm">{course.total_documents}</Badge>
+                        </Link>
+                      ) : course.total_documents != null ? (
                         <Badge variant="default" size="sm">{course.total_documents}</Badge>
                       ) : (
                         <span className="ax-text-tertiary">-</span>

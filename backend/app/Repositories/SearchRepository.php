@@ -114,6 +114,9 @@ class SearchRepository extends BaseRepository
                 $q->where('department_id', (int) $filters['department_id']);
             });
         }
+        if (! empty($filters['course_id'])) {
+            $query->where('course_id', (int) $filters['course_id']);
+        }
 
         foreach (['doc_type', 'academic_year', 'language', 'visibility'] as $field) {
             if (! empty($filters[$field])) {
@@ -244,6 +247,10 @@ class SearchRepository extends BaseRepository
         if (! empty($filters['department_id'])) {
             $did = (int) $filters['department_id'];
             $all = $all->filter(fn ($d) => (int) ($d->course?->department_id ?? 0) === $did);
+        }
+        if (! empty($filters['course_id'])) {
+            $cid = (int) $filters['course_id'];
+            $all = $all->filter(fn ($d) => (int) ($d->course_id ?? 0) === $cid);
         }
         foreach (['doc_type', 'academic_year', 'language', 'visibility'] as $field) {
             if (! empty($filters[$field])) {
