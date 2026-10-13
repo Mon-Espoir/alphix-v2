@@ -14,6 +14,7 @@
 import { RouterProvider } from 'react-router-dom'
 import ErrorBoundary from '../../components/feedback/ErrorBoundary'
 import AuthProvider from '../../context/AuthProvider'
+import { useHardwareBackButton } from '../../hooks/useHardwareBackButton'
 import { router } from '../router'
 import '../../styles/theme.css'
 import '../../styles/infrastructure.css'
@@ -26,6 +27,8 @@ import '../../styles/pages.css'
  * @returns {import('react').JSX.Element}
  */
 export default function AppProviders() {
+  // Bouton retour matériel Android : navigue dans l'app au lieu de quitter.
+  useHardwareBackButton()
   return (
     <ErrorBoundary>
       <AuthProvider>
