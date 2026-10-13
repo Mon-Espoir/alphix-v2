@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AutomationController;
 use App\Http\Controllers\BulkDocumentController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ExplorerController;
 use App\Http\Controllers\DelegateController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentController;
@@ -47,6 +48,8 @@ Route::prefix('v1')->group(function () {
     Route::get('courses/{course}', [CourseController::class, 'show'])->name('courses.show.public');
     Route::get('semesters/{semester}/courses', [CourseController::class, 'bySemester'])->name('semesters.courses.public');
     Route::get('levels/{level}/courses', [CourseController::class, 'byLevel'])->name('levels.courses.public');
+    // Explorateur en cascade (1 requete, branches vides elaguees).
+    Route::get('explorer', [ExplorerController::class, 'index'])->name('explorer.index.public');
     Route::get('documents', [DocumentController::class, 'index'])->name('documents.index.public');
     Route::get('documents/{document}', [DocumentController::class, 'show'])->name('documents.show.public');
     Route::prefix('documents')->group(function () {

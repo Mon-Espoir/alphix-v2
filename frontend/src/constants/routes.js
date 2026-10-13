@@ -29,6 +29,8 @@ export const ROUTE_PATHS = Object.freeze({
   DOCUMENTS: '/documents',
   /** Recherche globale de documents (publique, liee au module documents). */
   SEARCH: '/search',
+  /** Explorateur en cascade Faculte -> Cours -> Documents (public, jamais vide). */
+  EXPLORER: '/explorer',
   /** Centre de televersement (layout applicatif, protege). */
   UPLOAD: '/upload',
   /** Historique des televersements. */

@@ -42,6 +42,7 @@ const DocumentDetailsPage = lazy(() => import('../pages/documents/DocumentDetail
 const DocumentFormPage = lazy(() => import('../pages/documents/DocumentFormPage'))
 const DocumentPreviewPage = lazy(() => import('../pages/documents/DocumentPreviewPage'))
 const DocumentSearchPage = lazy(() => import('../pages/documents/DocumentSearchPage'))
+const ExplorerPage = lazy(() => import('../pages/explorer/ExplorerPage'))
 const UploadCenterPage = lazy(() => import('../pages/upload/UploadCenterPage'))
 const UploadHistoryPage = lazy(() => import('../pages/upload/UploadHistoryPage'))
 const StorageDashboardPage = lazy(() => import('../pages/storage/StorageDashboardPage'))
@@ -226,6 +227,17 @@ export const routeConfig = [
       {
         index: true,
         element: lazyElement(DocumentSearchPage),
+      },
+    ],
+  },
+  {
+    // Explorateur public en cascade Faculte -> Documents (jamais vide).
+    path: ROUTE_PATHS.EXPLORER,
+    element: createElement(AppLayout),
+    children: [
+      {
+        index: true,
+        element: lazyElement(ExplorerPage),
       },
     ],
   },
