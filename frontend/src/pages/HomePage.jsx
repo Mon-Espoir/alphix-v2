@@ -15,6 +15,7 @@ import { CourseApi } from '../api/CourseApi'
 import { DocumentApi } from '../api/DocumentApi'
 import { normalizeApiList, normalizeApiPagination } from '../utils/academic'
 import { cachedAcademicList } from '../utils/academicCache'
+import { useAuth } from '../hooks/useAuth'
 
 const QUICK_CHIPS = ['Chimie', 'Informatique', 'Examens', 'BAC 3']
 
@@ -23,6 +24,7 @@ const QUICK_CHIPS = ['Chimie', 'Informatique', 'Examens', 'BAC 3']
  */
 export default function HomePage() {
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const [heroQuery, setHeroQuery] = useState('')
   const [stats, setStats] = useState({ documents: null, faculties: null, courses: null, users: null })
   const [popular, setPopular] = useState([])
@@ -192,19 +194,36 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* CTA */}
+      {/* CTA — jamais « Créer un compte » pour un utilisateur déjà connecté :
+          un connecté voit « Explorer », un visiteur voit l'inscription. */}
       <Section>
         <Container size="sm">
           <div style={{ textAlign: 'center', padding: 'var(--ax-space-8) 0 var(--ax-space-12)' }}>
-            <h2 style={{ fontSize: 'var(--ax-text-2xl)', fontWeight: 'var(--ax-font-bold)', marginBottom: 'var(--ax-space-4)' }}>
-              Pret a commencer ?
-            </h2>
-            <p style={{ color: 'var(--ax-text-secondary)', marginBottom: 'var(--ax-space-6)', fontSize: 'var(--ax-text-sm)' }}>
-              Rejoignez la communaute universitaire et accedez a des milliers de documents.
-            </p>
-            <Link to={ROUTE_PATHS.REGISTER} className="ax-btn ax-btn--primary ax-btn--lg">
-              Creer un compte
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <h2 style={{ fontSize: 'var(--ax-text-2xl)', fontWeight: 'var(--ax-font-bold)', marginBottom: 'var(--ax-space-4)' }}>
+                  Bonne révision !
+                </h2>
+                <p style={{ color: 'var(--ax-text-secondary)', marginBottom: 'var(--ax-space-6)', fontSize: 'var(--ax-text-sm)' }}>
+                  Parcours ta faculté jusqu&apos;à tes documents, ou partage les tiens.
+                </p>
+                <Link to={ROUTE_PATHS.EXPLORER} className="ax-btn ax-btn--primary ax-btn--lg">
+                  Explorer les documents
+                </Link>
+              </>
+            ) : (
+              <>
+                <h2 style={{ fontSize: 'var(--ax-text-2xl)', fontWeight: 'var(--ax-font-bold)', marginBottom: 'var(--ax-space-4)' }}>
+                  Pret a commencer ?
+                </h2>
+                <p style={{ color: 'var(--ax-text-secondary)', marginBottom: 'var(--ax-space-6)', fontSize: 'var(--ax-text-sm)' }}>
+                  Rejoignez la communaute universitaire et accedez a des milliers de documents.
+                </p>
+                <Link to={ROUTE_PATHS.REGISTER} className="ax-btn ax-btn--primary ax-btn--lg">
+                  Creer un compte
+                </Link>
+              </>
+            )}
           </div>
         </Container>
       </Section>
