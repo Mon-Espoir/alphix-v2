@@ -62,7 +62,7 @@ export const UPLOAD_STATUS_LABELS = Object.freeze({
   [UPLOAD_ITEM_STATUS.PENDING]: 'En attente',
   [UPLOAD_ITEM_STATUS.HASHING]: 'Empreinte...',
   [UPLOAD_ITEM_STATUS.CHECKING]: 'Verification...',
-  [UPLOAD_ITEM_STATUS.AWAITING_DECISION]: 'Doublon detecte',
+  [UPLOAD_ITEM_STATUS.AWAITING_DECISION]: 'Ton choix requis',
   [UPLOAD_ITEM_STATUS.UPLOADING]: 'Envoi...',
   [UPLOAD_ITEM_STATUS.UPLOADED]: 'Envoye',
   [UPLOAD_ITEM_STATUS.FAILED]: 'Echec',

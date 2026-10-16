@@ -5,7 +5,7 @@
  * Actions contextuelles selon le statut.
  */
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
 import IconButton from '../ui/IconButton'
@@ -73,6 +73,17 @@ export default function UploadQueue({
   const [duplicateOpen, setDuplicateOpen] = useState(null)
 
   const openDuplicate = useCallback((item) => setDuplicateOpen(item), [])
+
+  // Un doublon en attente OUVRE le dialogue tout seul : sans cela,
+  // l'element reste fige a 50 % (« Doublon detecte ») et l'etudiant croit
+  // a un plantage alors qu'on attend simplement son choix.
+  useEffect(() => {
+    if (duplicateOpen) return
+    const awaiting = (items || []).find(
+      (item) => item?.status === UPLOAD_ITEM_STATUS.AWAITING_DECISION,
+    )
+    if (awaiting) setDuplicateOpen(awaiting)
+  }, [items, duplicateOpen])
 
   const handleResolve = useCallback(
     async (decision) => {
