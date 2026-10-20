@@ -11,6 +11,7 @@ import Header from '../components/layout/Header'
 import Sidebar from '../components/layout/Sidebar'
 import BottomNav from '../components/layout/BottomNav'
 import Footer from '../components/layout/Footer'
+import ScrollToTop from '../components/common/ScrollToTop'
 import WelcomeGuide from '../components/onboarding/WelcomeGuide'
 
 /**
@@ -20,6 +21,7 @@ import WelcomeGuide from '../components/onboarding/WelcomeGuide'
 export default function GuestLayout() {
   return (
     <div className="app-shell app-shell--guest">
+      <ScrollToTop />
       <a href="#main-content" className="ax-skip-link">
         Aller au contenu principal
       </a>

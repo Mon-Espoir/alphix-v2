@@ -12,6 +12,7 @@ import Header from '../components/layout/Header'
 import Sidebar from '../components/layout/Sidebar'
 import BottomNav from '../components/layout/BottomNav'
 import Footer from '../components/layout/Footer'
+import ScrollToTop from '../components/common/ScrollToTop'
 import { ROUTE_PATHS } from '../constants/routes'
 
 const ADMIN_NAV = [
@@ -30,6 +31,7 @@ const ADMIN_NAV = [
 export default function AdminLayout() {
   return (
     <div className="app-shell app-shell--admin">
+      <ScrollToTop />
       <a href="#admin-main" className="ax-skip-link">
         Aller au contenu principal
       </a>

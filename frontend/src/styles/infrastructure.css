@@ -124,3 +124,48 @@
 .error-boundary__retry:hover {
   background: var(--ax-primary-hover);
 }
+
+/* --- Toasts globaux --------------------------------------------------------
+   Ancrage haut centré + safe-area : jamais masqué par l'encoche/barre d'état. */
+.ax-toast-host {
+  position: fixed;
+  top: calc(var(--ax-safe-top, 0px) + var(--ax-space-3));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--ax-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ax-space-2);
+  width: min(calc(100% - 2 * var(--ax-space-4)), 28rem);
+  pointer-events: none;
+}
+
+.ax-toast {
+  pointer-events: auto;
+  width: 100%;
+  text-align: left;
+  padding: var(--ax-space-3) var(--ax-space-4);
+  border: 1px solid var(--ax-border);
+  border-left: 4px solid var(--ax-primary);
+  border-radius: var(--ax-radius-md);
+  background: var(--ax-surface);
+  color: var(--ax-text);
+  font-size: var(--ax-text-sm);
+  line-height: 1.45;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  cursor: pointer;
+  animation: ax-toast-in 0.18s ease-out;
+}
+
+.ax-toast--success { border-left-color: var(--ax-success); }
+.ax-toast--error { border-left-color: var(--ax-danger); }
+.ax-toast--warning { border-left-color: var(--ax-warning); }
+
+@keyframes ax-toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ax-toast { animation: none; }
+}

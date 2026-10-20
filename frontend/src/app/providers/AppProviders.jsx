@@ -13,6 +13,7 @@
 
 import { RouterProvider } from 'react-router-dom'
 import ErrorBoundary from '../../components/feedback/ErrorBoundary'
+import ToastHost from '../../components/feedback/ToastHost'
 import AuthProvider from '../../context/AuthProvider'
 import { useHardwareBackButton } from '../../hooks/useHardwareBackButton'
 import { router } from '../router'
@@ -33,6 +34,7 @@ export default function AppProviders() {
     <ErrorBoundary>
       <AuthProvider>
         <RouterProvider router={router} />
+        <ToastHost />
       </AuthProvider>
     </ErrorBoundary>
   )
