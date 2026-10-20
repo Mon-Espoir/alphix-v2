@@ -1,18 +1,17 @@
 /**
  * ---------------------------------------------------------------------------
- * ALPHIX V2 — Moteur d'upload (file sequentielle, retry, doublons)
+ * ALPHIX V2 — Moteur d'upload (file sequentielle, retry)
  * ---------------------------------------------------------------------------
  * Machine a etats agnostique du framework, exposee via useSyncExternalStore.
  *
  * Pipeline par fichier (strictement sequentiel — un transfert actif max) :
  *   1. HASHING    : empreinte SHA-256 locale chunked (annulable) ;
- *   2. CHECKING   : collision locale par hash + verification serveur
- *                   (`UploadApi.findDuplicateByHash`) ;
- *   3. DECISION   : si doublon -> AWAITING_DECISION (resolution utilisateur :
- *                   remplacer / conserver comme revision / annuler) ;
- *   4. UPLOADING  : validation serveur multipart (`UploadApi.validateFile`,
+ *   2. CHECKING   : preparation du transfert (aucun blocage doublon :
+ *                   deux etudiants peuvent envoyer le meme fichier) ;
+ *   3. UPLOADING  : validation serveur multipart (`UploadApi.validateFile`,
  *                   vrai transfert d'octets avec progression) puis
- *                   enregistrement du document (`DocumentApi.create`).
+ *                   enregistrement du document (`DocumentApi.create`,
+ *                   statut approved = publication immediate).
  *
  * Robustesse : AbortController par element, auto-retry exponentiel sur erreurs
  * reseau/serveur, pause/reprise de file, nettoyage integral des timers et
@@ -35,7 +34,6 @@ import {
   computeTransferSpeed,
   estimateEta,
   validateUploadFile,
-  findQueueHashCollision,
   bumpDocumentVersion,
 } from '../../utils/upload'
 
@@ -158,7 +156,7 @@ export class UploadEngine {
    * traçabilite est complete sans jamais transmettre d'octet invalide.
    *
    * @param {FileList|File[]|null} files - Fichiers selectionnes.
-   * @param {{driveId?: number|string|null}} [opts] - Drive cible optionnel.
+   * @param {{driveId?: number|string|null, courseId?: number|string|null, docType?: string|null}} [opts] - Cible Drive + classification choisie par l'etudiant.
    * @returns {string[]} Identifiants crees (dans l'ordre).
    */
   enqueueFiles(files, opts = {}) {
@@ -190,10 +188,11 @@ export class UploadEngine {
         resolution: null,
         documentId: null,
         linkedTitle: null,
-        // Classification auto/IA (POST /documents) : null = non identifié.
-        courseId: null,
-        docType: null,
-        classified: false,
+        // Classification choisie par l'etudiant (cours + type) avant envoi.
+        courseId: opts.courseId ?? null,
+        docType: opts.docType ?? null,
+        // Cours/type reconnus apres enregistrement (fallback classification).
+        classified: opts.courseId != null && opts.docType != null,
         startedAt: null,
         completedAt: null,
         durationMs: null,
@@ -507,8 +506,10 @@ export class UploadEngine {
 
       this._ensureAlive(item)
 
-      // ---- Phase 2 : collisions & verification serveur ---------------
-      this._transition(item, UPLOAD_ITEM_STATUS.CHECKING, 'Detection de doublons')
+      // ---- Phase 2 : verification serveur (sans blocage doublon) -----
+      // La detection stricte de doublon a ete retiree : deux etudiants
+      // peuvent envoyer le meme fichier sans blocage ni erreur.
+      this._transition(item, UPLOAD_ITEM_STATUS.CHECKING, 'Preparation du transfert')
       this._setProgress(
         item,
         PHASE_WEIGHTS.HASHING + PHASE_WEIGHTS.CHECKING / 2,
@@ -517,26 +518,7 @@ export class UploadEngine {
         null,
       )
 
-      const localCollision = findQueueHashCollision(
-        item.hash,
-        Array.from(this._items.values()).filter((other) => other.id !== item.id),
-      )
-      if (localCollision) {
-        this._flagDuplicate(item, {
-          id: null,
-          title: localCollision.name,
-          version: null,
-        }, 'file')
-        return
-      }
-
-      await this._checkServerDuplicateWithRetry(item)
-
       this._ensureAlive(item)
-
-      // Doublon serveur detecte : la decision utilisateur est requise —
-      // le pipeline s'arrete ici (reprise via resolveDuplicate).
-      if (item.status === UPLOAD_ITEM_STATUS.AWAITING_DECISION) return
 
       // ---- Phase 3 : transfert + enregistrement ----------------------
       this._transition(item, UPLOAD_ITEM_STATUS.UPLOADING, 'Validation serveur')
@@ -637,12 +619,14 @@ export class UploadEngine {
       fd.append('title', titleBase)
       fd.append('original_name', item.name)
       fd.append('slug', `${slugify(titleBase) || 'document'}-${Date.now().toString(36)}`)
-      fd.append('doc_type', 'other')
+      fd.append('doc_type', item.docType || 'other')
+      if (item.courseId != null) fd.append('course_id', String(item.courseId))
       if (item.mimeType) fd.append('mime_type', item.mimeType)
       fd.append('file_size', String(item.size))
       fd.append('file_hash', item.hash)
       fd.append('visibility', 'public')
-      fd.append('status', 'pending')
+      // Publication immediate : visible par tous des la validation.
+      fd.append('status', 'approved')
       fd.append('version', '1.0')
       if (item.driveId != null) fd.append('google_drive_id', String(Number(item.driveId)))
       fd.append('metadata[]', `upload_engine:v2`)

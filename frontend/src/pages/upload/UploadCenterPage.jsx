@@ -2,13 +2,16 @@
  * ---------------------------------------------------------------------------
  * ALPHIX V2 — Upload Center Page
  * ---------------------------------------------------------------------------
- * Centre de televersement : zone de depot, file d'attente en temps reel,
- * resolution de doublons, barre d'outils globale.
+ * Televersement simplifie : l'etudiant choisit SON COURS et le TYPE de
+ * document, depose son fichier, et l'envoi part immediatement
+ * (statut approved = visible par tous des la validation).
+ * Aucun blocage doublon : deux etudiants peuvent envoyer le meme fichier.
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { GoogleDriveApi } from '../../api/GoogleDriveApi'
-import { normalizeApiList } from '../../utils/academic'
+import { CourseApi } from '../../api/CourseApi'
+import { cachedAcademicList } from '../../utils/academicCache'
 import { Container, Button } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
 import {
@@ -20,6 +23,7 @@ import UploadModal from '../../components/documents/UploadModal'
 import { DocumentApi } from '../../api/DocumentApi'
 import { useUploadQueue } from '../../hooks/useUploadQueue'
 import { useNotification } from '../../hooks/useNotification'
+import { UPLOAD_CLASSIFY_TYPES } from '../../constants/upload'
 
 /**
  * Page principale de televersement.
@@ -35,7 +39,6 @@ export default function UploadCenterPage() {
     clearCompleted,
     pause,
     resume,
-    resolveDuplicate,
     purgeItems,
     markClassified,
     onEvent,
@@ -43,14 +46,15 @@ export default function UploadCenterPage() {
 
   const notify = useNotification()
   const [drives, setDrives] = useState([])
-  const [selectedDriveId, setSelectedDriveId] = useState(null)
   // Fallback guidé : document téléversé mais cours non identifié.
   const [classifyTarget, setClassifyTarget] = useState(null)
+  const [courses, setCourses] = useState([])
+  const [courseId, setCourseId] = useState('')
+  const [docType, setDocType] = useState('')
 
   useEffect(() => onEvent((event) => {
-    // A la fin de chaque téléversement, si l'auto-identification a échoué
-    // (pas de cours ou type générique), on propose la sélection hiérarchique
-    // au lieu d'une erreur — jamais de blocage pour l'étudiant.
+    // Filet de sécurité : si malgre tout un document arrive sans cours
+    // identifié, on propose la selection hierarchique — jamais de blocage.
     if (event?.type === 'completed' && event?.item?.needsClassification && event?.item?.documentId) {
       setClassifyTarget({
         itemId: event.itemId,
@@ -62,17 +66,15 @@ export default function UploadCenterPage() {
     }
   }), [onEvent])
 
-  const handleClassifyConfirm = useCallback(async ({ courseId, docType }) => {
+  const handleClassifyConfirm = useCallback(async ({ courseId: cid, docType: dtype }) => {
     if (!classifyTarget) return
-    await DocumentApi.classify(classifyTarget.documentId, { course_id: courseId, doc_type: docType })
-    markClassified(classifyTarget.itemId, { courseId, docType })
-    notify.success('Document rattaché à votre cours. Il part en validation.')
+    await DocumentApi.classify(classifyTarget.documentId, { course_id: cid, doc_type: dtype })
+    markClassified(classifyTarget.itemId, { courseId: cid, docType: dtype })
+    notify.success('Document rattache a votre cours.')
     setClassifyTarget(null)
   }, [classifyTarget, markClassified, notify])
 
   const handleClassifyClose = useCallback(() => {
-    // « Plus tard » : le document reste en attente, reclassifiable depuis
-    // la file (« Préciser le cours ») — aucune erreur renvoyée à l'étudiant.
     setClassifyTarget(null)
   }, [])
 
@@ -91,10 +93,17 @@ export default function UploadCenterPage() {
     let cancelled = false
     GoogleDriveApi.getActiveByPriority()
       .then((response) => {
-        if (!cancelled) setDrives(normalizeApiList(response))
+        if (!cancelled) {
+          const list = Array.isArray(response?.data) ? response.data : Array.isArray(response) ? response : []
+          setDrives(list)
+        }
       })
       .catch(() => {
         if (!cancelled) setDrives([])
+      })
+    cachedAcademicList('courses', () => CourseApi.list())
+      .then((list) => {
+        if (!cancelled) setCourses(list)
       })
     return () => {
       cancelled = true
@@ -102,18 +111,38 @@ export default function UploadCenterPage() {
   }, [])
 
   const defaultDrive = drives.find((d) => d.is_default) || drives[0] || null
-  const effectiveDriveId = selectedDriveId ?? defaultDrive?.id ?? null
+  const effectiveDriveId = defaultDrive?.id ?? null
+
+  const courseOptions = useMemo(
+    () =>
+      courses
+        .map((course) => ({
+          value: String(course.id),
+          label: `${course.code ? `${course.code} — ` : ''}${course.name}`,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [courses],
+  )
 
   const handleFiles = useCallback(
     (fileList) => {
       const files = Array.from(fileList ?? [])
       if (files.length === 0) return
-      enqueueFiles(files, { driveId: effectiveDriveId })
+      // Formulaire simplifie : cours ET type choisis avant l'envoi.
+      if (!courseId || !docType) {
+        notify.warning('Choisissez d\u2019abord votre cours et le type de document.')
+        return
+      }
+      enqueueFiles(files, {
+        driveId: effectiveDriveId,
+        courseId: Number(courseId),
+        docType,
+      })
       notify.success(
-        `${files.length} fichier${files.length > 1 ? 's' : ''} ajoute${files.length > 1 ? 's' : ''} a la file.`,
+        `${files.length} fichier${files.length > 1 ? 's' : ''} ajoute${files.length > 1 ? 's' : ''} \u00e0 la file.`,
       )
     },
-    [enqueueFiles, effectiveDriveId, notify],
+    [enqueueFiles, effectiveDriveId, courseId, docType, notify],
   )
 
   const handlePurgeFailed = useCallback(() => {
@@ -126,12 +155,13 @@ export default function UploadCenterPage() {
 
   const isPaused = queue.isPaused
   const counts = queue.counts
+  const formReady = Boolean(courseId && docType)
 
   return (
     <Container>
       <PageHeader
         title="Centre de televersement"
-        subtitle="Deposez vos documents pour les envoyer vers Google Drive"
+        subtitle="Choisissez votre cours, le type de document, puis deposez le fichier"
         actions={
           <Button
             variant={isPaused ? 'primary' : 'secondary'}
@@ -144,31 +174,51 @@ export default function UploadCenterPage() {
         }
       />
 
-      {drives.length > 0 && (
-        <div className="ax-drive-selector" style={{ marginBottom: 'var(--ax-space-4)' }}>
-          <label className="ax-drive-selector__label" htmlFor="upload-center-drive">
-            Drive cible
+      {/* Formulaire simplifie : cours + type, obligatoires avant envoi */}
+      <div className="ax-upload-form" style={{ marginBottom: 'var(--ax-space-4)' }}>
+        <div className="ax-form-group">
+          <label className="ax-form-group__label" htmlFor="upload-center-course">
+            Votre cours *
           </label>
           <select
-            id="upload-center-drive"
-            className="ax-drive-selector__select"
-            value={effectiveDriveId ?? ''}
-            onChange={(event) =>
-              setSelectedDriveId(event.target.value ? Number(event.target.value) : null)
-            }
+            id="upload-center-course"
+            className="ax-form-group__input"
+            value={courseId}
+            onChange={(event) => setCourseId(event.target.value)}
           >
-            {drives.map((drive) => (
-              <option key={drive.id} value={drive.id}>
-                {drive.name} - priorite {drive.priority}
-                {drive.is_default ? ' (defaut)' : ''}
+            <option value="">— Choisir votre cours —</option>
+            {courseOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
-          <p className="ax-drive-selector__hint">
-            Les envois sont rediriges automatiquement si le drive selectionne est sature.
-          </p>
         </div>
-      )}
+        <div className="ax-form-group">
+          <label className="ax-form-group__label" htmlFor="upload-center-doctype">
+            Type de document *
+          </label>
+          <select
+            id="upload-center-doctype"
+            className="ax-form-group__input"
+            value={docType}
+            onChange={(event) => setDocType(event.target.value)}
+          >
+            <option value="">— Choisir le type —</option>
+            {UPLOAD_CLASSIFY_TYPES.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.icon} {type.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        {!formReady && (
+          <p className="ax-text--muted ax-text--sm" style={{ margin: 0 }}>
+            Selectionnez votre cours et le type, puis deposez votre fichier.
+            Le document est publie immediatement apres l&apos;envoi.
+          </p>
+        )}
+      </div>
 
       <UploadZone onFiles={handleFiles} disabled={isPaused} multiple />
 
@@ -190,7 +240,6 @@ export default function UploadCenterPage() {
           onCancel={cancelItem}
           onRetry={retryItem}
           onRemove={removeItem}
-          onResolveDuplicate={resolveDuplicate}
           onClassify={handleClassifyReopen}
         />
       </div>

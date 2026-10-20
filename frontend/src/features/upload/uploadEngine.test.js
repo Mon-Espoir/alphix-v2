@@ -183,8 +183,8 @@ describe('transitions d’etat de la file', () => {
   })
 })
 
-describe('detection et resolution de doublons', () => {
-  it('detecte le doublon serveur et passe en AWAITING_DECISION', async () => {
+describe('doublons non bloquants', () => {
+  it("l'envoi continue meme si le serveur repond qu'un doublon existe", async () => {
     const engine = new UploadEngine()
     UploadApi.findDuplicateByHash.mockResolvedValue({
       id: 7,
@@ -196,94 +196,48 @@ describe('detection et resolution de doublons', () => {
     })
 
     engine.enqueueFiles([makeFile()])
-    const detected = await waitFor(
-      () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.AWAITING_DECISION,
-    )
-    expect(detected).toBe(true)
-
-    const item = engine.getSnapshot().items[0]
-    expect(item.status).toBe(UPLOAD_ITEM_STATUS.AWAITING_DECISION)
-    expect(item.duplicateOf).toMatchObject({ id: 7, title: 'Cours existant', origin: 'server' })
-    expect(UploadApi.validateFile).not.toHaveBeenCalled()
-    engine.destroy()
-  })
-
-  it("resolution 'replace' met a jour le document existant (version majeure)", async () => {
-    const engine = new UploadEngine()
-    UploadApi.findDuplicateByHash.mockResolvedValue({
-      id: 7,
-      title: 'Cours existant',
-      version: '1.3',
-      original_name: 'cours-algo.pdf',
-      file_size: 2048,
-    })
-    DocumentApi.patch.mockResolvedValue({ id: 7 })
-
-    const [id] = engine.enqueueFiles([makeFile()])
-    await waitFor(
-      () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.AWAITING_DECISION,
-    )
-    await engine.resolveDuplicate(id, 'replace')
-    await waitFor(
+    const uploaded = await waitFor(
       () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.UPLOADED,
     )
-
-    expect(DocumentApi.patch).toHaveBeenCalledTimes(1)
-    const [patchedId, payload] = DocumentApi.patch.mock.calls[0]
-    expect(patchedId).toBe(7)
-    expect(payload.version).toBe('2.0')
-    expect(payload.metadata).toContain('resolution:replace')
+    expect(uploaded).toBe(true)
 
     const item = engine.getSnapshot().items[0]
     expect(item.status).toBe(UPLOAD_ITEM_STATUS.UPLOADED)
-    expect(item.resolution).toBe('replace')
-    expect(item.documentId).toBe(7)
+    expect(item.duplicateOf).toBeNull()
+    expect(DocumentApi.create).toHaveBeenCalledTimes(1)
     engine.destroy()
   })
 
-  it("resolution 'keep_both' enregistre une revision (increment mineur)", async () => {
+  it('deux fichiers identiques dans la meme file passent tous les deux', async () => {
     const engine = new UploadEngine()
-    UploadApi.findDuplicateByHash.mockResolvedValue({
-      id: 9,
-      title: 'Rapport final',
-      version: '2.4',
-    })
-    DocumentApi.patch.mockResolvedValue({ id: 9 })
+    // Meme nom => meme contenu => meme hash dans le ledger local.
+    engine.enqueueFiles([makeFile('cours-algo.pdf'), makeFile('cours-algo.pdf')])
 
-    const [id] = engine.enqueueFiles([makeFile('rapport-final.pdf')])
-    await waitFor(
-      () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.AWAITING_DECISION,
+    const uploaded = await waitFor(
+      () => engine.getSnapshot().items.filter((i) => i.status === UPLOAD_ITEM_STATUS.UPLOADED).length === 2,
     )
-    await engine.resolveDuplicate(id, 'keep_both')
-    await waitFor(
+    expect(uploaded).toBe(true)
+    expect(DocumentApi.create).toHaveBeenCalledTimes(2)
+    engine.destroy()
+  })
+
+  it('enregistre avec statut approved et la classification choisie', async () => {
+    const engine = new UploadEngine()
+    DocumentApi.create.mockResolvedValue({ id: 99, course_id: 5, doc_type: 'exam' })
+
+    engine.enqueueFiles([makeFile()], { courseId: 5, docType: 'exam' })
+    const uploaded = await waitFor(
       () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.UPLOADED,
     )
+    expect(uploaded).toBe(true)
 
-    const [, payload] = DocumentApi.patch.mock.calls[0]
-    expect(payload.version).toBe('2.5')
-    expect(payload.metadata).toContain('resolution:revision')
+    const [payload] = DocumentApi.create.mock.calls[0]
+    expect(payload.get('status')).toBe('approved')
+    expect(payload.get('course_id')).toBe('5')
+    expect(payload.get('doc_type')).toBe('exam')
 
     const item = engine.getSnapshot().items[0]
-    expect(item.status).toBe(UPLOAD_ITEM_STATUS.UPLOADED)
-    expect(item.resolution).toBe('keep_both')
-    engine.destroy()
-  })
-
-  it("resolution 'cancel' abandonne l'entrant sans requete", async () => {
-    const engine = new UploadEngine()
-    UploadApi.findDuplicateByHash.mockResolvedValue({ id: 9, title: 'X', version: '1.0' })
-
-    const [id] = engine.enqueueFiles([makeFile()])
-    await waitFor(
-      () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.AWAITING_DECISION,
-    )
-    await engine.resolveDuplicate(id, 'cancel')
-    await waitFor(
-      () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.CANCELLED,
-    )
-
-    expect(DocumentApi.patch).not.toHaveBeenCalled()
-    expect(engine.getSnapshot().items[0].status).toBe(UPLOAD_ITEM_STATUS.CANCELLED)
+    expect(item.needsClassification).toBe(false)
     engine.destroy()
   })
 

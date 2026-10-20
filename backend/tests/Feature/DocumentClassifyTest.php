@@ -95,8 +95,10 @@ class DocumentClassifyTest extends TestCase
         )->assertStatus(422);
     }
 
-    public function test_classify_refuses_approved_documents(): void
+    public function test_classify_allows_approved_documents(): void
     {
+        // Publication immediate : le fallback de classification doit rester
+        // utilisable meme apres approbation (aucun blocage pour l'etudiant).
         $owner = User::factory()->create(['role' => 'student']);
         $course = $this->makeCourse();
         $doc = $this->makeDocument($owner, ['status' => 'approved', 'course_id' => $course->id, 'doc_type' => 'exam']);
@@ -104,7 +106,9 @@ class DocumentClassifyTest extends TestCase
         $this->actingAs($owner)->patchJson(
             "/api/v1/documents/{$doc->id}/classify",
             ['course_id' => $course->id, 'doc_type' => 'tp']
-        )->assertStatus(422);
+        )->assertStatus(200);
+
+        $this->assertSame('tp', $doc->fresh()->doc_type);
     }
 
     public function test_stranger_cannot_classify_someone_elses_document(): void

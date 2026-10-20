@@ -46,7 +46,7 @@ class StoreDocumentRequest extends FormRequest
             'mime_type' => ['sometimes', 'string', 'max:100'],
             'pages' => ['nullable', 'integer', 'min:1', 'max:65535'],
             'file_size' => ['sometimes', 'integer', 'min:0'],
-            'file_hash' => ['required', 'string', 'size:64', 'unique:documents,file_hash'],
+            'file_hash' => ['required', 'string', 'size:64'],
             'file' => ['nullable', 'file', 'max:204800'],
             'version' => ['sometimes', 'string', 'max:30'],
             'visibility' => [
@@ -93,7 +93,6 @@ class StoreDocumentRequest extends FormRequest
             'file_size.min' => 'La taille du fichier ne peut pas être négative.',
             'file_hash.required' => 'L\'empreinte du fichier est obligatoire.',
             'file_hash.size' => 'L\'empreinte du fichier doit contenir exactement :size caractères.',
-            'file_hash.unique' => 'Ce fichier existe déjà sur la plateforme.',
             'file.file' => 'Le champ file doit être un fichier valide.',
             'file.max' => 'Le fichier ne peut pas dépasser 200 Mo.',
             'version.max' => 'La version ne peut pas dépasser :max caractères.',

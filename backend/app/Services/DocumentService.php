@@ -139,7 +139,7 @@ class DocumentService
 
         $payload = array_merge([
             'uuid' => $data['uuid'] ?? (string) Str::uuid(),
-            'status' => $data['status'] ?? 'pending',
+            'status' => $data['status'] ?? 'approved',
             'ocr_status' => $data['ocr_status'] ?? 'pending',
             'visibility' => $data['visibility'] ?? 'public',
             'version' => $data['version'] ?? '1.0',
@@ -271,9 +271,9 @@ class DocumentService
     {
         $document = $this->documentRepository->findOrFail($id);
 
-        if (! in_array($document->getAttribute('status'), ['pending', 'processing'], true)) {
+        if (! in_array($document->getAttribute('status'), ['pending', 'processing', 'approved'], true)) {
             throw ValidationException::withMessages([
-                'document' => ['Seul un document en attente peut être reclassifié.'],
+                'document' => ['Seul un document en attente ou publié peut être reclassifié.'],
             ]);
         }
 
