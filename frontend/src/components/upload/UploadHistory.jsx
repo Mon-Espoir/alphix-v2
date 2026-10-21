@@ -23,9 +23,6 @@ const STATUS_ICONS = {
   [UPLOAD_ITEM_STATUS.CHECKING]: (
     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 10l4 4 6-6" /></svg>
   ),
-  [UPLOAD_ITEM_STATUS.AWAITING_DECISION]: (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10 6v4M10 12v.01" /></svg>
-  ),
   [UPLOAD_ITEM_STATUS.UPLOADING]: (
     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
   ),

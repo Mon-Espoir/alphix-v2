@@ -25,7 +25,7 @@ const REFRESH_ICON = (
 
 /**
  * @param {object} props
- * @param {object} props.counts - {total, pending, uploading, uploaded, failed, cancelled, duplicates}
+ * @param {object} props.counts - {total, pending, uploading, uploaded, failed, cancelled}
  * @param {boolean} props.isPaused - File en pause.
  * @param {function(): void} [props.onPause] - Pause file.
  * @param {function(): void} [props.onResume] - Reprise file.
@@ -64,7 +64,6 @@ export default function UploadToolbar({
     { key: UPLOAD_ITEM_STATUS.UPLOADED, label: 'Envoyes' },
     { key: UPLOAD_ITEM_STATUS.FAILED, label: 'Echecs' },
     { key: UPLOAD_ITEM_STATUS.CANCELLED, label: 'Annules' },
-    { key: UPLOAD_ITEM_STATUS.AWAITING_DECISION, label: 'Doublons' },
   ]
 
   return (

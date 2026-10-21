@@ -27,6 +27,7 @@ import TeacherBadge from '../../components/documents/TeacherBadge'
 import CourseCard from '../../components/documents/CourseCard'
 import { normalizeApiList, resolveCourseIds, resolveDepartmentFacultyId, toSelectOptions, semesterLabel } from '../../utils/academic'
 import { applyDocLevelFilters, docLevelFiltersActive, emptyFilters } from '../../utils/document'
+import { onDocumentPublished } from '../../utils/documentEvents'
 import { cachedAcademicList } from '../../utils/academicCache'
 import { hasAdminAccess } from '../../utils/admin'
 import { useAuth } from '../../hooks/useAuth'
@@ -100,6 +101,12 @@ export default function DocumentsListPage() {
     run()
     return () => { cancelled = true }
   }, [submittedQuery, reloadNonce])
+
+  // Feedback immediat : un document publie ailleurs (Centre de televersement)
+  // rafraichit cette liste sans rechargement complet de la page.
+  useEffect(() => {
+    return onDocumentPublished(() => setReloadNonce((n) => n + 1))
+  }, [])
 
   // Filtrage academique local (faculte/departement/niveau/semestre/cours) — instantane.
   const courses = useMemo(() => {

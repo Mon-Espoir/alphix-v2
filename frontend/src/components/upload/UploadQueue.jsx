@@ -2,18 +2,16 @@
  * ALPHIX V2 — UploadQueue
  * Liste reutilisable des elements de la file d'attente.
  * Version desktop (tableau) + mobile (cartes) via CSS.
- * Actions contextuelles selon le statut.
+ * Affiche icone MIME, nom nettoye, taille lisible et progression reelle.
  */
 
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
 import IconButton from '../ui/IconButton'
 import UploadProgress from './UploadProgress'
-import DuplicateDialog from './DuplicateDialog'
 import { UPLOAD_ITEM_STATUS, UPLOAD_STATUS_LABELS, UPLOAD_STATUS_BADGES } from '../../constants/upload'
-import { formatBytes } from '../../utils/upload'
-import { useNotification } from '../../hooks/useNotification'
+import { formatBytes, cleanFileName, fileCategory } from '../../utils/upload'
 
 const ACTION_ICONS = {
   cancel: (
@@ -32,11 +30,6 @@ const ACTION_ICONS = {
       <path d="M6 6l8 8M14 6l-8 8" />
     </svg>
   ),
-  hash: (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <path d="M10 2a6 6 0 0 1 6 6M10 2a6 6 0 0 0-6 6" />
-    </svg>
-  ),
 }
 
 /**
@@ -47,7 +40,6 @@ const ACTION_ICONS = {
  * @param {function(string): void} props.onCancel - Annulation.
  * @param {function(string): void} props.onRetry - Nouvelle tentative.
  * @param {function(string): void} props.onRemove - Suppression definitive.
- * @param {function(string, string): Promise<void>} props.onResolveDuplicate - Resolution doublon.
  * @param {function(object): void} [props.onClassify] - Reouverture du fallback
  *   de classification (document téléversé mais cours non identifié).
  * @param {boolean} [props.showGlobalActions=true] - Affiche pause/reprise.
@@ -62,39 +54,12 @@ export default function UploadQueue({
   onCancel,
   onRetry,
   onRemove,
-  onResolveDuplicate,
   onClassify,
   showGlobalActions = true,
   onPause,
   onResume,
   onClearCompleted,
 }) {
-  const notify = useNotification()
-  const [duplicateOpen, setDuplicateOpen] = useState(null)
-
-  const openDuplicate = useCallback((item) => setDuplicateOpen(item), [])
-
-  const handleResolve = useCallback(
-    async (decision) => {
-      if (!duplicateOpen) return
-      try {
-        await onResolveDuplicate(duplicateOpen.id, decision)
-        notify.success(
-          decision === 'replace'
-            ? 'Document remplace.'
-            : decision === 'keep_both'
-            ? 'Nouvelle revision enregistree.'
-            : 'Doublon annule.',
-        )
-      } catch {
-        notify.error('Echec de la resolution.')
-      } finally {
-        setDuplicateOpen(null)
-      }
-    },
-    [duplicateOpen, onResolveDuplicate, notify],
-  )
-
   const isActive = useCallback(
     (id) => id === activeId,
     [activeId],
@@ -105,11 +70,6 @@ export default function UploadQueue({
       status === UPLOAD_ITEM_STATUS.UPLOADED ||
       status === UPLOAD_ITEM_STATUS.FAILED ||
       status === UPLOAD_ITEM_STATUS.CANCELLED,
-    [],
-  )
-
-  const isDuplicating = useCallback(
-    (status) => status === UPLOAD_ITEM_STATUS.AWAITING_DECISION,
     [],
   )
 
@@ -151,9 +111,10 @@ export default function UploadQueue({
       <div className="ax-upload-queue__list" role="list" aria-label="File d'attente d'envoi">
         {items.map((item) => {
           const active = isActive(item.id)
-          const terminal = isTerminal(item.status)
-          const awaiting = isDuplicating(item.status)
+          const inProgress = !isTerminal(item.status)
           const statusVariant = getStatusBadgeVariant(item.status)
+          const category = fileCategory(item.mimeType, item.name)
+          const displayName = cleanFileName(item.name)
 
           return (
             <article
@@ -161,26 +122,23 @@ export default function UploadQueue({
               className={[
                 'ax-upload-queue__item',
                 active ? 'ax-upload-queue__item--active' : '',
-                terminal ? 'ax-upload-queue__item--terminal' : '',
-                awaiting ? 'ax-upload-queue__item--duplicate' : '',
+                isTerminal(item.status) ? 'ax-upload-queue__item--terminal' : '',
               ]
                 .filter(Boolean)
                 .join(' ')}
-              aria-busy={!terminal ? 'true' : 'false'}
+              aria-busy={inProgress ? 'true' : 'false'}
             >
               <div className="ax-upload-queue__main">
+                <span className="ax-upload-queue__file-icon" aria-hidden="true">
+                  {category.icon}
+                </span>
                 <div className="ax-upload-queue__file-info">
-                  <div className="ax-upload-queue__name" title={item.name}>
-                    {item.name}
+                  <div className="ax-upload-queue__name" title={displayName}>
+                    {displayName}
                   </div>
                   <div className="ax-upload-queue__meta">
+                    <span>{category.label}</span>
                     <span>{formatBytes(item.size)}</span>
-                    {item.mimeType && <span>{item.mimeType.split('/')[1]?.toUpperCase()}</span>}
-                    {item.hash && (
-                      <span className="ax-upload-queue__hash" title={item.hash}>
-                        SHA-256: {item.hash.slice(0, 16)}...
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -208,23 +166,7 @@ export default function UploadQueue({
               )}
 
               <div className="ax-upload-queue__actions">
-                {awaiting && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openDuplicate(item)}
-                    aria-label="Resoudre le doublon"
-                  >
-                    <span className="ax-btn__icon" aria-hidden="true">
-                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M6 10l4 4 6-6" />
-                      </svg>
-                    </span>
-                    Resoudre
-                  </Button>
-                )}
-
-                {active && !awaiting && !terminal && (
+                {active && !isTerminal(item.status) && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -236,7 +178,7 @@ export default function UploadQueue({
                   </Button>
                 )}
 
-                {terminal && item.status === UPLOAD_ITEM_STATUS.FAILED && (
+                {item.status === UPLOAD_ITEM_STATUS.FAILED && (
                   <Button
                     variant="primary"
                     size="sm"
@@ -248,7 +190,7 @@ export default function UploadQueue({
                   </Button>
                 )}
 
-                {terminal && item.status === UPLOAD_ITEM_STATUS.UPLOADED && item.needsClassification && typeof onClassify === 'function' && (
+                {item.status === UPLOAD_ITEM_STATUS.UPLOADED && item.needsClassification && typeof onClassify === 'function' && (
                   <Button
                     variant="primary"
                     size="sm"
@@ -259,7 +201,7 @@ export default function UploadQueue({
                   </Button>
                 )}
 
-                {terminal && (
+                {isTerminal(item.status) && (
                   <IconButton
                     variant="ghost"
                     size="sm"
@@ -277,30 +219,10 @@ export default function UploadQueue({
                   {item.error.message}
                 </div>
               )}
-
-              {item.duplicateOf && !awaiting && item.resolution && (
-                <div className="ax-upload-queue__resolution">
-                  Resolution: {item.resolution === 'replace' ? 'Remplace' : 'Revision'}
-                </div>
-              )}
             </article>
           )
         })}
       </div>
-
-      {duplicateOpen && (
-        <DuplicateDialog
-          open={true}
-          incomingFile={{
-            name: duplicateOpen.name,
-            size: duplicateOpen.size,
-            hash: duplicateOpen.hash,
-          }}
-          existingDocument={duplicateOpen.duplicateOf}
-          onConfirm={handleResolve}
-          onCancel={() => setDuplicateOpen(null)}
-        />
-      )}
     </div>
   )
 }

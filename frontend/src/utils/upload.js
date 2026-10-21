@@ -168,52 +168,6 @@ function mergeUint8Arrays(parts) {
 }
 
 /**
- * Detection de doublons CLIENT au sein d'une liste de fichiers :
- * meme empreinte (nom + taille + date de modification) => collision.
- *
- * @param {Array<{name?: string, size?: number, lastModified?: number}>|FileList} files - Candidats.
- * @returns {Map<number, number>} Map index duplique -> index original.
- */
-export function detectLocalDuplicates(files) {
-  const list = Array.from(files ?? [])
-  /** @type {Map<string, number>} Cle d'identite -> premier index rencontre. */
-  const seen = new Map()
-  const collisions = new Map()
-
-  list.forEach((file, index) => {
-    const identity = [
-      typeof file?.name === 'string' ? file.name.toLowerCase() : '',
-      Number(file?.size) || 0,
-      Number(file?.lastModified) || 0,
-    ].join('::')
-    if (seen.has(identity)) {
-      collisions.set(index, seen.get(identity))
-    } else {
-      seen.set(identity, index)
-    }
-  })
-
-  return collisions
-}
-
-/**
- * Detecte les doublons par empreinte SHA-256 au sein d'elements de file deja
- * connus (meme contenu binaire, noms differents).
- *
- * @param {string|null} hash - Empreinte du fichier entrant.
- * @param {Array<{hash?: string|null, status?: string}>} existingItems - Elements existants.
- * @returns {object|null} Element existant en collision, ou null.
- */
-export function findQueueHashCollision(hash, existingItems) {
-  if (!hash || !Array.isArray(existingItems)) return null
-  return (
-    existingItems.find(
-      (item) => item.hash === hash && item.status !== UPLOAD_ITEM_STATUS.FAILED,
-    ) || null
-  )
-}
-
-/**
  * Agrege la progression de plusieurs elements de file en un pourcentage global.
  * Les elements termines comptent pour 100 %, les echecs/annules sont exclus
  * du denominateur (progression honnete du travail restant).
@@ -310,24 +264,6 @@ export function computeRetryDelay(attempt, policy = {}) {
 }
 
 /**
- * Incremente une version semantique simplifiee ("X.Y") du document.
- * Utilisee lors des resolutions de doublon (remplacement / revision).
- *
- * @param {string|null} version - Version courante brute API (ex. '1.0').
- * @param {'major'|'minor'} [kind='minor'] - Type d'increment.
- * @returns {string} Nouvelle version ('2.0', '1.1'), repli '1.1'/'2.0'.
- */
-export function bumpDocumentVersion(version, kind = 'minor') {
-  const match = /^(\d+)\.(\d+)$/.exec(String(version ?? '').trim())
-  if (!match) return kind === 'major' ? '2.0' : '1.1'
-  const major = Number(match[1])
-  const minor = Number(match[2])
-  return kind === 'major'
-    ? `${major + 1}.0`
-    : `${major}.${minor + 1}`
-}
-
-/**
  * Construit la serie de volume quotidien (N derniers jours) depuis un ledger.
  * Seuls les elements reellement envoyes (UPLOADED) alimentent les volumes.
  *
@@ -371,3 +307,49 @@ export function buildDailyVolumeSeries(items, days = 7, now = new Date()) {
 
   return points
 }
+
+/**
+ * Nettoie un nom de fichier pour l'affichage : retire les suffixes de hash
+ * techniques (` [a1b2c3d4]`), les tirets/underscores de slug et les espaces
+ * multiples. Le nom affiche reste lisible et proche de l'original.
+ * @param {string|null} name - Nom brut (ex. `cours [a1b2c3d4].pdf`).
+ * @returns {string} Nom nettoye (ex. `cours.pdf`).
+ */
+export function cleanFileName(name) {
+  if (typeof name !== 'string' || name.trim() === '') return 'fichier'
+  return name
+    .replace(/\s*\[[0-9a-fA-F]{6,}\]/g, '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\s(\.[a-zA-Z0-9]+)$/, '$1')
+}
+
+/** Categorie visuelle d'un fichier (type + glyphe emoji). */
+const MIME_CATEGORIES = [
+  { test: (m, n) => m.includes('pdf') || n.endsWith('.pdf'), label: 'PDF', icon: '📕' },
+  { test: (m, n) => m.includes('word') || /\.(docx?|odt)$/.test(n), label: 'Word', icon: '📘' },
+  { test: (m, n) => m.includes('presentation') || m.includes('powerpoint') || /\.(pptx?|odp)$/.test(n), label: 'Presentation', icon: '📙' },
+  { test: (m, n) => m.includes('sheet') || m.includes('excel') || /\.(xlsx?|ods|csv)$/.test(n), label: 'Tableur', icon: '📗' },
+  { test: (m, n) => m.startsWith('image/') || /\.(jpe?g|png|gif|webp|bmp|svg)$/.test(n), label: 'Image', icon: '🖼️' },
+  { test: (m, n) => m.startsWith('video/') || /\.(mp4|mov|avi|mkv|webm)$/.test(n), label: 'Video', icon: '🎬' },
+  { test: (m, n) => m.includes('zip') || m.includes('compressed') || /\.(zip|rar|7z|tar|gz)$/.test(n), label: 'Archive', icon: '🗜️' },
+  { test: (m, n) => m.startsWith('text/') || /\.(txt|md|rtf)$/.test(n), label: 'Texte', icon: '📄' },
+]
+
+/**
+ * Determine la categorie visuelle (libelle + icone) d'un fichier d'apres son
+ * type MIME et son nom. Repli neutre pour les types inconnus.
+ * @param {string|null} mimeType - Type MIME (ex. 'application/pdf').
+ * @param {string|null} [fileName] - Nom du fichier (extension de secours).
+ * @returns {{label: string, icon: string}} Categorie visuelle.
+ */
+export function fileCategory(mimeType, fileName = '') {
+  const mime = typeof mimeType === 'string' ? mimeType.toLowerCase() : ''
+  const name = typeof fileName === 'string' ? fileName.toLowerCase() : ''
+  for (const category of MIME_CATEGORIES) {
+    if (category.test(mime, name)) return { label: category.label, icon: category.icon }
+  }
+  return { label: 'Fichier', icon: '📎' }
+}
+

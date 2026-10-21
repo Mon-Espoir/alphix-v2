@@ -9,8 +9,6 @@ import {
   formatDuration,
   validateUploadFile,
   computeFileSha256,
-  detectLocalDuplicates,
-  findQueueHashCollision,
   aggregateProgress,
   clampPercent,
   isTerminalStatus,
@@ -18,7 +16,8 @@ import {
   computeTransferSpeed,
   estimateEta,
   computeRetryDelay,
-  bumpDocumentVersion,
+  cleanFileName,
+  fileCategory,
   buildDailyVolumeSeries,
 } from './upload'
 import { UPLOAD_ITEM_STATUS } from '../constants/upload'
@@ -116,37 +115,6 @@ describe('computeFileSha256', () => {
   })
 })
 
-describe('detectLocalDuplicates', () => {
-  it('detecte les collisions nom+taille+date et preserve le premier index', () => {
-    const files = [
-      fakeFile(),
-      fakeFile(),
-      fakeFile({ name: 'autre.pdf' }),
-      fakeFile({ lastModified: 999 }),
-    ]
-    const collisions = detectLocalDuplicates(files)
-    expect(collisions.size).toBe(1)
-    expect(collisions.get(1)).toBe(0)
-  })
-
-  it('retourne une map vide sans collision ni entree nulle', () => {
-    expect(detectLocalDuplicates([fakeFile(), fakeFile({ name: 'x.pdf' })]).size).toBe(0)
-    expect(detectLocalDuplicates(null).size).toBe(0)
-  })
-})
-
-describe('findQueueHashCollision', () => {
-  it('trouve la collision par empreinte', () => {
-    const items = [
-      { hash: 'aaa', status: UPLOAD_ITEM_STATUS.UPLOADED },
-      { hash: 'bbb', status: UPLOAD_ITEM_STATUS.UPLOADING },
-    ]
-    expect(findQueueHashCollision('bbb', items)?.hash).toBe('bbb')
-    expect(findQueueHashCollision('zzz', items)).toBeNull()
-    expect(findQueueHashCollision(null, items)).toBeNull()
-  })
-})
-
 describe('aggregateProgress', () => {
   it('agrege la progression en excluant les statuts terminaux echoues', () => {
     const items = [
@@ -201,16 +169,31 @@ describe('computeRetryDelay (backoff exponentiel)', () => {
   })
 })
 
-describe('bumpDocumentVersion', () => {
-  it('incremente mineur et majeur depuis X.Y', () => {
-    expect(bumpDocumentVersion('1.0')).toBe('1.1')
-    expect(bumpDocumentVersion('1.9', 'minor')).toBe('1.10')
-    expect(bumpDocumentVersion('1.0', 'major')).toBe('2.0')
+describe('cleanFileName', () => {
+  it('retire le suffixe de hash et humanise les separateurs', () => {
+    expect(cleanFileName('cours_chimie [a1b2c3d4].pdf')).toBe('cours chimie.pdf')
+    expect(cleanFileName('rapport-final-2026.docx')).toBe('rapport final 2026.docx')
   })
 
-  it('repli propre sur version absente ou malformee', () => {
-    expect(bumpDocumentVersion(null)).toBe('1.1')
-    expect(bumpDocumentVersion('beta', 'major')).toBe('2.0')
+  it('repli neutre sur nom absent', () => {
+    expect(cleanFileName(null)).toBe('fichier')
+    expect(cleanFileName('   ')).toBe('fichier')
+  })
+})
+
+describe('fileCategory', () => {
+  it('classe par type MIME', () => {
+    expect(fileCategory('application/pdf', 'x.pdf').icon).toBe('📕')
+    expect(fileCategory('image/png', 'x.png').label).toBe('Image')
+  })
+
+  it('repli sur extension quand le MIME manque', () => {
+    expect(fileCategory('', 'cours.docx').label).toBe('Word')
+    expect(fileCategory(null, 'archive.zip').label).toBe('Archive')
+  })
+
+  it('repli neutre pour un type inconnu', () => {
+    expect(fileCategory('', 'mystere.xyz')).toEqual({ label: 'Fichier', icon: '📎' })
   })
 })
 

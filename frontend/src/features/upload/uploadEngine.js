@@ -29,12 +29,12 @@ import {
 } from '../../constants/upload'
 import { normalizeApiError } from '../../utils/apiError'
 import { slugify } from '../../utils/academic'
+import { emitDocumentPublished } from '../../utils/documentEvents'
 import {
   computeFileSha256,
   computeTransferSpeed,
   estimateEta,
   validateUploadFile,
-  bumpDocumentVersion,
 } from '../../utils/upload'
 
 /** Poids de progression par phase (somme = 100). */
@@ -79,7 +79,6 @@ export class UploadEngine {
     this.clearCompleted = this.clearCompleted.bind(this)
     this.purgeItems = this.purgeItems.bind(this)
     this.markClassified = this.markClassified.bind(this)
-    this.resolveDuplicate = this.resolveDuplicate.bind(this)
     this.pause = this.pause.bind(this)
     this.resume = this.resume.bind(this)
     this.subscribe = this.subscribe.bind(this)
@@ -144,6 +143,11 @@ export class UploadEngine {
         // Un consommateur defectueux ne doit jamais casser le pipeline.
       }
     }
+    // Feedback global immediat : toute page affichant des documents peut
+    // rafraichir son etat React sans rechargement complet.
+    if (type === 'completed') {
+      emitDocumentPublished({ documentId: event.item?.documentId ?? null })
+    }
   }
 
   /* ------------------------------------------------------------------ */
@@ -184,10 +188,7 @@ export class UploadEngine {
         hash: null,
         attempts: 0,
         error: verdict.valid ? null : { message: verdict.errors.join(' '), type: API_ERROR_TYPES.VALIDATION },
-        duplicateOf: null,
-        resolution: null,
         documentId: null,
-        linkedTitle: null,
         // Classification choisie par l'etudiant (cours + type) avant envoi.
         courseId: opts.courseId ?? null,
         docType: opts.docType ?? null,
@@ -268,7 +269,6 @@ export class UploadEngine {
     item.etaMs = null
     item.error = null
     item.attempts = 0
-    item.duplicateOf = null
     item.completedAt = null
     item.durationMs = null
     item.phaseLabel = ''
@@ -365,91 +365,6 @@ export class UploadEngine {
   /* Resolution de doublon                                               */
   /* ------------------------------------------------------------------ */
 
-  /**
-   * Applique la decision utilisateur sur un doublon detecte.
-   *  - 'replace'    : met a jour le document existant (metadonnees + version majeure) ;
-   *  - 'keep_both'  : enregistre l'entrant comme nouvelle REVISION du document
-   *                   existant (increment mineur + tracabilite metadata) — la
-   *                   contrainte SQL `file_hash UNIQUE` interdit une seconde
-   *                   ligne identique ; ce choix preserve l'integrite du hash ;
-   *  - 'cancel'     : abandonne l'entrant (statut CANCELLED).
-   *
-   * @param {string} id - Identifiant de l'element en AWAITING_DECISION.
-   * @param {'replace'|'keep_both'|'cancel'} decision - Decision utilisateur.
-   * @returns {Promise<void>}
-   */
-  async resolveDuplicate(id, decision) {
-    const item = this._items.get(id)
-    if (!item || item.status !== UPLOAD_ITEM_STATUS.AWAITING_DECISION) return
-
-    if (decision === 'cancel') {
-      item.resolution = 'cancel'
-      item.status = UPLOAD_ITEM_STATUS.CANCELLED
-      item.phaseLabel = ''
-      item.completedAt = new Date().toISOString()
-      this._emit()
-      this._dispatchEvent('cancelled', item)
-      this._schedulePump(0)
-      return
-    }
-
-    const existing = item.duplicateOf
-    if (!existing?.id) {
-      item.status = UPLOAD_ITEM_STATUS.FAILED
-      item.error = { message: 'Document existant introuvable pour la resolution.', type: API_ERROR_TYPES.CLIENT }
-      this._emit()
-      this._dispatchEvent('failed', item)
-      this._schedulePump(0)
-      return
-    }
-
-    try {
-      const nowIso = new Date().toISOString()
-      const baseMetadata = [
-        `duplicate_source:${item.name}`,
-        `resolved_at:${nowIso}`,
-      ]
-
-      if (decision === 'replace') {
-        await DocumentApi.patch(existing.id, {
-          original_name: item.name,
-          file_size: item.size,
-          mime_type: item.mimeType || undefined,
-          version: bumpDocumentVersion(existing.version, 'major'),
-          metadata: [...baseMetadata, 'resolution:replace'],
-        })
-        item.documentId = existing.id
-        item.linkedTitle = existing.title ?? null
-        item.resolution = 'replace'
-      } else {
-        await DocumentApi.patch(existing.id, {
-          version: bumpDocumentVersion(existing.version, 'minor'),
-          metadata: [...baseMetadata, 'resolution:revision'],
-        })
-        item.documentId = existing.id
-        item.linkedTitle = existing.title ?? null
-        item.resolution = 'keep_both'
-      }
-
-      item.status = UPLOAD_ITEM_STATUS.UPLOADED
-      item.progress = 100
-      item.phaseLabel = ''
-      item.completedAt = new Date().toISOString()
-      item.durationMs = item.startedAt ? Date.now() - item.startedAt : null
-      this._emit()
-      this._dispatchEvent('completed', item)
-    } catch (rawError) {
-      const error = normalizeApiError(rawError)
-      item.status = UPLOAD_ITEM_STATUS.FAILED
-      item.error = { message: error.message, type: error.type }
-      this._emit()
-      this._dispatchEvent('failed', item)
-    } finally {
-      this._activeId = null
-      this._schedulePump(QUEUE_INTER_ITEM_DELAY_MS)
-    }
-  }
-
   /* ------------------------------------------------------------------ */
   /* Boucle sequentielle                                                 */
   /* ------------------------------------------------------------------ */
@@ -544,29 +459,6 @@ export class UploadEngine {
       if (this._activeId === item.id) this._activeId = null
       item.controller = null
       this._schedulePump(QUEUE_INTER_ITEM_DELAY_MS)
-    }
-  }
-
-  /**
-   * Verification serveur de doublon avec politique de retry.
-   * 404 = aucun doublon (flux nominal).
-   * @param {object} item - Element interne.
-   */
-  async _checkServerDuplicateWithRetry(item) {
-    try {
-      const existing = await UploadApi.findDuplicateByHash(item.hash)
-      if (existing && (existing.id != null || existing.data?.id != null)) {
-        const document = existing.id != null ? existing : existing.data
-        this._flagDuplicate(item, document, 'server')
-      }
-    } catch (rawError) {
-      const error = normalizeApiError(rawError)
-      if (error.status === 404) return
-      if (this._shouldRetry(error, item)) {
-        await this._retryOrThrow(item, () => this._checkServerDuplicateWithRetry(item))
-        return
-      }
-      throw error
     }
   }
 
@@ -672,29 +564,6 @@ export class UploadEngine {
     if (classification.docType != null) item.docType = classification.docType
     item.classified = true
     this._emit()
-  }
-
-  /**
-   * Marque un element comme doublon en attente de decision.
-   * @param {object} item - Element interne.
-   * @param {object|null} document - Document existant (API ou file locale).
-   * @param {'file'|'server'} origin - Origine de la detection.
-   */
-  _flagDuplicate(item, document, origin) {
-    item.status = UPLOAD_ITEM_STATUS.AWAITING_DECISION
-    item.duplicateOf = {
-      id: document?.id ?? null,
-      title: document?.title ?? null,
-      original_name: document?.original_name ?? null,
-      file_size: document?.file_size ?? null,
-      version: document?.version ?? null,
-      created_at: document?.created_at ?? null,
-      origin,
-    }
-    item.phaseLabel = 'Doublon detecte'
-    item.progress = PHASE_WEIGHTS.HASHING + PHASE_WEIGHTS.CHECKING
-    this._emit()
-    this._dispatchEvent('duplicate', item)
   }
 
   /**
@@ -844,10 +713,7 @@ export class UploadEngine {
       hash: item.hash,
       attempts: item.attempts,
       error: item.error,
-      duplicateOf: item.duplicateOf,
-      resolution: item.resolution,
       documentId: item.documentId,
-      linkedTitle: item.linkedTitle,
       courseId: item.courseId,
       docType: item.docType,
       classified: item.classified,
@@ -877,7 +743,6 @@ export class UploadEngine {
       uploaded: 0,
       failed: 0,
       cancelled: 0,
-      duplicates: 0,
     }
     let uploadedTodayCount = 0
     let totalBytesUploaded = 0
@@ -892,9 +757,6 @@ export class UploadEngine {
         case UPLOAD_ITEM_STATUS.HASHING:
         case UPLOAD_ITEM_STATUS.CHECKING:
           counts.pending += 1
-          break
-        case UPLOAD_ITEM_STATUS.AWAITING_DECISION:
-          counts.duplicates += 1
           break
         case UPLOAD_ITEM_STATUS.UPLOADING:
           counts.uploading += 1

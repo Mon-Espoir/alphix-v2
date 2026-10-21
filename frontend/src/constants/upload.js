@@ -13,19 +13,17 @@ import { API_ERROR_TYPES } from './api'
 export const UPLOAD_ITEM_STATUS = Object.freeze({
   /** En file, pas encore demarree. */
   PENDING: 'pending',
-  /** Calcul local de l'empreinte SHA-256 en cours. */
+  /** Preparation locale : calcul de l'empreinte SHA-256. */
   HASHING: 'hashing',
-  /** Validation serveur + detection de doublon en cours. */
+  /** Transfert en cours vers le serveur. */
   CHECKING: 'checking',
-  /** Doublon detecte — decision utilisateur requise. */
-  AWAITING_DECISION: 'awaiting_decision',
   /** Transfert / enregistrement en cours. */
   UPLOADING: 'uploading',
   /** Termine avec succes. */
   UPLOADED: 'uploaded',
   /** Echec definitif (apres epuisement des retries ou erreur non retentable). */
   FAILED: 'failed',
-  /** Annulee par l'utilisateur ou rejet de doublon. */
+  /** Annulee par l'utilisateur. */
   CANCELLED: 'cancelled',
 })
 
@@ -49,7 +47,6 @@ export const UPLOAD_GROUP_STATUSES = Object.freeze({
     UPLOAD_ITEM_STATUS.PENDING,
     UPLOAD_ITEM_STATUS.HASHING,
     UPLOAD_ITEM_STATUS.CHECKING,
-    UPLOAD_ITEM_STATUS.AWAITING_DECISION,
   ]),
   [UPLOAD_STATUS_GROUPS.UPLOADING]: Object.freeze([UPLOAD_ITEM_STATUS.UPLOADING]),
   [UPLOAD_STATUS_GROUPS.UPLOADED]: Object.freeze([UPLOAD_ITEM_STATUS.UPLOADED]),
@@ -60,11 +57,10 @@ export const UPLOAD_GROUP_STATUSES = Object.freeze({
 /** Libelles lisibles des statuts (UI FR). */
 export const UPLOAD_STATUS_LABELS = Object.freeze({
   [UPLOAD_ITEM_STATUS.PENDING]: 'En attente',
-  [UPLOAD_ITEM_STATUS.HASHING]: 'Empreinte...',
-  [UPLOAD_ITEM_STATUS.CHECKING]: 'Verification...',
-  [UPLOAD_ITEM_STATUS.AWAITING_DECISION]: 'Ton choix requis',
-  [UPLOAD_ITEM_STATUS.UPLOADING]: 'Envoi...',
-  [UPLOAD_ITEM_STATUS.UPLOADED]: 'Envoye',
+  [UPLOAD_ITEM_STATUS.HASHING]: 'Preparation...',
+  [UPLOAD_ITEM_STATUS.CHECKING]: 'Televersement...',
+  [UPLOAD_ITEM_STATUS.UPLOADING]: 'Televersement...',
+  [UPLOAD_ITEM_STATUS.UPLOADED]: 'Publication terminee !',
   [UPLOAD_ITEM_STATUS.FAILED]: 'Echec',
   [UPLOAD_ITEM_STATUS.CANCELLED]: 'Annule',
 })
@@ -74,7 +70,6 @@ export const UPLOAD_STATUS_BADGES = Object.freeze({
   [UPLOAD_ITEM_STATUS.PENDING]: 'default',
   [UPLOAD_ITEM_STATUS.HASHING]: 'primary',
   [UPLOAD_ITEM_STATUS.CHECKING]: 'primary',
-  [UPLOAD_ITEM_STATUS.AWAITING_DECISION]: 'warning',
   [UPLOAD_ITEM_STATUS.UPLOADING]: 'primary',
   [UPLOAD_ITEM_STATUS.UPLOADED]: 'success',
   [UPLOAD_ITEM_STATUS.FAILED]: 'danger',

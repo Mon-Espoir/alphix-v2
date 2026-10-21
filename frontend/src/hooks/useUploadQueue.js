@@ -22,7 +22,6 @@ import { uploadEngine } from '../features/upload/uploadEngine'
  *   clearCompleted: (ids?: string[]) => number,
  *   purgeItems: (ids: string[]) => number,
  *   markClassified: (id: string, classification?: object) => void,
- *   resolveDuplicate: (id: string, decision: 'replace'|'keep_both'|'cancel') => Promise<void>,
  *   pause: () => void,
  *   resume: () => void,
  *   onEvent: (handler: (event: object) => void) => () => void,
@@ -30,11 +29,6 @@ import { uploadEngine } from '../features/upload/uploadEngine'
  */
 export function useUploadQueue() {
   const queue = useSyncExternalStore(uploadEngine.subscribe, uploadEngine.getSnapshot)
-
-  const resolveDuplicate = useCallback(
-    (id, decision) => uploadEngine.resolveDuplicate(id, decision),
-    [],
-  )
 
   const onEvent = useCallback((handler) => uploadEngine.onEvent(handler), [])
 
@@ -47,7 +41,6 @@ export function useUploadQueue() {
     clearCompleted: uploadEngine.clearCompleted,
     purgeItems: uploadEngine.purgeItems,
     markClassified: uploadEngine.markClassified,
-    resolveDuplicate,
     pause: uploadEngine.pause,
     resume: uploadEngine.resume,
     onEvent,

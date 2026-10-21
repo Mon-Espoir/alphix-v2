@@ -184,26 +184,15 @@ describe('transitions d’etat de la file', () => {
 })
 
 describe('doublons non bloquants', () => {
-  it("l'envoi continue meme si le serveur repond qu'un doublon existe", async () => {
+  it('aucun appel de detection de doublon : envoi direct', async () => {
     const engine = new UploadEngine()
-    UploadApi.findDuplicateByHash.mockResolvedValue({
-      id: 7,
-      title: 'Cours existant',
-      original_name: 'cours-algo.pdf',
-      file_size: 2048,
-      version: '1.0',
-      created_at: '2026-01-01T00:00:00Z',
-    })
 
     engine.enqueueFiles([makeFile()])
     const uploaded = await waitFor(
       () => engine.getSnapshot().items[0]?.status === UPLOAD_ITEM_STATUS.UPLOADED,
     )
     expect(uploaded).toBe(true)
-
-    const item = engine.getSnapshot().items[0]
-    expect(item.status).toBe(UPLOAD_ITEM_STATUS.UPLOADED)
-    expect(item.duplicateOf).toBeNull()
+    expect(UploadApi.findDuplicateByHash).not.toHaveBeenCalled()
     expect(DocumentApi.create).toHaveBeenCalledTimes(1)
     engine.destroy()
   })
@@ -238,17 +227,6 @@ describe('doublons non bloquants', () => {
 
     const item = engine.getSnapshot().items[0]
     expect(item.needsClassification).toBe(false)
-    engine.destroy()
-  })
-
-  it('ignore les decisions sur des elements non en attente (garde d’etat)', async () => {
-    const engine = new UploadEngine()
-    const [id] = engine.enqueueFiles([makeFile()])
-    await settle()
-    const patchesBefore = DocumentApi.patch.mock.calls.length
-
-    await engine.resolveDuplicate(`${id}-inconnu`, 'replace')
-    expect(DocumentApi.patch.mock.calls.length).toBe(patchesBefore)
     engine.destroy()
   })
 })
