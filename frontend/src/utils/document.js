@@ -43,6 +43,56 @@ export const DOC_VISIBILITIES = Object.freeze([
   { value: 'private', label: 'Prive' },
 ])
 
+/**
+ * Groupes de types de document exposes comme une seule puce dans l'UI.
+ * Chaque groupe porte une cle technique (utilisee comme `filters.docType`)
+ * et la liste reelle des `doc_type` API qu'il regroupe.
+ */
+export const DOC_TYPE_GROUPS = Object.freeze({
+  syllabus_course: Object.freeze(['syllabus', 'course']),
+  tp_td: Object.freeze(['tp', 'td']),
+  exam_correction: Object.freeze(['exam', 'correction']),
+})
+
+/**
+ * Association inverse : type API -> cle de groupe.
+ * Sert a retrouver le groupe d'un type simple (ex. 'correction' -> 'exam_correction')
+ * sans heuristique fragile sur la taille du tableau.
+ */
+export const DOC_TYPE_GROUP_BY_VALUE = Object.freeze(
+  Object.entries(DOC_TYPE_GROUPS).reduce((acc, [key, values]) => {
+    values.forEach((value) => { acc[value] = key })
+    return acc
+  }, {}),
+)
+
+/**
+ * Types acceptes par une selection de type (simple ou groupe).
+ * @param {string} docType - Valeur de `filters.docType`.
+ * @returns {string[]|null} Liste des types admis, ou null si aucun filtre.
+ */
+export function allowedDocTypesFor(docType) {
+  if (!docType) return null
+  const group = DOC_TYPE_GROUPS[docType]
+  return group ? [...group] : [docType]
+}
+
+/**
+ * Resout une selection de type (type simple OU cle de groupe) vers le contrat API.
+ * - type simple : `apiDocType` porte le type, `allowed` le contient seul ;
+ * - cle de groupe : `docTypes` liste les types a demander au serveur
+ *   (`doc_types[]`), `allowed` reste la liste pour le post-filtrage de securite.
+ *
+ * @param {string} docType - Valeur de `filters.docType`.
+ * @returns {{apiDocType: string|undefined, docTypes: string[]|null, allowed: string[]|null}} Contrat de filtrage.
+ */
+export function resolveDocTypeSelection(docType) {
+  if (!docType) return { apiDocType: undefined, docTypes: null, allowed: null }
+  const group = DOC_TYPE_GROUPS[docType]
+  if (group) return { apiDocType: undefined, docTypes: [...group], allowed: [...group] }
+  return { apiDocType: docType, docTypes: null, allowed: null }
+}
+
 /** Critere de tri -> cle du document. */
 const SORT_KEYS = Object.freeze({
   newest: 'created_at',
@@ -372,7 +422,15 @@ export function docLevelFiltersActive(filters = {}) {
  */
 export function buildDocSearchParams(filters = {}, extra = {}) {
   const params = { ...extra }
-  if (filters.docType) params.doc_type = filters.docType
+  const { apiDocType, docTypes } = resolveDocTypeSelection(filters.docType)
+  if (apiDocType) params.doc_type = apiDocType
+  // Groupe de types : filtre applique par le serveur (doc_types[]).
+  if (docTypes && docTypes.length) params.doc_types = docTypes
+  if (filters.facultyId) params.faculty_id = filters.facultyId
+  if (filters.departmentId) params.department_id = filters.departmentId
+  if (filters.levelId) params.level_id = filters.levelId
+  if (filters.semesterId) params.semester_id = filters.semesterId
+  if (filters.courseId) params.course_id = filters.courseId
   if (filters.visibility) params.visibility = filters.visibility
   if (filters.tagId) params.tag_id = filters.tagId
   if (filters.fromDate) params.from_date = filters.fromDate
@@ -391,7 +449,8 @@ export function buildDocSearchParams(filters = {}, extra = {}) {
  */
 export function applyDocLevelFilters(docs, filters = {}) {
   return (docs || []).filter((doc) => {
-    if (filters.docType && String(doc.doc_type ?? '') !== String(filters.docType)) return false
+    const allowedTypes = allowedDocTypesFor(filters.docType)
+    if (allowedTypes && !allowedTypes.includes(String(doc.doc_type ?? ''))) return false
     if (filters.visibility && String(doc.visibility ?? '') !== String(filters.visibility)) return false
     if (filters.tagId) {
       const tags = Array.isArray(doc.tags) ? doc.tags : []
@@ -416,6 +475,7 @@ export function emptyFilters() {
     departmentId: '',
     levelId: '',
     semesterId: '',
+    courseId: '',
     docType: '',
     visibility: '',
     tagId: '',

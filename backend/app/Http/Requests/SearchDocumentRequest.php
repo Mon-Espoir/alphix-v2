@@ -33,6 +33,8 @@ class SearchDocumentRequest extends FormRequest
             'faculty_id' => ['nullable', 'integer', 'exists:faculties,id'],
             'department_id' => ['nullable', 'integer', 'exists:departments,id'],
             'course_id' => ['nullable', 'integer', 'exists:courses,id'],
+            'level_id' => ['nullable', 'integer', 'exists:levels,id'],
+            'semester_id' => ['nullable', 'integer', 'exists:semesters,id'],
             'doc_type' => [
                 'nullable',
                 'string',
@@ -42,8 +44,20 @@ class SearchDocumentRequest extends FormRequest
                     'video', 'external_link', 'other',
                 ]),
             ],
+            // Plusieurs types a la fois (puces groupees : Syllabus/Cours,
+            // TP/TD, Examens/Corrections). Vecteur `doc_types[]=...`.
+            'doc_types' => ['nullable', 'array', 'max:6'],
+            'doc_types.*' => [
+                'string',
+                Rule::in([
+                    'course', 'tp', 'td', 'exam', 'correction', 'syllabus',
+                    'summary', 'book', 'thesis', 'report', 'presentation',
+                    'video', 'external_link', 'other',
+                ]),
+            ],
             'academic_year' => ['nullable', 'string', 'max:20'],
             'language' => ['nullable', 'string', 'max:20'],
+            'tag_id' => ['nullable', 'integer', 'exists:document_tags,id'],
             'visibility' => [
                 'nullable',
                 'string',

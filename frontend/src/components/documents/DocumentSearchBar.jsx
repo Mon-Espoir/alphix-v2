@@ -3,7 +3,7 @@
  * Recherche instantanee avec suggestions (autocomplete) et soumission clavier.
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 /**
  * @param {object} props
@@ -14,7 +14,7 @@ import { useEffect, useRef, useState } from 'react'
  * @param {string} [props.placeholder] - Placeholder du champ.
  * @returns {import('react').JSX.Element}
  */
-export default function DocumentSearchBar({
+function DocumentSearchBar({
   value,
   onChange,
   onSubmit,
@@ -22,41 +22,71 @@ export default function DocumentSearchBar({
   placeholder = 'Rechercher un document...',
 }) {
   const listId = 'document-search-suggestions'
-  const matches = value.trim()
-    ? suggestions.filter((s) => s.toLowerCase().includes(value.trim().toLowerCase())).slice(0, 6)
-    : []
+  // Filtrage mémoïsé : évite de re-filtrer les suggestions à chaque frappe.
+  const matches = useMemo(() => (
+    value.trim()
+      ? suggestions.filter((s) => s.toLowerCase().includes(value.trim().toLowerCase())).slice(0, 6)
+      : []
+  ), [suggestions, value])
 
   // Ménage d'ouverture du menu : fermé dès qu'on quitte le champ ou qu'on soumet,
   // rouvert uniquement en re-tapant. Évite tout recouvrement des résultats.
   const [open, setOpen] = useState(false)
   const [highlightIndex, setHighlightIndex] = useState(-1)
   const closeTimer = useRef(null)
-  const cancelClose = () => {
+  const cancelClose = useCallback(() => {
     if (closeTimer.current) {
       clearTimeout(closeTimer.current)
       closeTimer.current = null
     }
-  }
-  const requestClose = () => {
+  }, [])
+  const requestClose = useCallback(() => {
     cancelClose()
     closeTimer.current = setTimeout(() => setOpen(false), 120)
-  }
+  }, [cancelClose])
 
-  useEffect(() => () => cancelClose(), [])
+  useEffect(() => () => cancelClose(), [cancelClose])
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     cancelClose()
     setOpen(false)
     setHighlightIndex(-1)
-  }
+  }, [cancelClose])
 
   const showSuggestions = open && matches.length > 0
 
-  const selectSuggestion = (suggestion) => {
+  const selectSuggestion = useCallback((suggestion) => {
     closeMenu()
     onChange(suggestion)
     if (onSubmit) onSubmit(suggestion)
-  }
+  }, [closeMenu, onChange, onSubmit])
+
+  const handleInputChange = useCallback((event) => {
+    setOpen(true)
+    setHighlightIndex(-1)
+    onChange(event.target.value)
+  }, [onChange])
+
+  const handleKeyDown = useCallback((event) => {
+    if (event.key === 'ArrowDown' && showSuggestions) {
+      event.preventDefault()
+      setHighlightIndex((i) => (i + 1) % matches.length)
+    } else if (event.key === 'ArrowUp' && showSuggestions) {
+      event.preventDefault()
+      setHighlightIndex((i) => (i <= 0 ? matches.length - 1 : i - 1))
+    } else if (event.key === 'Escape') {
+      if (showSuggestions) event.preventDefault()
+      closeMenu()
+    } else if (event.key === 'Enter') {
+      event.preventDefault()
+      if (showSuggestions && highlightIndex >= 0 && matches[highlightIndex]) {
+        selectSuggestion(matches[highlightIndex])
+        return
+      }
+      closeMenu()
+      if (onSubmit) onSubmit(value)
+    }
+  }, [showSuggestions, matches, highlightIndex, closeMenu, selectSuggestion, onSubmit, value])
 
   return (
     <div className="ax-search-bar" role="search">
@@ -78,31 +108,8 @@ export default function DocumentSearchBar({
         autoComplete="off"
         onFocus={() => { cancelClose(); setOpen(true) }}
         onBlur={requestClose}
-        onChange={(event) => {
-          setOpen(true)
-          setHighlightIndex(-1)
-          onChange(event.target.value)
-        }}
-        onKeyDown={(event) => {
-          if (event.key === 'ArrowDown' && showSuggestions) {
-            event.preventDefault()
-            setHighlightIndex((i) => (i + 1) % matches.length)
-          } else if (event.key === 'ArrowUp' && showSuggestions) {
-            event.preventDefault()
-            setHighlightIndex((i) => (i <= 0 ? matches.length - 1 : i - 1))
-          } else if (event.key === 'Escape') {
-            if (showSuggestions) event.preventDefault()
-            closeMenu()
-          } else if (event.key === 'Enter') {
-            event.preventDefault()
-            if (showSuggestions && highlightIndex >= 0 && matches[highlightIndex]) {
-              selectSuggestion(matches[highlightIndex])
-              return
-            }
-            closeMenu()
-            if (onSubmit) onSubmit(value)
-          }
-        }}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
       />
       {showSuggestions && (
         <ul className="ax-doc-suggestions" id={listId} role="listbox" aria-label="Suggestions">
@@ -127,3 +134,5 @@ export default function DocumentSearchBar({
     </div>
   )
 }
+
+export default memo(DocumentSearchBar)

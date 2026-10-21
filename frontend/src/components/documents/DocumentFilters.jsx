@@ -4,11 +4,24 @@
  * Sur mobile (< 640px) : mode compact avec puces doc_type + accordéon pour le reste.
  */
 
-import { useState, useEffect } from 'react'
+import { memo, useCallback, useMemo, useState, useEffect } from 'react'
 import Button from '../ui/Button'
 import ClassPickerSheet from './ClassPickerSheet'
-import { DOC_TYPES, DOC_VISIBILITIES } from '../../utils/document'
+import { DOC_TYPES, DOC_VISIBILITIES, DOC_TYPE_GROUPS } from '../../utils/document'
 import { toSelectOptions, semesterOptionsForLevel } from '../../utils/academic'
+
+/**
+ * Groupes mobile-first (1 tap = catégorie parlante) — correspond au backend doc_type.
+ * `key` est la clé technique stockée dans `filters.docType` : les groupes de
+ * plusieurs types sont filtres CÔTE SERVEUR via `doc_types[]`.
+ */
+const MOBILE_CHIP_GROUPS = [
+  { key: 'syllabus_course', label: 'Syllabus / Cours', values: DOC_TYPE_GROUPS.syllabus_course, icon: '📚' },
+  { key: 'exam_correction', label: 'Examens', values: DOC_TYPE_GROUPS.exam_correction, icon: '📄' },
+  { key: 'tp_td', label: 'TP / TD', values: DOC_TYPE_GROUPS.tp_td, icon: '📝' },
+  { key: 'presentation', label: 'Exposés', values: ['presentation'], icon: '🎤' },
+  { key: 'report', label: 'Rapports', values: ['report'], icon: '📋' },
+]
 
 /**
  * @param {object} props
@@ -27,7 +40,7 @@ import { toSelectOptions, semesterOptionsForLevel } from '../../utils/academic'
  *   un squelette au lieu de listes vides.
  * @returns {import('react').JSX.Element}
  */
-export default function DocumentFilters({
+function DocumentFilters({
   faculties = [],
   departments = [],
   levels = [],
@@ -43,22 +56,13 @@ export default function DocumentFilters({
   const [isExpanded, setIsExpanded] = useState(false)
   const [isPickerOpen, setIsPickerOpen] = useState(false)
 
-  // Groupes mobile-first (1 tap = catégorie parlante) — correspond au backend doc_type
-  const MOBILE_CHIP_GROUPS = [
-    { label: 'Syllabus / Cours', values: ['syllabus', 'course'], icon: '📚' },
-    { label: 'Examens', values: ['exam', 'correction'], icon: '📄' },
-    { label: 'TP / TD', values: ['tp', 'td'], icon: '📝' },
-    { label: 'Exposés', values: ['presentation'], icon: '🎤' },
-    { label: 'Rapports', values: ['report'], icon: '📋' },
-  ]
-  const isGroupActive = (values) => values.includes(filters.docType)
-  const toggleGroup = (values) => {
-    // Groupe actif -> désélection, sinon sélection du premier type du groupe
-    // Pour TP/TD et Syllabus/Cours, on stocke une clé groupe pour le filtrage client
-    const groupKey = values.length > 1 ? (values.includes('syllabus') ? 'syllabus_course' : 'tp_td') : values[0]
-    const active = isGroupActive(values) || filters.docType === groupKey
-    onChange({ docType: active ? '' : (values.length > 1 ? groupKey : values[0]) })
-  }
+  const toggleGroup = useCallback((key, values) => {
+    // Groupe actif -> deselection, sinon selection du groupe (serveur filtre
+    // via `doc_types[]`). Plus d'heuristique sur la taille du tableau :
+    // "Examens" ne tombait plus dans "TP/TD".
+    const active = values.includes(filters.docType) || filters.docType === key
+    onChange({ docType: active ? '' : key })
+  }, [filters.docType, onChange])
 
   // Sur desktop (>= 640px) : toujours étendu.
   useEffect(() => {
@@ -69,22 +73,30 @@ export default function DocumentFilters({
     return () => mql.removeEventListener('change', handler)
   }, [])
 
-  const set = (key) => (event) => onChange({ [key]: event.target.value })
-  const optionList = toSelectOptions
-  const selectedLevelCode = levels.find((l) => String(l.id) === String(filters.levelId))?.code ||
-    // fallback: si levels filtrés (availableLevels) ne contient pas le filtre actuel, on garde le label brut
-    ''
-  // Si le niveau sélectionné n'est pas dans les levels disponibles (filtrage fdCourses), on cherche globalement
+  const set = useCallback((key) => (event) => onChange({ [key]: event.target.value }), [onChange])
+  const handleReset = useCallback(() => onChange({ reset: true }), [onChange])
+
+  const selectedLevelCode = levels.find((l) => String(l.id) === String(filters.levelId))?.code || ''
   const effectiveLevelCode = selectedLevelCode
-  const semOpts = semesterOptionsForLevel(semesters, effectiveLevelCode)
+
+  // Options memoïsées pour éviter de reconstruire ~867 objets <option> à chaque frappe
+  const facultyOptions = useMemo(() => toSelectOptions(faculties), [faculties])
+  const departmentOptions = useMemo(() => toSelectOptions(departments), [departments])
+  const levelOptions = useMemo(() => toSelectOptions(levels), [levels])
+  const courseOptions = useMemo(() => toSelectOptions(courses), [courses])
+  const tagOptions = useMemo(() => toSelectOptions(tags), [tags])
+  const semOpts = useMemo(
+    () => semesterOptionsForLevel(semesters, effectiveLevelCode),
+    [semesters, effectiveLevelCode],
+  )
 
   // Nombre de filtres actifs (pour le badge).
-  const activeCount = [
+  const activeCount = useMemo(() => [
     filters.facultyId, filters.departmentId, filters.levelId,
     filters.semesterId, filters.courseId, filters.docType,
     filters.visibility, filters.tagId, filters.fromDate,
     filters.toDate, filters.minDownloads, filters.minViews,
-  ].filter(Boolean).length
+  ].filter(Boolean).length, [filters])
 
   return (
     <div className="ax-card ax-card--padded ax-filters-wrapper">
@@ -123,13 +135,13 @@ export default function DocumentFilters({
         {!isExpanded && (
           <div className="ax-filters-chips" role="group" aria-label="Catégorie de document — 1 tap">
             {MOBILE_CHIP_GROUPS.map((g) => {
-              const active = g.values.includes(filters.docType) || filters.docType === (g.values.includes('syllabus') ? 'syllabus_course' : g.values.length > 1 ? 'tp_td' : '')
+              const active = g.values.includes(filters.docType) || filters.docType === g.key
               return (
                 <button
-                  key={g.label}
+                  key={g.key}
                   type="button"
                   className={`ax-filter-chip ax-filter-chip--mobile${active ? ' ax-filter-chip--active' : ''}`}
-                  onClick={() => toggleGroup(g.values)}
+                  onClick={() => toggleGroup(g.key, g.values)}
                   aria-pressed={active}
                 >
                   <span aria-hidden="true">{g.icon}</span> {g.label}
@@ -152,21 +164,21 @@ export default function DocumentFilters({
             <label className="ax-form-group__label" htmlFor="doc-f-faculty">Faculte</label>
             <select id="doc-f-faculty" className="ax-form-group__input" value={filters.facultyId || ''} onChange={set('facultyId')}>
               <option value="">Toutes les facultes</option>
-              {optionList(faculties).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              {facultyOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </div>
           <div className="ax-form-group">
             <label className="ax-form-group__label" htmlFor="doc-f-department">Departement</label>
             <select id="doc-f-department" className="ax-form-group__input" value={filters.departmentId || ''} onChange={set('departmentId')}>
               <option value="">Tous les departements</option>
-              {optionList(departments).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              {departmentOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </div>
           <div className="ax-form-group">
             <label className="ax-form-group__label" htmlFor="doc-f-level">Niveau</label>
             <select id="doc-f-level" className="ax-form-group__input" value={filters.levelId || ''} onChange={set('levelId')}>
               <option value="">Tous les niveaux</option>
-              {optionList(levels).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              {levelOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </div>
           <div className="ax-form-group">
@@ -180,7 +192,7 @@ export default function DocumentFilters({
             <label className="ax-form-group__label" htmlFor="doc-f-course">Cours</label>
             <select id="doc-f-course" className="ax-form-group__input" value={filters.courseId || ''} onChange={set('courseId')}>
               <option value="">Tous les cours</option>
-              {optionList(courses).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              {courseOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </div>
           <div className="ax-form-group">
@@ -201,7 +213,7 @@ export default function DocumentFilters({
             <label className="ax-form-group__label" htmlFor="doc-f-tag">Tag</label>
             <select id="doc-f-tag" className="ax-form-group__input" value={filters.tagId || ''} onChange={set('tagId')}>
               <option value="">Tous les tags</option>
-              {optionList(tags).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              {tagOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </div>
           <div className="ax-form-group">
@@ -222,7 +234,7 @@ export default function DocumentFilters({
           </div>
         </div>
         <div className="ax-form-actions">
-          <Button type="button" variant="ghost" size="md" onClick={() => onChange({ reset: true })}>
+          <Button type="button" variant="ghost" size="md" onClick={handleReset}>
             Reinitialiser
           </Button>
         </div>
@@ -230,3 +242,5 @@ export default function DocumentFilters({
     </div>
   )
 }
+
+export default memo(DocumentFilters)

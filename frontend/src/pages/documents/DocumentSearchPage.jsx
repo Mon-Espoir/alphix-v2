@@ -9,7 +9,7 @@
  * - Fallback fuzzy + IA invisible, état vide intelligent avec reset en 1 tap
  */
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { CourseApi } from '../../api/CourseApi'
 import { FacultyApi } from '../../api/FacultyApi'
@@ -26,12 +26,15 @@ import { ROUTE_PATHS } from '../../constants/routes'
 import { useNotification } from '../../hooks/useNotification'
 import { SearchApi } from '../../api/SearchApi'
 import { normalizeApiList, resolveCourseIds, resolveDepartmentFacultyId, toSelectOptions } from '../../utils/academic'
-import { emptyFilters } from '../../utils/document'
+import { buildDocSearchParams, emptyFilters, resolveDocTypeSelection } from '../../utils/document'
 import { cachedAcademicList } from '../../utils/academicCache'
 import { hasAdminAccess } from '../../utils/admin'
 import { useAuth } from '../../hooks/useAuth'
 
 const RECENT_KEY = 'alphix:recent-searches'
+
+/** Style stable pour CourseCard (sinon le memo() de la carte est inoperant). */
+const COURSE_CARD_STYLE = Object.freeze({ borderLeft: '4px solid var(--ax-primary)' })
 
 function readRecentQueries() {
   try {
@@ -121,11 +124,13 @@ export default function DocumentSearchPage() {
     }
   }, [query])
 
-  useEffect(() => {
-    if (hasSearched && query.trim() !== submittedQuery.trim() && query.trim() !== '') {
-      setCourses([])
-    }
-  }, [query, submittedQuery, hasSearched])
+  // Les cours affiches correspondent toujours a la DERNIERE recherche
+  // lancee : derive de l'etat (pas de setState dans un effet), donc
+  // aucune cascade de rendu a chaque frappe.
+  const visibleCourses = useMemo(() => {
+    if (hasSearched && query.trim() !== submittedQuery.trim() && query.trim() !== '') return []
+    return courses
+  }, [courses, hasSearched, query, submittedQuery])
 
   // --- Recherche COURS (tolérante via CourseRepository normalizeText) ---
   useEffect(() => {
@@ -162,13 +167,35 @@ export default function DocumentSearchPage() {
   }, [hasSearched, submittedQuery, filters.facultyId, filters.departmentId, filters.levelId, filters.semesterId, filters.courseId])
 
   // --- Recherche DOCUMENTS unifiée (SQL + fuzzy + IA fallback) ---
+  // Les parametres de la requete sont memorises : l'effet ne depend que
+  // d'objets stables, donc aucune requete n'est relancee a chaque frappe.
+  const docSearchParams = useMemo(
+    () => buildDocSearchParams(filters, {
+      query: submittedQuery.trim() || undefined,
+      per_page: 50,
+    }),
+    [filters, submittedQuery],
+  )
+  const allowedDocTypes = useMemo(() => resolveDocTypeSelection(filters.docType).allowed, [filters.docType])
+  // Toute facette posee declenche une recherche serveur, y compris sans
+  // mot-cle (navigation par filtres). Avant, seules les facettes
+  // academiques et le type declenchaient la requete : les autres
+  // filtres etaient visibles dans l'UI mais ignores par le serveur.
+  const hasDocFilter = Boolean(
+    filters.docType
+    || filters.visibility
+    || filters.tagId
+    || filters.fromDate
+    || filters.toDate
+    || (filters.minDownloads !== '' && filters.minDownloads != null)
+    || (filters.minViews !== '' && filters.minViews != null),
+  )
+  const hasAcademicFilter = Boolean(
+    filters.facultyId || filters.departmentId || filters.levelId || filters.semesterId || filters.courseId,
+  )
+  const shouldSearchDocs = (hasSearched && submittedQuery.trim() !== '') || hasAcademicFilter || hasDocFilter
+
   useEffect(() => {
-    const term = submittedQuery.trim()
-    const hasAcademicFilter = Boolean(filters.facultyId || filters.departmentId || filters.courseId)
-    // Documents visibles des qu'une recherche est lancee, qu'un filtre
-    // academique est pose OU qu'un filtre doc est actif (le backend accepte
-    // les recherches sans mot-cle : navigation par filtres).
-    const shouldSearchDocs = (hasSearched && term !== '') || hasAcademicFilter || Boolean(filters.docType)
     if (!shouldSearchDocs) {
       setDocResults([])
       setAiSuggestions([])
@@ -183,28 +210,15 @@ export default function DocumentSearchPage() {
       setAiSuggestions([])
       setFallbackUsed(false)
       try {
-        // Groupe "TP / TD" et "Syllabus / Cours" nécessitent un post-filtrage client
-        const groupMap = {
-          'syllabus_course': ['syllabus', 'course'],
-          'tp_td': ['tp', 'td'],
-        }
-        const isGroup = groupMap[filters.docType]
-        const apiDocType = isGroup ? undefined : (filters.docType || undefined)
-        const params = {
-          query: term || undefined,
-          doc_type: apiDocType,
-          faculty_id: filters.facultyId || undefined,
-          department_id: filters.departmentId || undefined,
-          course_id: filters.courseId || undefined,
-          per_page: 50,
-        }
-        // Nettoie les params vides
-        Object.keys(params).forEach((k) => params[k] === undefined && delete params[k])
-        const res = await SearchApi.search(params)
+        // Parametres construits depuis le contrat serveur valide : type,
+        // visibilite, tag, dates et compteurs sont desormais transmis (avant,
+        // ces filtres etaient silencieusement ignores).
+        const res = await SearchApi.search(docSearchParams)
         let list = normalizeApiList(res)
-        // Groupe : filtre client
-        if (isGroup) {
-          list = list.filter((d) => groupMap[filters.docType].includes(String(d.doc_type)))
+        // Les puces "groupes" (Syllabus/Cours, TP/TD) restent post-filtrees
+        // cote client : le serveur ne connait qu'un doc_type a la fois.
+        if (allowedDocTypes) {
+          list = list.filter((d) => allowedDocTypes.includes(String(d.doc_type)))
         }
         // Meta IA / fallback
         const suggestions = res?.ai_suggestions ?? res?.additional?.ai_suggestions ?? []
@@ -220,15 +234,15 @@ export default function DocumentSearchPage() {
     }
     run()
     return () => { cancelled = true }
-  }, [hasSearched, submittedQuery, filters.docType, filters.facultyId, filters.departmentId, filters.courseId])
+  }, [shouldSearchDocs, docSearchParams, allowedDocTypes])
 
   useEffect(() => {
-    if ((courses.length > 0 || docResults.length > 0) && resultsRef.current) {
+    if ((visibleCourses.length > 0 || docResults.length > 0) && resultsRef.current) {
       resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }, [courses, docResults, isLoading, isDocLoading])
+  }, [visibleCourses, docResults, isLoading, isDocLoading])
 
-  const handleSearchSubmit = (value) => {
+  const handleSearchSubmit = useCallback((value) => {
     const trimmed = value.trim()
     if (!trimmed) { notify.warning('Veuillez saisir un terme de recherche.'); return }
     // Exclusivité : taper du texte réinitialise le filtre docType qui masquerait les résultats
@@ -241,7 +255,7 @@ export default function DocumentSearchPage() {
     setQuery(trimmed)
     setSubmittedQuery(trimmed)
     setHasSearched(true)
-  }
+  }, [filters.docType, notify, recentQueries])
 
   useEffect(() => {
     const q = searchParams.get('q')
@@ -256,7 +270,8 @@ export default function DocumentSearchPage() {
     }
   }, [searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleDocumentOpen = () => { setCourses([]); setHasSearched(false) }
+  // Stable : conserve l'efficacite du memo() de CourseCard.
+  const handleDocumentOpen = useCallback(() => { setCourses([]); setHasSearched(false) }, [])
 
   const suggestions = useMemo(() => {
     const labels = [...popularQueries.map((e) => e?.query).filter(Boolean), ...recentQueries]
@@ -264,7 +279,7 @@ export default function DocumentSearchPage() {
   }, [popularQueries, recentQueries])
 
   const searched = hasSearched || Boolean(filters.facultyId || filters.departmentId || filters.levelId || filters.semesterId || filters.courseId || filters.docType)
-  const showEmpty = searched && !isLoading && !isDocLoading && !error && !docError && courses.length === 0 && docResults.length === 0
+  const showEmpty = searched && !isLoading && !isDocLoading && !error && !docError && visibleCourses.length === 0 && docResults.length === 0
 
   const fdCourses = useMemo(() => allCourses.filter((c) => {
     const ids = resolveCourseIds(c)
@@ -278,14 +293,32 @@ export default function DocumentSearchPage() {
     let base = fdCourses
     if (filters.levelId) base = base.filter((c) => resolveCourseIds(c).levelId === String(filters.levelId))
     if (filters.semesterId) base = base.filter((c) => resolveCourseIds(c).semesterId === String(filters.semesterId))
+    // Index O(1) au lieu d'un find() dans un map() (O(n²) sur ~867 cours).
+    const byId = new Map(base.map((c) => [String(c.id), c]))
     return toSelectOptions(base, { labelKey: 'name' }).map((o) => {
-      const course = base.find((c) => String(c.id) === String(o.value))
+      const course = byId.get(String(o.value))
       return { value: o.value, label: `${course?.code ? `${course.code} — ` : ''}${o.label}` }
     })
   }, [fdCourses, filters.levelId, filters.semesterId])
   const displayedDepartments = useMemo(() => (filters.facultyId ? departments.filter((d) => resolveDepartmentFacultyId(d) === String(filters.facultyId)) : departments), [departments, filters.facultyId])
 
-  const resetAll = () => {
+  // Patch de filtres stable : identite constante pour memo(DocumentFilters).
+  const handleFiltersChange = useCallback((patch) => {
+    if (patch.reset) { setFilters(emptyFilters()); return }
+    setFilters((prev) => {
+      // Changement de filtre : mise à jour instantanée, sans délai
+      if (patch.facultyId !== undefined && patch.facultyId !== prev.facultyId) {
+        return { ...prev, facultyId: patch.facultyId, departmentId: '', levelId: '', semesterId: '', courseId: '' }
+      }
+      if (patch.departmentId !== undefined && patch.departmentId !== prev.departmentId) {
+        return { ...prev, departmentId: patch.departmentId, levelId: '', semesterId: '', courseId: '' }
+      }
+      // Exclusivité inverse : choisir un filtre docType garde la recherche mais filtre les docs instantanément
+      return { ...prev, ...patch }
+    })
+  }, [])
+
+  const resetAll = useCallback(() => {
     setFilters(emptyFilters())
     setQuery('')
     setSubmittedQuery('')
@@ -294,7 +327,7 @@ export default function DocumentSearchPage() {
     setDocResults([])
     setError(null)
     setDocError(null)
-  }
+  }, [])
 
   return (
     <Container>
@@ -324,20 +357,7 @@ export default function DocumentSearchPage() {
         courses={courseOptions}
         tags={tags}
         filters={filters}
-        onChange={(patch) => {
-          if (patch.reset) { setFilters(emptyFilters()); return }
-          // Changement de filtre : mise à jour instantanée, sans délai
-          if (patch.facultyId !== undefined && patch.facultyId !== filters.facultyId) {
-            setFilters((prev) => ({ ...prev, facultyId: patch.facultyId, departmentId: '', levelId: '', semesterId: '', courseId: '' }))
-            return
-          }
-          if (patch.departmentId !== undefined && patch.departmentId !== filters.departmentId) {
-            setFilters((prev) => ({ ...prev, departmentId: patch.departmentId, levelId: '', semesterId: '', courseId: '' }))
-            return
-          }
-          // Exclusivité inverse : choisir un filtre docType garde la recherche mais filtre les docs instantanément
-          setFilters((prev) => ({ ...prev, ...patch }))
-        }}
+        onChange={handleFiltersChange}
       />
 
       <div ref={resultsRef} />
@@ -374,15 +394,15 @@ export default function DocumentSearchPage() {
       )}
 
       {/* Section COURS — toujours visible quand il y a une recherche, jamais masquée par les filtres doc */}
-      {searched && !isLoading && courses.length > 0 && (
+      {searched && !isLoading && visibleCourses.length > 0 && (
         <section aria-label="Cours" style={{ marginTop: 'var(--ax-space-6)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--ax-space-3)', marginBottom: 'var(--ax-space-3)', flexWrap: 'wrap' }}>
             <h2 style={{ fontSize: 'var(--ax-text-lg)', fontWeight: 'var(--ax-font-bold)', margin: 0 }}>📚 Cours</h2>
-            <Badge variant="primary" size="sm">{courses.length} trouvé{courses.length !== 1 ? 's' : ''}</Badge>
+            <Badge variant="primary" size="sm">{visibleCourses.length} trouvé{visibleCourses.length !== 1 ? 's' : ''}</Badge>
             <span style={{ fontSize: 'var(--ax-text-xs)', color: 'var(--ax-text-tertiary)' }}>— touchez pour voir les documents du cours</span>
           </div>
           <div className="ax-course-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--ax-space-4)' }}>
-            {courses.map((course) => (
+            {visibleCourses.map((course) => (
               <CourseCard
                 key={course.id}
                 course={course}
@@ -391,7 +411,7 @@ export default function DocumentSearchPage() {
                 isAdmin={isAdmin}
                 addLabel="Ajouter"
                 onSelect={handleDocumentOpen}
-                style={{ borderLeft: '4px solid var(--ax-primary)' }}
+                style={COURSE_CARD_STYLE}
               />
             ))}
           </div>
@@ -430,8 +450,8 @@ export default function DocumentSearchPage() {
         </section>
       )}
 
-      {searched && !isDocLoading && docResults.length === 0 && courses.length > 0 && (
-        <p style={{ marginTop: 'var(--ax-space-4)', fontSize: 'var(--ax-text-sm)', color: 'var(--ax-text-secondary)', textAlign: 'center' }}>Aucun document ne correspond au filtre actuel — les {courses.length} cours ci-dessus restent visibles. <button type="button" className="ax-link" onClick={() => setFilters((p) => ({ ...p, docType: '' }))} style={{ background: 'none', border: 0, padding: 0, cursor: 'pointer' }}>Effacer le filtre</button></p>
+      {searched && !isDocLoading && docResults.length === 0 && visibleCourses.length > 0 && (
+        <p style={{ marginTop: 'var(--ax-space-4)', fontSize: 'var(--ax-text-sm)', color: 'var(--ax-text-secondary)', textAlign: 'center' }}>Aucun document ne correspond au filtre actuel — les {visibleCourses.length} cours ci-dessus restent visibles. <button type="button" className="ax-link" onClick={() => setFilters((p) => ({ ...p, docType: '' }))} style={{ background: 'none', border: 0, padding: 0, cursor: 'pointer' }}>Effacer le filtre</button></p>
       )}
     </Container>
   )

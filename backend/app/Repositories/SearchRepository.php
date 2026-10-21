@@ -96,7 +96,7 @@ class SearchRepository extends BaseRepository
     {
         $query = $this->document->newQuery()
             ->where('status', 'approved')
-            ->with(['course.department.faculty', 'course.level', 'course.semester']);
+            ->with(['course.department.faculty', 'course.level', 'course.semester', 'tags']);
 
         $term = trim((string) ($filters['query'] ?? ''));
         if ($term !== '') {
@@ -117,6 +117,16 @@ class SearchRepository extends BaseRepository
         if (! empty($filters['course_id'])) {
             $query->where('course_id', (int) $filters['course_id']);
         }
+        if (! empty($filters['level_id'])) {
+            $query->whereHas('course', function ($q) use ($filters): void {
+                $q->where('level_id', (int) $filters['level_id']);
+            });
+        }
+        if (! empty($filters['semester_id'])) {
+            $query->whereHas('course', function ($q) use ($filters): void {
+                $q->where('semester_id', (int) $filters['semester_id']);
+            });
+        }
 
         foreach (['doc_type', 'academic_year', 'language', 'visibility'] as $field) {
             if (! empty($filters[$field])) {
@@ -124,11 +134,24 @@ class SearchRepository extends BaseRepository
             }
         }
 
+        // Plusieurs types (puces groupees) : le filtre reste 100 % serveur.
+        if (! empty($filters['doc_types']) && is_array($filters['doc_types'])) {
+            $query->whereIn('doc_type', $filters['doc_types']);
+        }
+
+        if (! empty($filters['tag_id'])) {
+            $query->whereHas('tags', function ($q) use ($filters): void {
+                $q->where('document_tags.id', (int) $filters['tag_id']);
+            });
+        }
+
+        // Bornes de date SARGABLES (range sur la colonne indexee) : `whereDate`
+        // empeche PostgreSQL d'utiliser l'index (colonne transformee en ::date).
         if (! empty($filters['from_date'])) {
-            $query->whereDate('created_at', '>=', $filters['from_date']);
+            $query->where('created_at', '>=', $filters['from_date'].' 00:00:00');
         }
         if (! empty($filters['to_date'])) {
-            $query->whereDate('created_at', '<=', $filters['to_date']);
+            $query->where('created_at', '<=', $filters['to_date'].' 23:59:59');
         }
         if (isset($filters['min_downloads']) && $filters['min_downloads'] !== '' && $filters['min_downloads'] !== null) {
             $query->where('downloads_count', '>=', (int) $filters['min_downloads']);
@@ -252,11 +275,23 @@ class SearchRepository extends BaseRepository
             $cid = (int) $filters['course_id'];
             $all = $all->filter(fn ($d) => (int) ($d->course_id ?? 0) === $cid);
         }
+        if (! empty($filters['level_id'])) {
+            $lid = (int) $filters['level_id'];
+            $all = $all->filter(fn ($d) => (int) ($d->course?->level_id ?? 0) === $lid);
+        }
+        if (! empty($filters['semester_id'])) {
+            $sid = (int) $filters['semester_id'];
+            $all = $all->filter(fn ($d) => (int) ($d->course?->semester_id ?? 0) === $sid);
+        }
         foreach (['doc_type', 'academic_year', 'language', 'visibility'] as $field) {
             if (! empty($filters[$field])) {
                 $val = mb_strtolower((string) $filters[$field]);
                 $all = $all->filter(fn ($d) => mb_strtolower((string) ($d->$field ?? '')) === $val);
             }
+        }
+        if (! empty($filters['doc_types']) && is_array($filters['doc_types'])) {
+            $types = array_map('mb_strtolower', $filters['doc_types']);
+            $all = $all->filter(fn ($d) => in_array(mb_strtolower((string) ($d->doc_type ?? '')), $types, true));
         }
 
         if ($term !== '') {

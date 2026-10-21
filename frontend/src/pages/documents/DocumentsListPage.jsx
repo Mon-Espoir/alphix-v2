@@ -7,7 +7,7 @@
  * même sans document. Recherche retourne des cours.
  */
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { CourseApi } from '../../api/CourseApi'
 import { FacultyApi } from '../../api/FacultyApi'
@@ -16,6 +16,7 @@ import { LevelApi } from '../../api/LevelApi'
 import { SemesterApi } from '../../api/SemesterApi'
 import { DocumentTagApi } from '../../api/DocumentTagApi'
 import { DocumentApi } from '../../api/DocumentApi'
+import { SearchApi } from '../../api/SearchApi'
 import { ROUTE_PATHS } from '../../constants/routes'
 import { Container, Button, Badge } from '../../components/ui'
 import PageHeader from '../../components/common/PageHeader'
@@ -26,11 +27,17 @@ import FavoriteButton from '../../components/documents/FavoriteButton'
 import TeacherBadge from '../../components/documents/TeacherBadge'
 import CourseCard from '../../components/documents/CourseCard'
 import { normalizeApiList, resolveCourseIds, resolveDepartmentFacultyId, toSelectOptions, semesterLabel } from '../../utils/academic'
-import { applyDocLevelFilters, docLevelFiltersActive, emptyFilters } from '../../utils/document'
+import { buildDocSearchParams, docLevelFiltersActive, emptyFilters, resolveDocTypeSelection } from '../../utils/document'
 import { onDocumentPublished } from '../../utils/documentEvents'
 import { cachedAcademicList } from '../../utils/academicCache'
 import { hasAdminAccess } from '../../utils/admin'
 import { useAuth } from '../../hooks/useAuth'
+
+/** Nombre de cours affichés avant le bouton "Afficher plus". */
+const PAGE_SIZE = 48
+
+/** Style stable pour CourseCard (évite un nouvel objet à chaque rendu). */
+const CARD_ACTIONS_STYLE = Object.freeze({ marginTop: 'var(--ax-space-3)' })
 
 export default function DocumentsListPage() {
   const [searchParams] = useSearchParams()
@@ -47,6 +54,7 @@ export default function DocumentsListPage() {
     tags: [],
   })
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefsPending, setIsRefsPending] = useState(true)
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
   const [submittedQuery, setSubmittedQuery] = useState('')
@@ -56,12 +64,14 @@ export default function DocumentsListPage() {
   const [docResults, setDocResults] = useState([])
   const [isDocLoading, setIsDocLoading] = useState(false)
 
-  // Référentiels (cache mémoire : une seule requête par session) + cours.
+  // Référentiels (cache mémoire : une seule requête par session).
+  // Chargé UNE SEULE FOIS : les références ne changent pas pendant que
+  // l'utilisateur tape, ce qui évite de recréer un objet `references`
+  // (et donc un rendu + une invalidation des useMemo) à chaque recherche.
   useEffect(() => {
     let cancelled = false
     async function run() {
-      setIsLoading(true)
-      setError(null)
+      setIsRefsPending(true)
       try {
         const [facs, deps, levs, sems, tags] = await Promise.all([
           cachedAcademicList('faculties', () => FacultyApi.list()),
@@ -78,9 +88,24 @@ export default function DocumentsListPage() {
           semesters: sems,
           tags,
         })
+      } catch {
+        // Les référentiels restent vides : l'UI reste utilisable.
+      } finally {
+        if (!cancelled) setIsRefsPending(false)
+      }
+    }
+    run()
+    return () => { cancelled = true }
+  }, [])
 
-        // Source principale : les cours de la base (SQLite), avec compteur.
-        // Recherche = API existante ; sinon liste complète mise en cache.
+  // Cours : source principale = base (SQLite) avec compteur.
+  // Recherche = API existante ; sinon liste complète mise en cache.
+  useEffect(() => {
+    let cancelled = false
+    async function run() {
+      setIsLoading(true)
+      setError(null)
+      try {
         let list = []
         if (submittedQuery.trim()) {
           const res = await CourseApi.search({ q: submittedQuery.trim() }).catch(() => [])
@@ -194,7 +219,7 @@ export default function DocumentsListPage() {
     return crumbs
   }, [filters, references, rawCourses])
 
-  const goUpTo = (clearKeys) => {
+  const goUpTo = useCallback((clearKeys) => {
     if (!clearKeys) {
       setFilters(emptyFilters())
       return
@@ -204,10 +229,35 @@ export default function DocumentsListPage() {
       for (const key of clearKeys) next[key] = ''
       return next
     })
-  }
+  }, [])
 
-  // Filtres de niveau document : chargement + filtrage local des documents.
+  // Patch de filtres stable (cascade faculte -> departement -> ...) : identite
+  // constante pour que memo(DocumentFilters) soit reellement efficace.
+  const handleFiltersChange = useCallback((patch) => {
+    if (patch.reset) {
+      setFilters(emptyFilters())
+      return
+    }
+    setFilters((prev) => {
+      if (patch.facultyId !== undefined && patch.facultyId !== prev.facultyId) {
+        return { ...prev, facultyId: patch.facultyId, departmentId: '', levelId: '', semesterId: '', courseId: '' }
+      }
+      if (patch.departmentId !== undefined && patch.departmentId !== prev.departmentId) {
+        return { ...prev, departmentId: patch.departmentId, levelId: '', semesterId: '', courseId: '' }
+      }
+      return { ...prev, ...patch }
+    })
+  }, [])
+
+  // Filtres de niveau document : chargement + filtrage SERVEUR des documents.
   const docFiltersActive = docLevelFiltersActive(filters)
+  // Parametres memorises : la requete depend de tous les filtres (y compris
+  // academiques), plus uniquement de ceux de niveau document.
+  const docSearchParams = useMemo(
+    () => buildDocSearchParams(filters, { per_page: 100 }),
+    [filters],
+  )
+  const allowedDocTypes = useMemo(() => resolveDocTypeSelection(filters.docType).allowed, [filters.docType])
   useEffect(() => {
     if (!docFiltersActive) {
       // Pas de nettoyage d'etat ici (evite un setState synchrone dans
@@ -218,8 +268,14 @@ export default function DocumentsListPage() {
     async function run() {
       setIsDocLoading(true)
       try {
-        const res = await DocumentApi.list({ per_page: 100 })
-        if (!cancelled) setDocResults(applyDocLevelFilters(normalizeApiList(res), filters))
+        // Filtrage serveur : le backend applique type, visibilite, tag, dates
+        // et compteurs -> plus de troncature a 100 ni de refetch inutile.
+        const res = await SearchApi.search(docSearchParams)
+        if (cancelled) return
+        let list = normalizeApiList(res)
+        // Filet de securite : le serveur filtre deja par groupe (doc_types[]).
+        if (allowedDocTypes) list = list.filter((d) => allowedDocTypes.includes(String(d.doc_type)))
+        setDocResults(list)
       } catch {
         if (!cancelled) setDocResults([])
       } finally {
@@ -228,7 +284,7 @@ export default function DocumentsListPage() {
     }
     run()
     return () => { cancelled = true }
-  }, [docFiltersActive, filters.docType, filters.visibility, filters.tagId, filters.fromDate, filters.toDate, filters.minDownloads, filters.minViews, reloadNonce])
+  }, [docFiltersActive, docSearchParams, allowedDocTypes, reloadNonce])
 
   // Vue "documents d'un cours" : ?course_id=X
   useEffect(() => {
@@ -259,19 +315,24 @@ export default function DocumentsListPage() {
 
   const visibleCount = courses.length
 
-  // Référentiels en cours de chargement (réseau lent) : le tiroir de classe
-  // affiche un squelette au lieu d'un faux « Aucune faculté disponible ».
-  const isRefsLoading = isLoading && references.faculties.length === 0 && references.levels.length === 0
+  // Referentiels en cours de chargement (reseau lent) : le tiroir de classe
+  // affiche un squelette au lieu d'un faux « Aucune faculte disponible ».
+  // Etat dedie : le chargement des referentiels est separe de celui des cours.
+  const isRefsLoading = isRefsPending && references.faculties.length === 0 && references.levels.length === 0
 
   // Liste progressive (mobile-first) : 867 cartes d'un coup figent les
-  // téléphones faibles. On affiche 48 cartes puis "Afficher plus".
-  const PAGE_SIZE = 48
+  // telephones faibles. On affiche 48 cartes puis "Afficher plus".
   const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE)
 
-  // Tout changement de critères repart du début de liste.
-  useEffect(() => {
+  // Tout changement de criteres repart du debut de liste. Ajustement fait
+  // PENDANT le rendu (pattern React "adjust state during render") : pas
+  // d'effet, donc pas de second rendu ni de cascade de rendu.
+  const criteriaKey = `${filters.facultyId}|${filters.departmentId}|${filters.levelId}|${filters.semesterId}|${filters.courseId}|${submittedQuery}`
+  const [limitKey, setLimitKey] = useState(criteriaKey)
+  if (criteriaKey !== limitKey) {
+    setLimitKey(criteriaKey)
     setVisibleLimit(PAGE_SIZE)
-  }, [filters.facultyId, filters.departmentId, filters.levelId, filters.semesterId, filters.courseId, submittedQuery])
+  }
 
   const visibleCourses = useMemo(
     () => courses.slice(0, visibleLimit),
@@ -279,9 +340,9 @@ export default function DocumentsListPage() {
   )
   const remainingCount = courses.length - visibleCourses.length
 
-  const handleSubmitSearch = (value) => {
+  const handleSubmitSearch = useCallback((value) => {
     setSubmittedQuery(value.trim())
-  }
+  }, [])
 
   // Recherche instantanee : 300 ms apres la derniere frappe, sans attendre Entree.
   useEffect(() => {
@@ -299,6 +360,13 @@ export default function DocumentsListPage() {
     fdCourses.some((c) => resolveCourseIds(c).levelId === String(l.id))), [references.levels, fdCourses])
   const availableSemesters = useMemo(() => references.semesters.filter((s) =>
     fdCourses.some((c) => resolveCourseIds(c).semesterId === String(s.id))), [references.semesters, fdCourses])
+  // Départements de la faculté courante : tableau stable (sinon un nouveau
+  // tableau à chaque rendu invalide le memo de DocumentFilters).
+  const filteredDepartments = useMemo(() => (
+    filters.facultyId
+      ? references.departments.filter((d) => resolveDepartmentFacultyId(d) === String(filters.facultyId))
+      : references.departments
+  ), [references.departments, filters.facultyId])
 
   if (courseId) {
     return (
@@ -375,9 +443,7 @@ export default function DocumentsListPage() {
 
       <DocumentFilters
         faculties={references.faculties}
-        departments={filters.facultyId
-          ? references.departments.filter((d) => resolveDepartmentFacultyId(d) === String(filters.facultyId))
-          : references.departments}
+        departments={filteredDepartments}
         allDepartments={references.departments}
         allLevels={references.levels}
         levels={availableLevels}
@@ -386,22 +452,7 @@ export default function DocumentsListPage() {
         tags={references.tags}
         filters={filters}
         isLoading={isRefsLoading}
-        onChange={(patch) => {
-          if (patch.reset) {
-            setFilters(emptyFilters())
-            return
-          }
-          if (patch.facultyId !== undefined && patch.facultyId !== filters.facultyId) {
-            // Cascade : changer de faculte reinitialise departement/niveau/semestre.
-            setFilters((prev) => ({ ...prev, facultyId: patch.facultyId, departmentId: '', levelId: '', semesterId: '', courseId: '' }))
-            return
-          }
-          if (patch.departmentId !== undefined && patch.departmentId !== filters.departmentId) {
-            setFilters((prev) => ({ ...prev, departmentId: patch.departmentId, levelId: '', semesterId: '', courseId: '' }))
-            return
-          }
-          setFilters((prev) => ({ ...prev, ...patch }))
-        }}
+        onChange={handleFiltersChange}
       />
 
       {breadcrumb.length > 1 && (
@@ -501,7 +552,7 @@ export default function DocumentsListPage() {
                 levels={references.levels}
                 semesters={references.semesters}
                 isAdmin={isAdmin}
-                actionsStyle={{ marginTop: 'var(--ax-space-3)' }}
+                actionsStyle={CARD_ACTIONS_STYLE}
               />
             ))}
           </div>
