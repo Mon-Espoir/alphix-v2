@@ -1,16 +1,10 @@
 # Render Blueprint for ALPHIX V2 (100% gratuit)
-# - alphix-backend  : Web Service Laravel + PostgreSQL (spin-down après 15 min)
+# - alphix-backend  : Web Service Laravel (spin-down après 15 min)
 # - alphix-frontend : Site statique React (CDN mondial, jamais endormi)
+# PostgreSQL : Supabase (hors Render), configuré via les env vars DB_* ci-dessous.
 # URLs permanentes :
 #   https://alphix-backend.onrender.com  (API)
 #   https://alphix-frontend.onrender.com (site)
-
-databases:
-  - name: alphix-db
-    plan: free
-    databaseName: alphix
-    user: alphix
-    postgresMajorVersion: "16"
 
 services:
   # Web Service Laravel (gratuit, spin-down après 15 min inactivité)
@@ -41,28 +35,20 @@ services:
         value: error
       - key: DB_CONNECTION
         value: pgsql
-      # Liaison Postgres explicite (sans elle, Render n'injecte RIEN et
-      # l'app bascule sur SQLite éphémère = données perdues à chaque deploy).
+      # PostgreSQL Supabase. Valeurs réelles saisies dans le dashboard Render
+      # (sync: false) pour ne jamais committer d'identifiants dans Git.
       - key: DB_HOST
-        fromDatabase:
-          name: alphix-db
-          property: host
+        sync: false
       - key: DB_PORT
-        fromDatabase:
-          name: alphix-db
-          property: port
+        sync: false
       - key: DB_DATABASE
-        fromDatabase:
-          name: alphix-db
-          property: database
+        sync: false
       - key: DB_USERNAME
-        fromDatabase:
-          name: alphix-db
-          property: user
+        sync: false
       - key: DB_PASSWORD
-        fromDatabase:
-          name: alphix-db
-          property: password
+        sync: false
+      - key: DB_SSLMODE
+        value: require
       - key: SESSION_DRIVER
         value: database
       - key: QUEUE_CONNECTION
