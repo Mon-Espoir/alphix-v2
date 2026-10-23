@@ -12,7 +12,7 @@ services:
     name: alphix-backend
     runtime: docker
     plan: free
-    region: oregon
+    region: frankfurt
     repo: https://github.com/Mon-Espoir/alphix-v2
     branch: master
     rootDir: backend
