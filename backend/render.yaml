@@ -49,6 +49,10 @@ services:
         sync: false
       - key: DB_SSLMODE
         value: require
+      # Réutilise la connexion TLS au pooler entre les requêtes d'un même worker
+      # PHP-FPM (le backend Render et la base Supabase sont dans deux régions).
+      - key: DB_PERSISTENT
+        value: "true"
       - key: SESSION_DRIVER
         value: database
       - key: QUEUE_CONNECTION
