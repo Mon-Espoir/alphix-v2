@@ -22,8 +22,12 @@
   padding: var(--ax-space-4);
   /* Smooth kinetic scroll on iOS inside the content column */
   -webkit-overflow-scrolling: touch;
-  /* Keep inner scroll from dragging the whole page (pull-to-refresh) */
+  /* Allow vertical scrolling within the content area */
+  overflow-y: auto;
+  /* Prevent inner scroll from dragging the whole page (pull-to-refresh) */
   overscroll-behavior-y: contain;
+  /* Enable proper flex shrinking - prevents overflow on long lists */
+  min-height: 0;
   transition: margin-left var(--ax-transition-slow), padding var(--ax-transition-slow);
 }
 
