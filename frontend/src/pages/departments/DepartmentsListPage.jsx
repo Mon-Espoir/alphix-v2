@@ -177,7 +177,7 @@ export default function DepartmentsListPage() {
   }
 
   return (
-    <Container>
+    <Container className="overflow-y-auto touch-pan-y">
       <PageHeader
         title={facultyIdParam ? `Departements${facultyFilterName ? ` — ${facultyFilterName}` : ''}` : 'Departements'}
         subtitle={

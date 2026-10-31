@@ -142,7 +142,7 @@ export default function FacultiesListPage() {
   }
 
   return (
-    <Container>
+    <Container className="overflow-y-auto touch-pan-y">
       <PageHeader
         title="Facultes"
         subtitle={`${faculties.length} faculte${faculties.length !== 1 ? 's' : ''} enregistree${faculties.length !== 1 ? 's' : ''}`}

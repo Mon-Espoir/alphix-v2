@@ -93,7 +93,7 @@ export default function AdminFacultiesPage() {
   }, [deleteTarget, notify])
 
   if (loading) return <LoadingScreen label="Chargement des facultés…" />
-  if (error) return <div className="ax-container"><PageHeader title="Facultés" subtitle="Administration" /><div className="ax-card ax-card--padded" role="alert"><p>{error}</p><Button size="sm" onClick={() => load()}>Réessayer</Button></div></div>
+  if (error) return <div className="ax-container overflow-y-auto touch-pan-y"><PageHeader title="Facultés" subtitle="Administration" /><div className="ax-card ax-card--padded" role="alert"><p>{error}</p><Button size="sm" onClick={() => load()}>Réessayer</Button></div></div>
 
   const columns = [
     { key: 'name', label: 'Nom' },
@@ -113,7 +113,7 @@ export default function AdminFacultiesPage() {
   const rows = paginated.items.map((x) => ({ key: x.id, _id: x.id, name: x.name, code: x.code, status: x.status ?? true, actions: null }))
 
   return (
-    <div className="ax-container">
+    <div className="ax-container overflow-y-auto touch-pan-y">
       <PageHeader title="Facultés" subtitle={`${stats.total} faculté(s) — ${stats.active} active(s)`} actions={<Button variant="primary" size="sm" onClick={openCreate}>Nouvelle faculté</Button>} />
 
       <AdminSection title="Statistiques">

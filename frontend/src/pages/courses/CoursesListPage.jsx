@@ -258,7 +258,7 @@ export default function CoursesListPage() {
   }, [searchParams, departmentId])
 
   return (
-    <Container>
+    <Container className="overflow-y-auto touch-pan-y">
       <PageHeader
         title="Cours"
         subtitle={`${courses.length} cours charge${courses.length !== 1 ? 's' : ''}${initialDept ? ` — departement #${initialDept}` : ''}`}

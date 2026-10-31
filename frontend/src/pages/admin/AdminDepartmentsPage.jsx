@@ -85,7 +85,7 @@ export default function AdminDepartmentsPage() {
   }, [deleteTarget, notify])
 
   if (loading) return <LoadingScreen label="Chargement des départements…" />
-  if (error) return <div className="ax-container"><PageHeader title="Départements" subtitle="Administration" /><div className="ax-card ax-card--padded" role="alert"><p>{error}</p><Button size="sm" onClick={() => load()}>Réessayer</Button></div></div>
+  if (error) return <div className="ax-container overflow-y-auto touch-pan-y"><PageHeader title="Départements" subtitle="Administration" /><div className="ax-card ax-card--padded" role="alert"><p>{error}</p><Button size="sm" onClick={() => load()}>Réessayer</Button></div></div>
 
   const columns = [
     { key: 'name', label: 'Nom' },
@@ -105,7 +105,7 @@ export default function AdminDepartmentsPage() {
   const rows = paginated.items.map((x) => ({ key: x.id, _id: x.id, name: x.name, code: x.code, faculty_id: x.faculty_id, status: x.status ?? true, actions: null }))
 
   return (
-    <div className="ax-container">
+    <div className="ax-container overflow-y-auto touch-pan-y">
       <PageHeader title="Départements" subtitle={`${stats.total} département(s)`} actions={<Button variant="primary" size="sm" onClick={openCreate}>Nouveau département</Button>} />
       <AdminSection title="Statistiques"><p className="ax-text--muted">Total : {stats.total} — Actifs : {stats.active}</p></AdminSection>
       <AdminTable columns={columns} rows={rows} caption="Liste des départements" pagination={paginated} onPageChange={setPage} />
