@@ -440,3 +440,29 @@ button.ax-card:active {
     animation-duration: 2.4s;
   }
 }
+/* --- Scrollable containers with touch scroll -------------------------------------------- */
+/*
+ * These classes enable drag-to-scroll and momentum scrolling on touch devices.
+ * Add .overflow-y-auto to any element with vertical overflow.
+ * Add .touch-pan-y or .touch-pan-x to enable touch-driven scrolling.
+ */
+.overflow-y-auto {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pan-x;
+  overscroll-behavior-y: contain;
+}
+
+.touch-pan-y {
+  touch-action: pan-y pan-x;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+.touch-pan-x {
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* --- End Scrollable containers ------------------------------------------------------- */

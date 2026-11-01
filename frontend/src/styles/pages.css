@@ -993,6 +993,7 @@
   gap: var(--ax-space-2);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
   padding: 2px 2px 6px;
@@ -1130,6 +1131,7 @@
 .ax-sheet__body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pan-x;
   padding: 0 var(--ax-space-4) var(--ax-space-2);
   min-height: 0;
 }
@@ -2171,6 +2173,7 @@
   scrollbar-width: thin;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   padding: var(--ax-space-2) var(--ax-space-4);
   max-width: var(--ax-container-max, 1200px);
   margin: 0 auto;
