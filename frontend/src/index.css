@@ -16,23 +16,30 @@ html {
   text-size-adjust: 100%;
   /* Fill notched-device viewport edge-to-edge */
   height: 100%;
+  width: 100%;
 }
 
 body {
   margin: 0;
   min-height: 100dvh;
+  width: 100%;
   /* Stop pull-to-refresh / rubber-banding from leaking past the app */
   overscroll-behavior: none;
   /* Remove gray tap flash on Android Chrome / older iOS */
   -webkit-tap-highlight-color: transparent;
   /* Prevent accidental long-press callout on links/images */
   -webkit-touch-callout: none;
+  /* Autoriser le scroll vertical global */
+  overflow-y: auto !important;
 }
 
 #root {
   min-height: 100dvh;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  /* Autoriser le scroll vertical global */
+  overflow-y: auto !important;
 }
 
 /* Skip double-tap zoom delay & pinch-delay on all tappable elements */
