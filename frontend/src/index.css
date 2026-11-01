@@ -64,6 +64,23 @@ textarea,
   touch-action: manipulation;
 }
 
+/* ---------- Android drag-to-scroll / swipe fix ---------- */
+/* -webkit-overflow-scrolling: touch enables momentum scrolling on iOS/
+   Android Chrome when vertical/horizontal overflow is present. */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+/* Explicitly allow vertical swipe (pan-y) and pinch-zoom on the document
+   root and main containers. Without this, Android may treat the whole page
+   as "pointer-down prevents scroll" and block the drag. */
+html,
+body,
+#root,
+main,
+div {
+  touch-action: pan-y pinch-zoom !important;
+}
+
 /* No text selection on chrome (keep it on readable content) */
 .ax-header,
 .ax-bottom-nav,
